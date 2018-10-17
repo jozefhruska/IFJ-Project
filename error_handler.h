@@ -12,9 +12,21 @@
  *	May the force be with you.
  */
 
+#ifndef ERROR_HANDLER_HEADER
+#define ERROR_HANDLER_HEADER
+
 #include <stdio.h>
-#include <stdlib.h>
 
-int main( int argc, char** argv ) {
+/* Error codes table */
+typedef enum errorCodes {
+	ERROR_LEXICAL = 1,
+	ERROR_SYNTACTIC = 2,
+	ERROR_SEMANTIC_DEF = 3,
+	ERROR_SEMANTIC_RUN = 4,
+	ERROR_SEMANTIC_PARAM = 5,
+	ERROR_SEMANTIC_OTHER = 6,
+	ERROR_ZERO_DIVISION = 9,
+	ERROR_INTERNAL = 99
+} ERROR_CODES;
 
-}
+#endif ERROR_HANDLER_HEADER
