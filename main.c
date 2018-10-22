@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "error_handler.h"
 
 int main( int argc, char** argv ) {
 
