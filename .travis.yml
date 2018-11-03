@@ -1,9 +1,11 @@
 language: c
-install: make get-deps
 compiler:
-  - clang
   - gcc
 branches:
   only:
   - master
+before_install:
+  - sudo apt-get update
 script: make
+notifications:
+  slack: ifj-projectgroup:wgciDeWTSoYEwi38yhSV9rpE
