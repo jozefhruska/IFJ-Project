@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "str.h"
-#include "stable.h"
+#include "symtable.h"
 #include "ilist.h"
 
 int inter(tSymbolTable *ST, tListOfInstr *instrList)

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "str.h"
-#include "stable.h"
+#include "symtable.h"
 #include "ilist.h"
 #include "scaner.h"
 #include "parser.h"

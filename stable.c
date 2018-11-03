@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "str.h"
-#include "stable.h"
+#include "symtable.h"
 
 void tableInit(tSymbolTable *T)
 // funkce inicializuje tabulku symbolu
