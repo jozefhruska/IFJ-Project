@@ -1,10 +1,14 @@
 CFLAGS=-std=c99 -Wall -pedantic -g
-BIN=project
 CC=gcc
-RM=rm -f
 
-ALL: str.o symtable.o error_handler.o ilist.o scaner.o parser.o interpret.o main.o
-	$(CC) $(CFLAGS) -o $(BIN) str.o symtable.o error_handler.o ilist.o scaner.o parser.o interpret.o main.o
+demel: parser.c parser.h main.c
+	$(CC) $(CFLAGS) parser.c main.c -o demel
+
+hruska: list.c list.h symtable.c symtable.h main.c
+	$(CC) $(CFLAGS) symtable.c list.c main.c -o hruska
+
+sedlacek: scaner.c scaner.h main.c
+	$(CC) $(CFLAGS) scaner.c main.c -o sedlacek
 
 clean:
-	$(RM) *.o $(BIN)
+	rm demel sedlacek hruska
