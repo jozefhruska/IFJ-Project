@@ -1,21 +1,56 @@
-/*
- *	Project: IFJ18
- *	Course: Formal Languages and Compilers
- *	School: Brno University of Technology
- *
- *	Authors:
- *	- Demel Jan <xdemel01@stud.fit.vutbr.cz>
- *	- Sedláček Aleš	<xsedla1c@stud.fit.vutbr.cz>
- *	- Buchta Martin	<xbucht28@stud.fit.vutbr.cz>
- *	- Hruška Jozef <xhrusk25@stud.fit.vutbr.cz>
- *
- *	May the force be with you.
- */
-
 #include <stdio.h>
-#include <stdlib.h>
-#include "error_handler.h"
+#include "str.h"
+#include "stable.h"
+#include "ilist.h"
+#include "scaner.h"
+#include "parser.h"
+#include "interpret.h"
 
-int main( int argc, char** argv ) {
+#define FILE_ERROR 5
 
+int main(int argc, char** argv)
+{
+   FILE *f;
+   if (argc == 1)
+   {
+      printf("Neni zadan vstupni soubor\n");
+      return FILE_ERROR;
+   }
+   if ((f = fopen(argv[1], "r")) == NULL)
+   {
+      printf("Soubor se nepodarilo otevrit\n");
+      return FILE_ERROR;
+   }   
+   setSourceFile(f);
+   
+   tSymbolTable ST; 
+   tableInit(&ST); // inicializace tabulky symbolu
+  
+   tListOfInstr instrList;
+   listInit(&instrList); // inicializace seznamu instrukci
+  
+   int result;
+   result = parse(&ST, &instrList); // provedeme syntaktickou analyzu
+   
+   switch (result)
+   {
+     case LEX_ERROR:
+     case SYNTAX_ERROR:
+     case SEM_ERROR:
+       // nastala chyba v prubehu prekladu
+       tableFree(&ST);
+       listFree(&instrList);
+       fclose(f);
+       return -result;
+     break;
+     // jinak probehlo vse v poradku, muzeme provadet kod
+   } 
+   
+   // provedeme interpretaci
+   inter(&ST, &instrList);
+
+   tableFree(&ST);
+   listFree(&instrList);
+   fclose(f);
+   return 0;
 }
