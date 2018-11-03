@@ -1,7 +1,8 @@
 //hlavicka pro lexikalni analyzator
 
-//identifikator
-#define ID       0
+//lengths
+#define KEYWORDS_LENGTH 9
+#define OPERATORS_LENGTH 9
 
 //klicova slova
 #define SETZERO 10
@@ -23,6 +24,39 @@
 
 //chybove hlasky
 #define LEX_ERROR    -1
+
+//type of state
+typedef enum {
+    INIT,
+    ID,
+    ID_FUNC,
+    NUMBER,
+    INTEGER,
+    DOUBLE,
+    STRING,
+    OPERATOR,
+    KEYWORD
+} Tstate;
+
+//type of token
+typedef enum {
+    //scanner end and error handling
+    T_EOF,
+    T_ERR,
+    //data types
+    T_ID,
+    T_ID_FUNC,
+    T_INT,
+    T_DOUBLE,
+    T_STRING,
+    //keywords
+    T_KEYWORD,
+    //operators
+    T_OPERATOR,
+    //delimiters
+    T_DELIMITER
+
+} Ttoken;
 
 //hlavicka funkce simulujici lexikalni analyzator
 void setSourceFile(FILE *f);
