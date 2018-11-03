@@ -1,4 +1,4 @@
-// lexikalni analyzator
+// lexical analysator
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -7,7 +7,7 @@
 
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 
-static char operator[] = {'+', '-', '*', '<', '>', '=', '!'}; // single operator
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'}; // single operator
 static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "<", ">", "<=", ">=", "==", "!="}; // final operator
 
 // check if loaded string is from keywords
@@ -21,16 +21,16 @@ bool isKeyword(char *input) {
 }
 
 // check if loaded string is from operators
-bool isOperator(char *input) {
+bool isOperator(char input) {
 	for (int i = 0; i<OPERATORS_LENGTH; i++) {
-		if (strcmp(input, operators[i]) == 0) {
+		if (strcmp(input, operator[i]) == 0) {
 			return true;
 		}
 	}
 	return false;
 }
 
-// promenna pro ulozeni vstupniho souboru
+// variable to save input file
 FILE *source;
 
 void setSourceFile(FILE *f)
@@ -39,53 +39,59 @@ void setSourceFile(FILE *f)
 }
 
 int getNextToken(string *attr)
-// hlavni funkce lexikalniho analyzatoru
+// main function of lexical analysator
 {
   Tstate state = INIT;
-  int c;
-	// vymazeme obsah atributu a v pripade identifikatoru
-  // budeme postupne do nej vkladat jeho nazev
+  char c;
+
+	// clear attr
   strClear(attr);
   while (1)
   {     
-  	// nacteni dalsiho znaku
+  	// read next char
   	c = getc(source);
            
     switch (state)
     {
     	case INIT:
-      	// zakladni stav automatu 
-        if (isspace(c))
-        	// bila mista - ignorovat
+
+      	// white space
+        if (isspace(c) && c != '\0')
 	    		state = INIT;
+
+				// identifier or keyword
 				else if (c == '_' || islower(c))
-				// identifikator nebo klicove slovo
 				{
 					strAddChar(attr, c);
 					state = ID;
 				}
-				else if (isdigit(c))
-					// not classified number
+
+				// not classified number
+				else if (isdigit(c)) {
+					strAddChar(attr, c);
 					state = NUMBER;
-				else if (c == '-')
-					// operator --
-					state = 4;
-				else if (c == '{') return LEFT_VINCULUM;
-				else if (c == '}') return RIGHT_VINCULUM;
-				else if (c == ';') return SEMICOLON;
-				else if (c == EOF) return END_OF_FILE;
+				}
+					
+				else if (c == '{') return T_DELIMITER;
+				else if (c == '}') return T_DELIMITER;
+				else if (c == ';') 
+				{
+					strAddChar(attr, c);
+					return T_COMMA;
+				}
+				else if (c == EOF) return T_EOF;
 				else
-				return LEX_ERROR;
+				return T_ERR;
 
       break;
 	 
 
-      case ID:
+      // ----- identifier -----
+			case ID:
       	// komentar
         if (isalnum(c) || c == '_') 
 				{
 					strAddChar(attr, c);
-					state = ID;
 				}
 
 				else if (c == '?' || c == '!')
@@ -95,25 +101,61 @@ int getNextToken(string *attr)
 				}
 				
         else
-        	ungetc(c, attr);
-        	return T_ID;
+				{
+					ungetc(c, source);
+					if (isKeyword(attr->str))
+					{
+						return T_KEYWORD;
+					}
+					else return T_ID;
+				}
       break;
+
 
 			// ----- identifier that is function -----
 			case ID_FUNC:
 				// 
 				if (isspace(c) || c == '(' || c == ')')
 				{
-					ungetc(c, attr);
+					ungetc(c, source);
 					return T_ID_FUNC;
 				}
 				// char after ? or ! is illegal
 				else
 				{
-					ungetc(c, attr);
+					ungetc(c, source);
 					return T_ERR;
 				}
+			break;
 
+			// ----- identifier that is function -----
+			case NUMBER:
+				// 
+				if (isdigit(c))
+				{
+					strAddChar(attr, c);
+				}
+				// char after ? or ! is illegal
+				else if (c == '.')
+				{
+					ungetc(c, source);
+					state = DOUBLE;
+				}
+				else if (c == 'e' || c == 'E') 
+				{
+					ungetc(c, source);
+					state = DOUBLE;
+				}
+				else if (!isdigit(c) || !isOperator(c) || c != ';') // TODO UPLNE NAPICU HOSI, ALE JAKOZE FEST
+				{
+					ungetc(c, source);
+					return T_ERR;
+				}
+				else
+				{
+					ungetc(c, source);
+					return T_INT;
+				}
 			break;
        
     }

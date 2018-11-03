@@ -7,8 +7,8 @@ demel: parser.c parser.h main.c
 hruska: list.c list.h symtable.c symtable.h main.c
 	$(CC) $(CFLAGS) symtable.c list.c main.c -o hruska
 
-sedlacek: scaner.c scaner.h main.c
-	$(CC) $(CFLAGS) scaner.c main.c -o sedlacek
+sedlacek: scaner.c scaner.h str.c str.h main.c
+	$(CC) $(CFLAGS) scaner.c main.c str.c -o sedlacek
 
 clean:
 	rm demel sedlacek hruska

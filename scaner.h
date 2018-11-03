@@ -2,6 +2,7 @@
 
 //lengths
 #define KEYWORDS_LENGTH 9
+#define OPERATOR_LENGTH 7
 #define OPERATORS_LENGTH 9
 
 //klicova slova
@@ -54,7 +55,8 @@ typedef enum {
     //operators
     T_OPERATOR,
     //delimiters
-    T_DELIMITER
+    T_DELIMITER,
+    T_COMMA
 
 } Ttoken;
 
