@@ -1,0 +1,9 @@
+language: c
+install: make get-deps
+compiler:
+  - clang
+  - gcc
+branches:
+  only:
+  - master
+script: make
