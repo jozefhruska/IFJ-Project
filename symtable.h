@@ -12,29 +12,57 @@
  *	May the force be with you.
  */
 
-// definice jednotlivych typu
-#define TYPE_INT     1
+#ifndef SYMTABLE_HEADER
+#define SYMTABLE_HEADER
 
+#include <stdbool.h>
 
-typedef struct
-{
-  int varType;  // typ dane promenne, v nasem pripade vzdy int
-  int varValue; // pro ruzne typy nutnost resit pomoci unie
-} tData;
+#include "list.h"
 
-typedef struct tableItem
-{
-  string key;                  // klic, podle ktereho se bude vyhledavat = nazev identifikatoru
-  tData data;                  // data, ktera jsou ke klici pridruzena
-  struct tableItem *nextItem;  // ukazatel na dalsi prvek tabulky symbolu
-} tTableItem;
+/**
+ * @brief  Structure representing type of sBTNode.
+ */
+typedef enum {
+	TYPE_VARIABLE,
+	TYPE_FUNCTION
+} BTNodeType;
 
-typedef struct
-{
-  struct tableItem *first;
-} tSymbolTable;
+/**
+ * @brief  Structure representing variable data type.
+ */
+typedef enum {
+	TYPE_INTEGER,
+	TYPE_DOUBLE,
+	TYPE_STRING
+} BTVariableDataType;
 
-void tableInit(tSymbolTable *T);
-int tableInsert(tSymbolTable *T, string *key, int varType);
-tData *tableSearch(tSymbolTable *T, string *key);
-void tableFree(tSymbolTable *T);
+/**
+ * @brief  Structure representing variable.
+ */
+typedef struct sBTVariableData {
+	char *key;
+	BTVariableDataType type;
+} * BTVariableData;
+
+/**
+ * @brief  Structure representing function.
+ */
+typedef struct sBTFunctionData {
+	char *key;
+	bool defined;
+	bool declared;
+	ListItem parameters;
+} *BTFunction;
+
+/**
+ * @brief  Structure representing one node of Binary Search Tree.
+ */
+typedef struct sBTNode {
+	char *key;
+	BTNodeType type;
+	void* data;
+	struct sBTNode *LBTNode;
+	struct sBTNode *RBTNode;
+} *BTNode;
+
+#endif SYMTABLE_HEADER
