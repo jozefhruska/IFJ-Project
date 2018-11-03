@@ -1,3 +1,5 @@
+// TODO: Delete file
+
 // definice jednotlivych typu
 #define TYPE_INT     1
 
