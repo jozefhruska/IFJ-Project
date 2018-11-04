@@ -2,6 +2,7 @@
 
 //lengths
 #define KEYWORDS_LENGTH 9
+#define DELIMITER_LENGTH 3
 #define OPERATOR_LENGTH 7
 #define OPERATORS_LENGTH 9
 
@@ -31,12 +32,13 @@ typedef enum {
     INIT,
     ID,
     ID_FUNC,
+    KEYWORD,
+    STRING,
     NUMBER,
     INTEGER,
     DOUBLE,
-    STRING,
     OPERATOR,
-    KEYWORD
+    DELIMITER
 } Tstate;
 
 //type of token
@@ -56,10 +58,16 @@ typedef enum {
     T_OPERATOR,
     //delimiters
     T_DELIMITER,
-    T_COMMA
+    T_EOL
 
 } Ttoken;
 
 //hlavicka funkce simulujici lexikalni analyzator
 void setSourceFile(FILE *f);
 int getNextToken(string *attr);
+
+// bool isDelimiter(char input);
+// bool isOperator(char input);
+
+// bool isFromKeywords(char *input);
+// bool isFromOperators(char *input);
