@@ -19,4 +19,11 @@
 #ifndef IFJ_PROJECT_TAC_H
 #define IFJ_PROJECT_TAC_H
 
+typedef struct {
+    // function
+    // destination
+    // operand 1
+    // operand 2
+} tTacInstr;
+
 #endif //IFJ_PROJECT_TAC_H
