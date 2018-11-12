@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
-#include "_pseudoScanner.h"
+#include "scanner.h"
 
 void parse(){
     char tokenValue[100];
