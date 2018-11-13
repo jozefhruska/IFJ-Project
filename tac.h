@@ -36,7 +36,7 @@ typedef struct {
     void *op1; // operand 1
     void *op2; // operand 2
     void *dest; // destination
-} tTacInstr;
+} tInstr;
 
 /**
  * Creates new instruction and adds it to instruction list
