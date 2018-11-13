@@ -10,10 +10,21 @@ sToken tokens[] = {
     { .data = "def",    .id = FUNC_DEFINE },
     { .data = "funkce", .id = ID },
     { .data = "(",      .id = L_BRACKET },
+    { .data = "test",   .id = ID },
+    { .data = "test",   .id = COMMA },
+    { .data = "test",   .id = ID },
+    { .data = "test",   .id = COMMA },
+    { .data = "test",   .id = ID },
+    { .data = "test",   .id = COMMA },
+    { .data = "test",   .id = ID },
+    { .data = "test",   .id = COMMA },
+    { .data = "test",   .id = ID },
+    { .data = "test",   .id = COMMA },
+    { .data = "test",   .id = ID },
     { .data = ")",      .id = R_BRACKET },
     { .data = "",       .id = EOL },
     { .data = "end",    .id = FUNC_END },
-    { .data = "",    .id = EOF },
+    { .data = "",       .id = EOF },
 };
 
 sToken *getNextToken(){

@@ -12,7 +12,8 @@ typedef enum {
     ID,
     L_BRACKET,
     R_BRACKET,
-    EOL
+    EOL,
+    COMMA
 } tokenTypes;
 
 sToken *getNextToken();
