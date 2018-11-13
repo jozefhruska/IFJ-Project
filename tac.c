@@ -20,7 +20,7 @@
 
 #include "tac.h"
 
-tInstrList* instrList; // global instruction list - TODO: replace with the variable from parser.c
+tInstrList *instrList; // global instruction list - TODO: replace with the variable from parser.c
 
 /**
  * Creates new instruction and adds it to instruction list
@@ -30,7 +30,7 @@ tInstrList* instrList; // global instruction list - TODO: replace with the varia
  * @param op2 Second operand pointer
  * @param dest Result destination pointer
  */
-void generateInstruction(tInstrType type, void* op1, void* op2, void* dest)
+void generateInstruction(tInstrType type, void *op1, void *op2, void *dest)
 {
     // create the instruction struct
     tInstr instruction;

@@ -43,15 +43,15 @@ typedef struct {
  */
 typedef struct instrListItem{
     tInstr instr; // instruction
-    struct instrListItem* next; // pointer to the next item
+    struct instrListItem *next; // pointer to the next item
 } tInstrListItem;
 
 /**
  * Structure for a list of instructions
  */
 typedef struct {
-    struct instrListItem* first; // the first item of the list
-    struct instrListItem* last; // the last item of the list
+    struct instrListItem *first; // the first item of the list
+    struct instrListItem *last; // the last item of the list
 } tInstrList;
 
 /**
@@ -62,6 +62,6 @@ typedef struct {
  * @param op2 Second operand pointer
  * @param dest Result destination pointer
  */
-void generateInstruction(tInstrType type, void* op1, void* op2, void* dest);
+void generateInstruction(tInstrType type, void *op1, void *op2, void *dest);
 
 #endif //IFJ_PROJECT_TAC_H
