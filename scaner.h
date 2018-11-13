@@ -4,7 +4,7 @@
 #define KEYWORDS_LENGTH 9
 #define DELIMITER_LENGTH 3
 #define OPERATOR_LENGTH 7
-#define OPERATORS_LENGTH 9
+#define OPERATORS_LENGTH 10
 
 //klicova slova
 #define SETZERO 10
@@ -26,6 +26,12 @@
 
 //chybove hlasky
 #define LEX_ERROR    -1
+
+// return structure of getNextToken
+struct Token {
+    int type;
+    void *data;
+} token;
 
 //type of state
 typedef enum {

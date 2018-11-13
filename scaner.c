@@ -8,12 +8,12 @@
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
 static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'}; // single operator
-static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "<", ">", "<=", ">=", "==", "!="}; // final operator
+static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
 
 // check if loaded char is delimiter
 bool isDelimiter(char input) {
-	for (int i = 0; i<3; i++) {
-		if (strcmp(input, delimiter[i]) == 0) {
+	for (int i = 0; i<DELIMITER_LENGTH; i++) {
+		if (input == delimiter[i]) {
 			return true;
 		}
 	}
@@ -23,7 +23,7 @@ bool isDelimiter(char input) {
 // check if loaded char is operator
 bool isOperator(char input) {
 	for (int i = 0; i<OPERATORS_LENGTH; i++) {
-		if (strcmp(input, operator[i]) == 0) {
+		if (input == operator[i]) {
 			return true;
 		}
 	}
@@ -58,39 +58,35 @@ void setSourceFile(FILE *f)
   source = f;
 }
 
-int getNextToken(string *attr)
+struct Token getNextToken(string *attr)
 // main function of lexical analysator
 {
   Tstate state = INIT;
   char c;
 
-  printf("printf debug jak pica 2\n");
-
 	// clear attr
   strClear(attr);
-  while (c = getc(source))
-  {     
-  	// read next char
-	if (c == EOF)
-	{
-		return T_EOF;
-	}
-
-	printf("char: %c\n", c);
-           
+  while ((c = fgetc(source)))
+  { 
+ 
     switch (state)
     {
     	// ---------------------------------------- INIT CASE ----------------------------------------
 		case INIT:
 
 			// white space
-			if (isspace(c) && c != '\0')
+			if (isspace(c) && c != '\n')
 			{
 				state = INIT;
 			}
 
+			else if (c == EOF)
+			{
+				return T_EOF;
+			}
+
 			// end of line
-			else if (c == '\0')
+			else if (c == '\n')
 			{
 				strAddChar(attr, c);
 				return T_EOL;
@@ -138,6 +134,7 @@ int getNextToken(string *attr)
 			if (isalnum(c) || c == '_') 
 			{
 				strAddChar(attr, c);
+				state = ID;
 			}
 
 			// special kind of id that can be only function
@@ -163,7 +160,7 @@ int getNextToken(string *attr)
 		// ---------------------------------------- ID_FUNC CASE ----------------------------------------
 		case ID_FUNC:
 			// 
-			if (isspace(c) || c == '(')
+			if (isspace(c) || c == '(' || c == EOF)
 			{
 				ungetc(c, source);
 				return T_ID_FUNC;
@@ -195,11 +192,6 @@ int getNextToken(string *attr)
 				ungetc(c, source);
 				state = DOUBLE;
 			}
-			else if (!isdigit(c) || !isOperator(c)) // TODO UPLNE NAPICU HOSI, ALE JAKOZE FEST
-			{
-				ungetc(c, source);
-				return T_ERR;
-			}
 			else
 			{
 				ungetc(c, source);
@@ -220,12 +212,11 @@ int getNextToken(string *attr)
 
 		// ---------------------------------------- OPERATOR CASE ----------------------------------------
 		case OPERATOR:
-			if (isDelimiter(c))
+			if (isOperator(c))
 			{
 				strAddChar(attr, c);
 				if (isFromOperators(attr->str)) 
 				{
-					strAddChar(attr, c);
 					return T_OPERATOR;
 				}
 				state = OPERATOR;
@@ -233,14 +224,14 @@ int getNextToken(string *attr)
 
 			else 
 			{
+				ungetc(c, source);
+				
 				if (isFromOperators(attr->str))
 				{
-					ungetc(c, source);
 					return T_OPERATOR;
 				}
 				else 
 				{
-					ungetc(c, source);
 					return T_ERR;
 				}
 			}
@@ -248,4 +239,5 @@ int getNextToken(string *attr)
 
     }
   }
+  return state;
 }
