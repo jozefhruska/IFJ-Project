@@ -2,10 +2,20 @@
 #define scanner__
 
 typedef struct __token{
-    char name[100];
+    void *data;
     int id;
 } sToken;
 
-int getNextToken(char *);
+typedef enum {
+    FUNC_DEFINE,
+    FUNC_END,
+    ID,
+    L_BRACKET,
+    R_BRACKET,
+    EOL
+} tokenTypes;
+
+sToken *getNextToken();
+void storeToken(sToken*);
 
 #endif

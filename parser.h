@@ -1,6 +1,9 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-void parse();
+
+#define PARSE_SUCCESS 1
+
+int parse();
 
 #endif

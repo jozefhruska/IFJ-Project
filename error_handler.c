@@ -43,8 +43,7 @@ void error_fatal(int errorCode) {
 		case ERROR_INTERNAL:
 			fprintf(stderr, "Internal error: Ooops, something went wrong...\n");
 			break;
-
-		/* End process with given error code */
-		exit(errorCode);
 	}
+	/* End process with given error code */
+	exit(errorCode);
 }

@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
-#include "scanner.h"
+#include "_pseudoScanner.h"
+#include "parser_syntax_rules.h"
+#include "error_handler.h"
 
-void parse(){
-    char tokenValue[100];
-    int retValue = getNextToken(tokenValue);
-    printf("Token: %s, ID: %d\n", tokenValue, retValue);
+int parse(){
+    int result = parser_parse_prog();
+    return result;
 }

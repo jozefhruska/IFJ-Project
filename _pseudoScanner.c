@@ -4,16 +4,28 @@
 
 int _i = 0;
 
+sToken *_tokenBuffer = NULL;
+
 sToken tokens[] = {
-    { .name = "def", .id = 0},
-    { .name = "funkce", .id = 1},
-    { .name = "(", .id = 2},
-    { .name = ")", .id = 3},
-    { .name = "end", .id = 4}
+    { .data = "def",    .id = FUNC_DEFINE },
+    { .data = "funkce", .id = ID },
+    { .data = "(",      .id = L_BRACKET },
+    { .data = ")",      .id = R_BRACKET },
+    { .data = "",       .id = EOL },
+    { .data = "end",    .id = FUNC_END },
+    { .data = "",    .id = EOF },
 };
 
-int getNextToken(char *target){
-    sToken tmp = tokens[_i++];
-    strcpy(target, tmp.name);
-    return tmp.id;
+sToken *getNextToken(){
+    if(_tokenBuffer != NULL){
+        sToken *tmp = _tokenBuffer;
+        _tokenBuffer = NULL;
+        return tmp;
+    } else {
+        return &(tokens[_i++]);
+    }
+}
+
+void storeToken(sToken *storedToken){
+    _tokenBuffer = storedToken;
 }
