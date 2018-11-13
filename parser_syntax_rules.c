@@ -1,8 +1,11 @@
 #include <stdio.h>
+
+#include "parser.h"
 #include "parser_syntax_rules.h"
+#include "parser_syntax_prec_analysis.h"
+
 #include "error_handler.h"
 #include "_pseudoScanner.h"
-#include "parser.h"
 
 /**
  * Grammar rules for <prog>
@@ -15,6 +18,14 @@ int parser_parse_prog(){
          */
         case FUNC_DEFINE:
             parser_parse_function();
+            parser_parse_prog();
+        break;
+
+        /**
+         * Rule <prog> => <stat><prog>
+         */
+        case IF_KEYWORD:
+            parser_parse_statement();
             parser_parse_prog();
         break;
 
@@ -94,4 +105,41 @@ int parser_parse_params_next(){
     } else {
         error_fatal(ERROR_SYNTACTIC);
     }
+}
+
+/**
+ * Grammar rules for <stat>
+ */
+int parser_parse_statement(){
+    parser_parse_expression();
+    sToken *token = getNextToken();
+    if(token->id != THEN_KEYWORD) error_fatal(ERROR_SYNTACTIC);
+    token = getNextToken();
+    if(token->id != EOL) error_fatal(ERROR_SYNTACTIC);
+
+    parser_parse_commands();
+    parser_parse_statement_else_block();
+    token = getNextToken();
+    if(token->id != END_KEYWORD) error_fatal(ERROR_SYNTACTIC);
+    return 0;
+}
+
+int parser_parse_statement_else_block(){
+    sToken *token = getNextToken();
+    if(token->id == ELSE_KEYWORD){
+        token = getNextToken();
+        if(token->id != EOL) error_fatal(ERROR_SYNTACTIC);
+        parser_parse_commands();
+        return 0;
+    } else {
+        storeToken(token);
+        return 0;
+    }
+}
+
+/**
+ * Grammar rules for <commands>
+ */
+int parser_parse_commands(){
+    return 0;
 }
