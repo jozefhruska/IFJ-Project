@@ -19,6 +19,15 @@
 #ifndef IFJ_PROJECT_TAC_H
 #define IFJ_PROJECT_TAC_H
 
+/**
+ * Types of instruction in three-address code
+ */
+typedef enum {
+    ItAdd, // addition +
+    ItSub, // substraction -
+    ItEquals, // =
+} tInstrType;
+
 typedef struct {
     // function
     // destination
