@@ -38,4 +38,14 @@ typedef struct {
     void *dest; // destination
 } tTacInstr;
 
+/**
+ * Creates new instruction and adds it to instruction list
+ *
+ * @param type Type of instruction, +-= etc.
+ * @param op1 First operand pointer
+ * @param op2 Second operand pointer
+ * @param dest Result destination pointer
+ */
+void generateInstruction(tInstrType type, void* op1, void* op2, void* dest);
+
 #endif //IFJ_PROJECT_TAC_H
