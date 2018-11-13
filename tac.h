@@ -51,6 +51,7 @@ typedef struct instrListItem{
  */
 typedef struct {
     struct instrListItem* first; // the first item of the list
+    struct instrListItem* last; // the last item of the list
 } tInstrList;
 
 /**
