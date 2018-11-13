@@ -10,5 +10,8 @@ hruska: list.c list.h symtable.c symtable.h main.c
 sedlacek: scaner.c scaner.h main.c
 	$(CC) $(CFLAGS) scaner.c main.c -o sedlacek
 
+buchta:
+	$(CC) $(CFLAHS) main.c tac.c -o buchta
+
 clean:
 	rm demel sedlacek hruska
