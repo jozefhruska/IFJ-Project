@@ -39,6 +39,21 @@ typedef struct {
 } tInstr;
 
 /**
+ * Structure representing one item of the list of instructions
+ */
+typedef struct instrListItem{
+    tInstr instr; // instruction
+    struct instrListItem* next; // pointer to the next item
+} tInstrListItem;
+
+/**
+ * Structure for a list of instructions
+ */
+typedef struct {
+    struct instrListItem* first; // the first item of the list
+} tInstrList;
+
+/**
  * Creates new instruction and adds it to instruction list
  *
  * @param type Type of instruction, +-= etc.
