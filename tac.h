@@ -28,11 +28,14 @@ typedef enum {
     ItEquals, // =
 } tInstrType;
 
+/**
+ * Structure for one instruction in three-address code
+ */
 typedef struct {
-    // function
-    // destination
-    // operand 1
-    // operand 2
+    tInstrType instrType; // instruction type
+    void *op1; // operand 1
+    void *op2; // operand 2
+    void *dest; // destination
 } tTacInstr;
 
 #endif //IFJ_PROJECT_TAC_H
