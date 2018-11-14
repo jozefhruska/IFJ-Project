@@ -29,4 +29,5 @@ typedef enum errorCodes {
 	ERROR_INTERNAL = 99
 } ERROR_CODES;
 
-#endif ERROR_HANDLER_HEADER
+void error_fatal(int);
+#endif

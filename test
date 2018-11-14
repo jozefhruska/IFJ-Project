@@ -1,7 +1,1 @@
-def function(coti, jebe)
-    prikaz1 = 69
-    prikaz2 = 42
-    if prikaz1 => prikaz2 then
-        prikaz1 = prikaz2
-    end
-end
+2e-5+5*21569.9005E+4

@@ -5,6 +5,7 @@
 #define DELIMITER_LENGTH 3
 #define OPERATOR_LENGTH 7
 #define OPERATORS_LENGTH 10
+#define ESCAPE_LENGTH 5
 
 //klicova slova
 #define SETZERO 10
@@ -27,12 +28,6 @@
 //chybove hlasky
 #define LEX_ERROR    -1
 
-// return structure of getNextToken
-struct Token {
-    int type;
-    void *data;
-} token;
-
 //type of state
 typedef enum {
     INIT,
@@ -43,6 +38,8 @@ typedef enum {
     NUMBER,
     INTEGER,
     DOUBLE,
+    DOUBLE_EXP,
+    DOUBLE_DOT,
     OPERATOR,
     DELIMITER
 } Tstate;
@@ -64,13 +61,16 @@ typedef enum {
     T_OPERATOR,
     //delimiters
     T_DELIMITER,
+    T_LEFT_BRACKET,
+    T_RIGHT_BRACKET,
+    T_COMMA,
     T_EOL
 
 } Ttoken;
 
 //hlavicka funkce simulujici lexikalni analyzator
 void setSourceFile(FILE *f);
-int getNextToken(string *attr);
+sToken getNextToken();
 
 // bool isDelimiter(char input);
 // bool isOperator(char input);

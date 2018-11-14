@@ -1,4 +1,4 @@
-//hlavickovy soubor pro praci s nekonecne dlouhymi retezci
+#include <stdbool.h>
 
 typedef struct
 {
@@ -6,6 +6,16 @@ typedef struct
   int length;		// skutecna delka retezce
   int allocSize;	// velikost alokovane pameti
 } string;
+
+typedef struct Token {
+    int type;
+    void *data;
+} sToken;
+
+void tokenClear(sToken *t);
+bool tokenChangeData(sToken *t, string *s);
+bool tokenChangeType(sToken *t, int state);
+bool tokenChangeBoth(sToken *t, string *s, int state);
 
 
 int strInit(string *s);
