@@ -20,6 +20,9 @@ tSymbolTable *tempSymTable; // temporary symbol table
 tSymbolTable *currentSymTable; // current local symbol table
 tSymbolTableStack *symTableStack; // stack of local symbol talbes
 
+/**
+ * @brief Creates new global table
+ */
 void initGlobalSymTable()
 {
     globalSymTable = NULL;

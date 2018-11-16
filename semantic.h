@@ -15,6 +15,9 @@
 #ifndef IFJ_PROJECT_SEMANTIC_H
 #define IFJ_PROJECT_SEMANTIC_H
 
-
+/**
+ * @brief Creates new global table
+ */
+void initGlobalSymTable();
 
 #endif //IFJ_PROJECT_SEMANTIC_H
