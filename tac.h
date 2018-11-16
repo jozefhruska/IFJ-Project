@@ -25,7 +25,12 @@
 typedef enum {
     ItAdd, // addition +
     ItSub, // substraction -
+    ItMul, // multiplication
+    ITDiv, // division
     ItEquals, // =
+    ItGoto, // goto
+    ItLabel, // new label
+    ItNot, // not
 } tInstrType;
 
 /**
