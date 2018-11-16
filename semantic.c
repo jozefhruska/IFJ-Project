@@ -13,3 +13,20 @@
  */
 
 #include "semantic.h"
+#include "symtable.h"
+
+tSymbolTable *globalSymTable; // global symbol table
+tSymbolTable *tempSymTable; // temporary symbol table
+tSymbolTable *currentSymTable; // current local symbol table
+tSymbolTableStack *symTableStack; // stack of local symbol talbes
+
+void initGlobalSymTable()
+{
+    globalSymTable = NULL;
+    tempSymTable = NULL;
+    currentSymTable = NULL;
+    symTableStack = NULL;
+
+    // init global symbol table
+    tableInit(globalSymTable);
+}
