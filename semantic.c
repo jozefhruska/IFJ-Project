@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "semantic.h"
 #include "error_handler.h"
@@ -36,7 +37,6 @@ void initGlobalSymTable()
 
     // init global symbol table
     tableInit(globalSymTable);
-    tableInit(tempSymTable);
 }
 
 /**
@@ -73,6 +73,45 @@ void addFunction(char *name)
         symTableItem->defined = false;
 
         // null parameters
+        tableInit(tempSymTable);
         tempSymTable->parameters = stackInit();
     }
+}
+
+/**
+ * @brief Add new parameter into stack of function's parameters
+ * @param name
+ */
+void addParam(char *name)
+{
+    // global table defined
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    // not in function
+    if (tempSymTable == NULL || tempSymTable->parameters == NULL) {
+        error_fatal(ERROR_SEMANTIC_OTHER);
+        return;
+    }
+
+    // create new parameter
+    tParameter *parameter = malloc(sizeof(tParameter));
+    if (parameter == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    // allocate memory for parameter name
+    parameter->name = malloc(strlen(name) + 1);
+    if (parameter->name == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    strcpy(parameter->name, name);
+
+    // push parameter on the stack
+    stackPush(tempSymTable->parameters, parameter);
 }

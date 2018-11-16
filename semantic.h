@@ -52,4 +52,10 @@ void initGlobalSymTable();
  */
 void addFunction(char *name);
 
+/**
+ * @brief Add new parameter into stack of function's parameters
+ * @param name
+ */
+void addParam(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H
