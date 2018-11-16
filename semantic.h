@@ -46,4 +46,10 @@ typedef struct {
  */
 void initGlobalSymTable();
 
+/**
+ * @brief Start of creating new function, or it's declaration
+ * @param name
+ */
+void addFunction(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H
