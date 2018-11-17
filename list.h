@@ -12,28 +12,43 @@
  *	May the force be with you.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-#include "symtable.c"
+#define FALSE 0
+#define TRUE 1
 
-/**
- * @brief  Structure representing item of a two-way list of strings.
- */
-typedef struct sListItem {
-	BTVariableData data;
-	struct sListItem *prevItem;
-	struct sListItem *nextItem;
-} *ListItem;
+extern int errflg;
+extern int solved;
 
-/**
- * @brief  Structure representing two-way list of strings.
- */
-typedef struct sList {
-    ListItem First;
-    ListItem Last;
-} *List;
+typedef struct tDLElem {
+        void *data;
+        struct tDLElem *lptr;
+        struct tDLElem *rptr;
+} *tDLElemPtr;
 
-void listInit (List);
-void listDispose (List);
-void listInsert(List, char*, BTVariableDataType);
+typedef struct {
+    tDLElemPtr First;
+    tDLElemPtr Act;
+    tDLElemPtr Last;
+} tDLList;
+
+void DLInitList (tDLList *);
+void DLDisposeList (tDLList *);
+void DLInsertFirst (tDLList *, void *);
+void DLInsertLast(tDLList *, void *);
+void DLFirst (tDLList *);
+void DLLast (tDLList *);
+void DLCopyFirst (tDLList *, void *);
+void DLCopyLast (tDLList *, void *);
+void DLDeleteFirst (tDLList *);
+void DLDeleteLast (tDLList *);
+void DLPostDelete (tDLList *);
+void DLPreDelete (tDLList *);
+void DLPostInsert (tDLList *, void *);
+void DLPreInsert (tDLList *, void *);
+void DLCopy (tDLList *, void *);
+void DLActualize (tDLList *, void *);
+void DLSucc (tDLList *);
+void DLPred (tDLList *);
+int DLActive (tDLList *);
