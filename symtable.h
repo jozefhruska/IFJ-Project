@@ -16,53 +16,56 @@
 #define SYMTABLE_HEADER
 
 #include <stdbool.h>
-
 #include "list.h"
 
-/**
- * @brief  Structure representing type of sBTNode.
- */
 typedef enum {
 	TYPE_VARIABLE,
 	TYPE_FUNCTION
 } BTNodeType;
 
-/**
- * @brief  Structure representing variable data type.
- */
 typedef enum {
 	TYPE_INTEGER,
 	TYPE_DOUBLE,
 	TYPE_STRING
-} BTVariableDataType;
+} BTVariableType;
 
-/**
- * @brief  Structure representing variable.
- */
 typedef struct sBTVariableData {
 	char *key;
-	BTVariableDataType type;
-} * BTVariableData;
+	BTVariableType type;
+}	BTVariableData;
 
-/**
- * @brief  Structure representing function.
- */
 typedef struct sBTFunctionData {
 	char *key;
+	BTVariableType type;
+	tDLList *params;
 	bool defined;
 	bool declared;
-	ListItem parameters;
-} *BTFunction;
+} BTFunctionData;
 
-/**
- * @brief  Structure representing one node of Binary Search Tree.
- */
 typedef struct sBTNode {
-	char *key;
+	char* key;
 	BTNodeType type;
-	void* data;
-	struct sBTNode *LBTNode;
-	struct sBTNode *RBTNode;
-} *BTNode;
+	void *data;
+	struct sBTNode *LPtr;
+	struct sBTNode *RPtr;
+} *BTNodePtr;
 
-#endif SYMTABLE_HEADER
+typedef struct sSTable {
+	BTNodePtr root;
+} STable;
+
+void BTInit   (BTNodePtr *);
+BTNodePtr BTSearch  (BTNodePtr, char *);
+void BTInsert (BTNodePtr *, char *, BTNodeType, void *);
+void ReplaceByRightmost (BTNodePtr, BTNodePtr *);
+void BTDelete (BTNodePtr *, char *);
+void BTDispose(BTNodePtr *);
+
+void STableInit(STable *);
+void STableInsertVariable(STable *, char *, BTVariableType);
+void STableInsertFunction(STable *, char *, BTVariableType, tDLList *, bool, bool);
+BTNodePtr STSearch(STable *, char *);
+void STDelete(STable *, char *);
+void STDispose(STable *);
+
+#endif
