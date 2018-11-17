@@ -23,7 +23,6 @@ static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
 static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'};					   // single operator
 static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
-// static char escape[ESCAPE_LENGTH] = {'\"', '\n', '\t', '\s', '\\'};
 
 /*================= DML EDIT ==================*/
 
@@ -128,7 +127,8 @@ int hexadecimalToDecimal(string *hexValue)
 }
 
 // convert integer to string
-char *itoa(int i, char b[]){
+char *itoa(int i, char b[])
+{
     char const digit[] = "0123456789";
     char* p = b;
     if(i<0){
@@ -170,6 +170,8 @@ sToken *getNextToken()
 	Tstate state = INIT;
 	char c;
 	char buff;
+	int count;
+  	int integer;
 
 	string output;
 	string stack;
@@ -363,7 +365,7 @@ sToken *getNextToken()
 				}
 				state = DOUBLE_EXP;
 			}
-			break;
+		break;
 
 		// ---------------------------------------- DOUBLE_DOT CASE ----------------------------------------
 		case DOUBLE_DOT:
@@ -376,14 +378,14 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				buff = fgetc(source);
-
+				
 				if (buff == '+' || buff == '-' || isdigit(buff))
 				{
 					strAddChar(&output, buff);
 					buff = fgetc(source);
 					if (!isdigit(buff))
 					{
-						tokenChangeType(&token, T_ERR);
+						tokenChangeType(token, T_ERR);
 						return token;
 					}
 					strAddChar(&output, buff);
@@ -400,7 +402,7 @@ sToken *getNextToken()
 				tokenChangeBoth(token, &output, T_DOUBLE);
 				return token;
 			}
-			break;
+		break;
 
 		// ---------------------------------------- DOUBLE_EXP CASE ----------------------------------------
 		case DOUBLE_EXP:
@@ -426,42 +428,107 @@ sToken *getNextToken()
 				ungetc(c, source);
 				return token;
 			}
-			break;
+		break;
 
 		// ---------------------------------------- STRING CASE ----------------------------------------
 		case STRING:
-			if (c == '"') // SPATNE
+			if (c == '"') // end of string
 			{
-				// if (output.str != NULL)
-				// {
-				// 	tokenChangeBoth(&token, &output, T_STRING);
-				// }
-				// else
-				// {
-				// 	tokenChangeType(&token, T_STRING);
-				// }
-				// return token;
+				tokenChangeBoth(token, &output, T_STRING);
+				return token;
 			}
-			// else if (c == '\\')
-			// {
-			// 	buff = fgetc(source);
-			// 	if (buff == '"' || buff == 'n' || buff == 't' || buff == 's' || buff == '\\')
-			// 	{
-			// 		char *temp;
-			// 		strAddChar(&stack, c);
-			// 		strAddChar(&stack, buff);
-			// 		if (temp = isFromEscape(&temp))
-			// 		{
+			else if (c == '\\') // escape sequence
+			{
+				state = STRING_ESCAPE;
+			}
+			else if (c != '\n')
+			{
+				strAddChar(&output, c);
+			}
+			else
+			{
+				tokenChangeType(token, T_ERR);
+			}
+		break;
 
-			// 		}
-			// 	}
-			// }
-			// else if (c > 31)
-			// {
-			// 	strAddChar(&output, c);
-			// 	state = STRING;
-			// }
-			break;
+		// ---------------------------------------- STRING_ESCAPE CASE ----------------------------------------
+		case STRING_ESCAPE:
+
+			state = STRING;
+
+			if (c == 'x')
+			{
+				state = STRING_HEXA;
+			}
+			else if (c == '"')
+			{
+				strAddChar(&output, '"');
+
+			}
+			else if (c == 'n')
+			{
+				strAddChar(&output, '\n');
+			}
+			else if (c == 't')
+			{
+				strAddChar(&output, '\t');
+			}
+			else if (c == 's')
+			{
+				strAddChar(&output, ' ');
+			}
+			else if (c == '\\')
+			{
+				strAddChar(&output, '\\');
+			}
+			else
+			{
+				tokenChangeType(token, T_ERR);
+				return token;
+			}
+			
+		break;
+
+		// ---------------------------------------- STRING_HEXA CASE ----------------------------------------
+		case STRING_HEXA:
+
+			state = STRING;
+			
+			count = 0;
+			integer = 0;
+			strClear(&stack);
+
+			while (count <= 1)
+			{
+				if (isdigit(c))
+				{
+					strAddChar(&stack, c);
+					count++;
+					c = fgetc(source);
+				}
+				else if (c >= 65 && c <= 70)
+				{
+					strAddChar(&stack, c);
+					count++;
+					c = fgetc(source);
+				}
+				else
+				{
+					tokenChangeType(token, T_ERR);
+					return token;
+				}
+			}
+
+			ungetc(c, source);
+			integer = hexadecimalToDecimal(&stack);
+			strClear(&stack);
+			itoa(integer, stack.str);
+
+			for (int j = 0; stack.str[j]; j++)
+			{
+				strAddChar(&output, stack.str[j]);
+			}
+		break;
 
 		// ---------------------------------------- OPERATOR CASE ----------------------------------------
 		case OPERATOR:
@@ -492,6 +559,21 @@ sToken *getNextToken()
 				}
 			}
 			break;
+
+		// ---------------------------------------- LINE_COMMENT CASE ----------------------------------------
+		case LINE_COMMENT:
+			if (c == '\n')
+			{
+				strAddChar(&output, c);
+				tokenChangeBoth(token, &output, T_EOL);
+				return token;
+			}
+			else if (c == EOF)
+			{
+				tokenChangeType(token, T_EOF);
+				return token;
+			}
+		break;
 		}
 	}
 	tokenChangeType(token, T_ERR);
