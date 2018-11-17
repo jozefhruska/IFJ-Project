@@ -6,4 +6,6 @@ project
 main.c
 sedlacek
 hruska
-demel
+main.c
+*.sh
+*.dSYM
