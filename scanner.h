@@ -33,15 +33,15 @@ typedef enum {
     INIT,
     ID,
     ID_FUNC,
-    KEYWORD,
     STRING,
+    STRING_ESCAPE,
+    STRING_HEXA,
     NUMBER,
-    INTEGER,
     DOUBLE,
     DOUBLE_EXP,
     DOUBLE_DOT,
     OPERATOR,
-    DELIMITER
+    LINE_COMMENT
 } Tstate;
 
 //type of token

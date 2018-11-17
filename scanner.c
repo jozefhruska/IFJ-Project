@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <string.h>
 #include "token.h"
 #include "scanner.h"
 
@@ -64,14 +65,65 @@ bool isFromOperators(char *input) {
 	return false;
 }
 
-// char isFromEscape(char *input) {
-// 	for (int i = 0; i<ESCAPE_LENGTH; i++) {
-// 		if (strcmp(input, escape[i]) == 0) {
-// 			return escape[i];
-// 		}
-// 	}
-// 	return NULL;
-// }
+// Function to convert hexadecimal to decimal 
+int hexadecimalToDecimal(string *hexValue) 
+{    
+    int len = strlen(hexValue->str); 
+      
+    // Initializing base value to 1, i.e 16^0 
+    int base = 1; 
+      
+    int dec_val = 0; 
+      
+    // Extracting characters as digits from last character 
+    for (int i=len-1; i>=0; i--) 
+    {    
+        // if character lies in '0'-'9', converting  
+        // it to integral 0-9 by subtracting 48 from 
+        // ASCII value. 
+        if (hexValue->str[i]>='0' && hexValue->str[i]<='9') 
+        { 
+            dec_val += (hexValue->str[i] - 48)*base; 
+                  
+            // incrementing base by power 
+            base = base * 16; 
+        } 
+  
+        // if character lies in 'A'-'F' , converting  
+        // it to integral 10 - 15 by subtracting 55  
+        // from ASCII value 
+        else if (hexValue->str[i]>='A' && hexValue->str[i]<='F') 
+        { 
+            dec_val += (hexValue->str[i] - 55)*base; 
+          
+            // incrementing base by power 
+            base = base*16; 
+        } 
+    } 
+      
+    return dec_val; 
+}
+
+// convert integer to string
+char *itoa(int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    if(i<0){
+        *p++ = '-';
+        i *= -1;
+    }
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back, inserting digits as u go
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
+}
 
 // variable to save input file
 FILE *source;
@@ -87,6 +139,8 @@ sToken getNextToken()
   Tstate state = INIT;
   char c;
   char buff;
+  int count;
+  int integer;
 
   string output;
   string stack;
@@ -122,6 +176,11 @@ sToken getNextToken()
 				strAddChar(&output, c);
 				tokenChangeBoth(&token, &output, T_EOL);
 				return token;
+			}
+
+			else if (c == '#')
+			{
+				state = LINE_COMMENT;
 			}
 
 			// identifier or keyword
@@ -290,6 +349,13 @@ sToken getNextToken()
 				if (buff == '+' || buff == '-' || isdigit(buff))
 				{
 					strAddChar(&output, buff);
+					buff = fgetc(source);
+					if (!isdigit(buff))
+					{
+						tokenChangeType(&token, T_ERR);
+						return token;
+					}
+					strAddChar(&output, buff);
 					state = DOUBLE_EXP;
 				}
 				else
@@ -333,37 +399,102 @@ sToken getNextToken()
 
 		// ---------------------------------------- STRING CASE ----------------------------------------
 		case STRING:
-			if (c == '"') // SPATNE
+			if (c == '"') // end of string
 			{
-				// if (output.str != NULL)
-				// {
-				// 	tokenChangeBoth(&token, &output, T_STRING);
-				// }
-				// else
-				// {
-				// 	tokenChangeType(&token, T_STRING);
-				// }
-				// return token;
+				tokenChangeBoth(&token, &output, T_STRING);
+				return token;
 			}
-			// else if (c == '\\')
-			// {
-			// 	buff = fgetc(source);
-			// 	if (buff == '"' || buff == 'n' || buff == 't' || buff == 's' || buff == '\\')
-			// 	{
-			// 		char *temp;
-			// 		strAddChar(&stack, c);
-			// 		strAddChar(&stack, buff);
-			// 		if (temp = isFromEscape(&temp))
-			// 		{
-						
-			// 		}
-			// 	}
-			// }
-			// else if (c > 31) 
-			// {
-			// 	strAddChar(&output, c);
-			// 	state = STRING;
-			// }
+			else if (c == '\\') // escape sequence
+			{
+				state = STRING_ESCAPE;
+			}
+			else if (c != '\n')
+			{
+				strAddChar(&output, c);
+			}
+			else
+			{
+				tokenChangeType(&token, T_ERR);
+			}
+		break;
+
+		// ---------------------------------------- STRING_ESCAPE CASE ----------------------------------------
+		case STRING_ESCAPE:
+
+			state = STRING;
+
+			if (c == 'x')
+			{
+				state = STRING_HEXA;
+			}
+			else if (c == '"')
+			{
+				strAddChar(&output, '"');
+
+			}
+			else if (c == 'n')
+			{
+				strAddChar(&output, '\n');
+			}
+			else if (c == 't')
+			{
+				strAddChar(&output, '\t');
+			}
+			else if (c == 's')
+			{
+				strAddChar(&output, ' ');
+			}
+			else if (c == '\\')
+			{
+				strAddChar(&output, '\\');
+			}
+			else
+			{
+				tokenChangeType(&token, T_ERR);
+				return token;
+			}
+			
+		break;
+
+		// ---------------------------------------- STRING_HEXA CASE ----------------------------------------
+		case STRING_HEXA:
+
+			state = STRING;
+			
+			count = 0;
+			integer = 0;
+			strClear(&stack);
+
+			while (count <= 1)
+			{
+				if (isdigit(c))
+				{
+					strAddChar(&stack, c);
+					count++;
+					c = fgetc(source);
+				}
+				else if (c >= 65 && c <= 70)
+				{
+					strAddChar(&stack, c);
+					count++;
+					c = fgetc(source);
+				}
+				else
+				{
+					tokenChangeType(&token, T_ERR);
+					return token;
+				}
+			}
+
+			ungetc(c, source);
+			integer = hexadecimalToDecimal(&stack);
+			strClear(&stack);
+			itoa(integer, stack.str);
+
+			for (int j = 0; stack.str[j]; j++)
+			{
+				strAddChar(&output, stack.str[j]);
+			}
 		break;
 
 		// ---------------------------------------- OPERATOR CASE ----------------------------------------
@@ -396,7 +527,21 @@ sToken getNextToken()
 			}
 		break;
 
-    }
+		// ---------------------------------------- LINE_COMMENT CASE ----------------------------------------
+		case LINE_COMMENT:
+			if (c == '\n')
+			{
+				strAddChar(&output, c);
+				tokenChangeBoth(&token, &output, T_EOL);
+				return token;
+			}
+			else if (c == EOF)
+			{
+				tokenChangeType(&token, T_EOF);
+				return token;
+			}
+		break;
+	}
   }
   tokenChangeType(&token, T_ERR);
   return token;
