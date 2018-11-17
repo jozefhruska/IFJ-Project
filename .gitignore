@@ -3,8 +3,9 @@
 .idea/*
 *.o
 project
-demel
+main.c
 sedlacek
 hruska
 main.c
 *.sh
+*.dSYM
