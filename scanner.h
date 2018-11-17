@@ -1,4 +1,8 @@
+#ifndef __scanner
+#define __scanner
 //hlavicka pro lexikalni analyzator
+#include "token.h"
+#include <stdio.h>
 
 //lengths
 #define KEYWORDS_LENGTH 9
@@ -70,10 +74,13 @@ typedef enum {
 
 //hlavicka funkce simulujici lexikalni analyzator
 void setSourceFile(FILE *f);
-sToken getNextToken();
+
+void store_token(sToken*);
+sToken *getNextToken();
 
 // bool isDelimiter(char input);
 // bool isOperator(char input);
 
 // bool isFromKeywords(char *input);
 // bool isFromOperators(char *input);
+#endif

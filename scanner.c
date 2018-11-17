@@ -16,19 +16,33 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
-#include "token.h"
+#include <stdlib.h>
 #include "scanner.h"
 
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
-static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'}; // single operator
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'};					   // single operator
 static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
 // static char escape[ESCAPE_LENGTH] = {'\"', '\n', '\t', '\s', '\\'};
 
+/*================= DML EDIT ==================*/
+
+sToken *storedToken = NULL;
+
+void store_token(sToken *token)
+{
+	storedToken = token;
+}
+
+/*================= END OFDML EDIT ==================*/
+
 // check if loaded char is delimiter
-bool isDelimiter(char input) {
-	for (int i = 0; i<DELIMITER_LENGTH; i++) {
-		if (input == delimiter[i]) {
+bool isDelimiter(char input)
+{
+	for (int i = 0; i < DELIMITER_LENGTH; i++)
+	{
+		if (input == delimiter[i])
+		{
 			return true;
 		}
 	}
@@ -36,9 +50,12 @@ bool isDelimiter(char input) {
 }
 
 // check if loaded char is operator
-bool isOperator(char input) {
-	for (int i = 0; i<OPERATOR_LENGTH; i++) {
-		if (input == operator[i]) {
+bool isOperator(char input)
+{
+	for (int i = 0; i < OPERATOR_LENGTH; i++)
+	{
+		if (input == operator[i])
+		{
 			return true;
 		}
 	}
@@ -46,9 +63,12 @@ bool isOperator(char input) {
 }
 
 // check if loaded string is from keywords
-bool isFromKeywords(char *input) {
-	for (int i = 0; i<KEYWORDS_LENGTH; i++) {
-		if (strcmp(input, keywords[i]) == 0) {
+bool isFromKeywords(char *input)
+{
+	for (int i = 0; i < KEYWORDS_LENGTH; i++)
+	{
+		if (strcmp(input, keywords[i]) == 0)
+		{
 			return true;
 		}
 	}
@@ -56,9 +76,12 @@ bool isFromKeywords(char *input) {
 }
 
 // check if loaded string is from operators
-bool isFromOperators(char *input) {
-	for (int i = 0; i<OPERATORS_LENGTH; i++) {
-		if (strcmp(input, operators[i]) == 0) {
+bool isFromOperators(char *input)
+{
+	for (int i = 0; i < OPERATORS_LENGTH; i++)
+	{
+		if (strcmp(input, operators[i]) == 0)
+		{
 			return true;
 		}
 	}
@@ -130,32 +153,40 @@ FILE *source;
 
 void setSourceFile(FILE *f)
 {
-  source = f;
+	source = f;
 }
 
-sToken getNextToken()
+sToken *getNextToken()
 // main function of lexical analysator
 {
-  Tstate state = INIT;
-  char c;
-  char buff;
-  int count;
-  int integer;
+	/*================= DML EDIT ==================*/
+	if(storedToken != NULL){
+		sToken *tmp = storedToken;
+		storedToken = NULL;
+		return tmp;
+	}
+	/*================= END OFDML EDIT ==================*/
 
-  string output;
-  string stack;
-  strInit(&stack);
-  strInit(&output);
+	Tstate state = INIT;
+	char c;
+	char buff;
 
-  sToken token;
-  tokenClear(&token);
+	string output;
+	string stack;
+	strInit(&stack);
+	strInit(&output);
 
-  while ((c = fgetc(source)))
-  { 
- 
-    switch (state)
-    {
-    	// ---------------------------------------- INIT CASE ----------------------------------------
+	sToken *token;
+	token = (sToken *)malloc(sizeof(struct Token));
+
+	tokenClear(token);
+
+	while ((c = fgetc(source)))
+	{
+
+		switch (state)
+		{
+		// ---------------------------------------- INIT CASE ----------------------------------------
 		case INIT:
 
 			// white space
@@ -166,7 +197,7 @@ sToken getNextToken()
 
 			else if (c == EOF)
 			{
-				tokenChangeType(&token, T_EOF);
+				tokenChangeType(token, T_EOF);
 				return token;
 			}
 
@@ -174,7 +205,7 @@ sToken getNextToken()
 			else if (c == '\n')
 			{
 				strAddChar(&output, c);
-				tokenChangeBoth(&token, &output, T_EOL);
+				tokenChangeBoth(token, &output, T_EOL);
 				return token;
 			}
 
@@ -191,7 +222,7 @@ sToken getNextToken()
 			}
 
 			// not classified number
-			else if (isdigit(c)) 
+			else if (isdigit(c))
 			{
 				strAddChar(&output, c);
 				state = NUMBER;
@@ -213,23 +244,23 @@ sToken getNextToken()
 			else if (isDelimiter(c))
 			{
 				strAddChar(&output, c);
-				tokenChangeBoth(&token, &output, T_DELIMITER);
+				tokenChangeBoth(token, &output, T_DELIMITER);
 				return token;
 			}
 
 			// error handling
 			else
 			{
-				tokenChangeType(&token, T_ERR);
+				tokenChangeType(token, T_ERR);
 				return token;
 			}
 
-      	break;
+			break;
 
-      	// ---------------------------------------- ID CASE ----------------------------------------
+		// ---------------------------------------- ID CASE ----------------------------------------
 		case ID:
 			// komentar
-			if (isalnum(c) || c == '_') 
+			if (isalnum(c) || c == '_')
 			{
 				strAddChar(&output, c);
 				state = ID;
@@ -241,45 +272,45 @@ sToken getNextToken()
 				strAddChar(&output, c);
 				state = ID_FUNC;
 			}
-			
+
 			// handle possibility to be keyword
 			else
 			{
 				ungetc(c, source);
 				if (isFromKeywords(output.str))
 				{
-					tokenChangeBoth(&token, &output, T_KEYWORD);
+					tokenChangeBoth(token, &output, T_KEYWORD);
 					return token;
 				}
 				else
 				{
-					tokenChangeBoth(&token, &output, T_ID);
+					tokenChangeBoth(token, &output, T_ID);
 					return token;
 				}
 			}
-      	break;
+			break;
 
 		// ---------------------------------------- ID_FUNC CASE ----------------------------------------
 		case ID_FUNC:
-			// 
+			//
 			if (isspace(c) || c == '(' || c == EOF)
 			{
 				ungetc(c, source);
-				tokenChangeBoth(&token, &output, T_ID_FUNC);
+				tokenChangeBoth(token, &output, T_ID_FUNC);
 				return token;
 			}
 			// char after ? or ! is illegal
 			else
 			{
 				ungetc(c, source);
-				tokenChangeType(&token, T_ERR);
+				tokenChangeType(token, T_ERR);
 				return token;
 			}
-		break;
+			break;
 
 		// ---------------------------------------- NUMBER CASE ----------------------------------------
 		case NUMBER:
-			// 
+			//
 			if (isdigit(c))
 			{
 				strAddChar(&output, c);
@@ -291,14 +322,14 @@ sToken getNextToken()
 				buff = fgetc(source);
 				if (!isdigit(buff))
 				{
-					tokenChangeType(&token, T_ERR);
+					tokenChangeType(token, T_ERR);
 					return token;
 				}
 				ungetc(buff, source);
 				ungetc(c, source);
 				state = DOUBLE;
 			}
-			else if (c == 'e' || c == 'E') 
+			else if (c == 'e' || c == 'E')
 			{
 				ungetc(c, source);
 				state = DOUBLE;
@@ -306,10 +337,10 @@ sToken getNextToken()
 			else
 			{
 				ungetc(c, source);
-				tokenChangeBoth(&token, &output, T_INT);
+				tokenChangeBoth(token, &output, T_INT);
 				return token;
 			}
-		break;
+			break;
 
 		// ---------------------------------------- DOUBLE CASE ----------------------------------------
 		case DOUBLE:
@@ -332,7 +363,7 @@ sToken getNextToken()
 				}
 				state = DOUBLE_EXP;
 			}
-		break;
+			break;
 
 		// ---------------------------------------- DOUBLE_DOT CASE ----------------------------------------
 		case DOUBLE_DOT:
@@ -345,7 +376,7 @@ sToken getNextToken()
 			{
 				strAddChar(&output, c);
 				buff = fgetc(source);
-				
+
 				if (buff == '+' || buff == '-' || isdigit(buff))
 				{
 					strAddChar(&output, buff);
@@ -360,16 +391,16 @@ sToken getNextToken()
 				}
 				else
 				{
-					tokenChangeType(&token, T_ERR);
+					tokenChangeType(token, T_ERR);
 					return token;
 				}
 			}
 			else
 			{
-				tokenChangeBoth(&token, &output, T_DOUBLE);
+				tokenChangeBoth(token, &output, T_DOUBLE);
 				return token;
 			}
-		break;
+			break;
 
 		// ---------------------------------------- DOUBLE_EXP CASE ----------------------------------------
 		case DOUBLE_EXP:
@@ -382,120 +413,55 @@ sToken getNextToken()
 			{
 				if (isspace(c) || c == EOF)
 				{
-					tokenChangeBoth(&token, &output, T_DOUBLE);
+					tokenChangeBoth(token, &output, T_DOUBLE);
 				}
 				else if (isOperator(c))
 				{
-					tokenChangeBoth(&token, &output, T_DOUBLE);
+					tokenChangeBoth(token, &output, T_DOUBLE);
 				}
 				else
 				{
-					tokenChangeType(&token, T_ERR);
+					tokenChangeType(token, T_ERR);
 				}
 				ungetc(c, source);
 				return token;
 			}
-		break;
+			break;
 
 		// ---------------------------------------- STRING CASE ----------------------------------------
 		case STRING:
-			if (c == '"') // end of string
+			if (c == '"') // SPATNE
 			{
-				tokenChangeBoth(&token, &output, T_STRING);
-				return token;
+				// if (output.str != NULL)
+				// {
+				// 	tokenChangeBoth(&token, &output, T_STRING);
+				// }
+				// else
+				// {
+				// 	tokenChangeType(&token, T_STRING);
+				// }
+				// return token;
 			}
-			else if (c == '\\') // escape sequence
-			{
-				state = STRING_ESCAPE;
-			}
-			else if (c != '\n')
-			{
-				strAddChar(&output, c);
-			}
-			else
-			{
-				tokenChangeType(&token, T_ERR);
-			}
-		break;
+			// else if (c == '\\')
+			// {
+			// 	buff = fgetc(source);
+			// 	if (buff == '"' || buff == 'n' || buff == 't' || buff == 's' || buff == '\\')
+			// 	{
+			// 		char *temp;
+			// 		strAddChar(&stack, c);
+			// 		strAddChar(&stack, buff);
+			// 		if (temp = isFromEscape(&temp))
+			// 		{
 
-		// ---------------------------------------- STRING_ESCAPE CASE ----------------------------------------
-		case STRING_ESCAPE:
-
-			state = STRING;
-
-			if (c == 'x')
-			{
-				state = STRING_HEXA;
-			}
-			else if (c == '"')
-			{
-				strAddChar(&output, '"');
-
-			}
-			else if (c == 'n')
-			{
-				strAddChar(&output, '\n');
-			}
-			else if (c == 't')
-			{
-				strAddChar(&output, '\t');
-			}
-			else if (c == 's')
-			{
-				strAddChar(&output, ' ');
-			}
-			else if (c == '\\')
-			{
-				strAddChar(&output, '\\');
-			}
-			else
-			{
-				tokenChangeType(&token, T_ERR);
-				return token;
-			}
-			
-		break;
-
-		// ---------------------------------------- STRING_HEXA CASE ----------------------------------------
-		case STRING_HEXA:
-
-			state = STRING;
-			
-			count = 0;
-			integer = 0;
-			strClear(&stack);
-
-			while (count <= 1)
-			{
-				if (isdigit(c))
-				{
-					strAddChar(&stack, c);
-					count++;
-					c = fgetc(source);
-				}
-				else if (c >= 65 && c <= 70)
-				{
-					strAddChar(&stack, c);
-					count++;
-					c = fgetc(source);
-				}
-				else
-				{
-					tokenChangeType(&token, T_ERR);
-					return token;
-				}
-			}
-
-			ungetc(c, source);
-			integer = hexadecimalToDecimal(&stack);
-			strClear(&stack);
-			itoa(integer, stack.str);
-
-			for (int j = 0; stack.str[j]; j++)
-			{
-				strAddChar(&output, stack.str[j]);
-			}
-		break;
+			// 		}
+			// 	}
+			// }
+			// else if (c > 31)
+			// {
+			// 	strAddChar(&output, c);
+			// 	state = STRING;
+			// }
+			break;
 
 		// ---------------------------------------- OPERATOR CASE ----------------------------------------
 		case OPERATOR:
@@ -504,45 +470,30 @@ sToken getNextToken()
 				strAddChar(&output, c);
 				if (isFromOperators(output.str))
 				{
-					tokenChangeBoth(&token, &output, T_OPERATOR);
+					tokenChangeBoth(token, &output, T_OPERATOR);
 					return token;
 				}
 				state = OPERATOR;
 			}
 
-			else 
+			else
 			{
 				ungetc(c, source);
-				
+
 				if (isFromOperators(output.str))
 				{
-					tokenChangeBoth(&token, &output, T_OPERATOR);
+					tokenChangeBoth(token, &output, T_OPERATOR);
 					return token;
 				}
-				else 
+				else
 				{
-					tokenChangeType(&token, T_ERR);
+					tokenChangeType(token, T_ERR);
 					return token;
 				}
 			}
-		break;
-
-		// ---------------------------------------- LINE_COMMENT CASE ----------------------------------------
-		case LINE_COMMENT:
-			if (c == '\n')
-			{
-				strAddChar(&output, c);
-				tokenChangeBoth(&token, &output, T_EOL);
-				return token;
-			}
-			else if (c == EOF)
-			{
-				tokenChangeType(&token, T_EOF);
-				return token;
-			}
-		break;
+			break;
+		}
 	}
-  }
-  tokenChangeType(&token, T_ERR);
-  return token;
+	tokenChangeType(token, T_ERR);
+	return token;
 }

@@ -12,7 +12,12 @@ typedef enum {
     ID,
     L_BRACKET,
     R_BRACKET,
-    EOL
+    EOL,
+    COMMA,
+    IF_KEYWORD,
+    THEN_KEYWORD,
+    ELSE_KEYWORD,
+    END_KEYWORD
 } tokenTypes;
 
 sToken *getNextToken();
