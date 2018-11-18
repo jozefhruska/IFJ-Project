@@ -119,3 +119,27 @@ void addParam(char *name)
     // add new parameter to the list
     DLInsertLast(currentFunction->data->parameters, (void *) param);
 }
+
+/**
+ * @brief Create new variable,
+ * @param name
+ */
+void addVar(char *name)
+{
+    // alloc mem for name string
+    char *var = malloc(strlen(name) + 1);
+    if (var == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    strcpy(var, name);
+
+    if (currentFunction == NULL) {
+        // if is not in a function definition, add new global variable
+        STableInsertVariable(globalSymTable, var); // todo: var type in symbol table...?
+    } else {
+        // if is in a function definition, add new local variable
+        STableInsertVariable(currentSymTable, var); // todo: var type in symbol table...?
+    }
+}
