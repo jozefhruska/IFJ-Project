@@ -58,4 +58,10 @@ void addFunction(char *name);
  */
 void addParam(char *name);
 
+/**
+ * @brief Create new variable,
+ * @param name
+ */
+void addVar(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H
