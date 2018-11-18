@@ -22,7 +22,9 @@
 #include "list.h"
 
 STable *globalSymTable; // global symbol table
+
 STable *currentSymTable; // local symbol table for current function
+BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
 /**
  * @brief Creates new global table
@@ -30,6 +32,7 @@ STable *currentSymTable; // local symbol table for current function
 void initGlobalSymTable()
 {
     currentSymTable = NULL;
+    currentFunction = NULL;
 
     // init global symbol table
     STableInit(globalSymTable);
@@ -53,18 +56,18 @@ void addFunction(char *name)
         return;
     }
 
-    BTNodePtr symTableItem = STSearch(globalSymTable, name);
+    currentFunction = STSearch(globalSymTable, name);
 
     // is the function in the global sym table?
-    if (symTableItem != NULL) {
+    if (currentFunction != NULL) {
         // the symbol is declared, but is not a function
-        if (symTableItem->type != TYPE_FUNCTION) {
+        if (currentFunction->type != TYPE_FUNCTION) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
 
         // the function is defined yet
-        if (symTableItem->defined) {
+        if (currentFunction->defined) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
@@ -73,7 +76,7 @@ void addFunction(char *name)
 
         // add function into global table
         // todo create data for the function
-        symTableItem = STableInsertFunction(globalSymTable, name);
+        currentFunction = STableInsertFunction(globalSymTable, name);
 
         // create new sym table
         STableInit(currentSymTable);
@@ -81,12 +84,12 @@ void addFunction(char *name)
         // create list of parameters
         tDLList *parameters = malloc(sizeof(tDLList));
         DLInitList(parameters);
-        symTableItem->data->parameters = parameters;
+        currentFunction->data->parameters = parameters;
     }
 }
 
 /**
- * @brief Add new parameter into stack of function's parameters
+ * @brief Add new parameter into list of function's parameters
  * @param name
  */
 void addParam(char *name)
@@ -97,28 +100,22 @@ void addParam(char *name)
         return;
     }
 
-    // not in function
-    if (currentSymTable == NULL || tempSymTable->parameters == NULL) {
+    // make sure we're in a function
+    if (currentSymTable == NULL || currentFunction == NULL || currentFunction->data->parameters == NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
     // create new parameter
-    tParameter *parameter = malloc(sizeof(tParameter));
-    if (parameter == NULL) {
-        error_fatal(ERROR_INTERNAL);
-        return;
-    }
-
     // allocate memory for parameter name
-    parameter->name = malloc(strlen(name) + 1);
-    if (parameter->name == NULL) {
+    char *param = malloc(strlen(name) + 1);
+    if (param == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
     }
 
     strcpy(parameter->name, name);
 
-    // push parameter on the stack
-    stackPush(tempSymTable->parameters, parameter);
+    // add new parameter to the list
+    DLInsertLast(currentFunction->data->parameters, (void *) param);
 }
