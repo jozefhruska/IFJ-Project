@@ -19,6 +19,7 @@
 #include "semantic.h"
 #include "error_handler.h"
 #include "symtable.h"
+#include "list.h"
 
 STable *globalSymTable; // global symbol table
 STable *currentSymTable; // local symbol table for current function
@@ -74,8 +75,13 @@ void addFunction(char *name)
         // todo create data for the function
         symTableItem = STableInsertFunction(globalSymTable, name);
 
-        // null parameters
+        // create new sym table
         STableInit(currentSymTable);
+
+        // create list of parameters
+        tDLList *parameters = malloc(sizeof(tDLList));
+        DLInitList(parameters);
+        symTableItem->data->parameters = parameters;
     }
 }
 
@@ -92,7 +98,7 @@ void addParam(char *name)
     }
 
     // not in function
-    if (tempSymTable == NULL || tempSymTable->parameters == NULL) {
+    if (currentSymTable == NULL || tempSymTable->parameters == NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
