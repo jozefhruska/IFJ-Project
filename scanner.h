@@ -1,8 +1,15 @@
+#ifndef __scanner
+#define __scanner
 //hlavicka pro lexikalni analyzator
+#include "token.h"
+#include <stdio.h>
 
 //lengths
 #define KEYWORDS_LENGTH 9
-#define OPERATORS_LENGTH 9
+#define DELIMITER_LENGTH 3
+#define OPERATOR_LENGTH 7
+#define OPERATORS_LENGTH 10
+#define ESCAPE_LENGTH 5
 
 //klicova slova
 #define SETZERO 10
@@ -30,12 +37,15 @@ typedef enum {
     INIT,
     ID,
     ID_FUNC,
+    KEYWORD,
+    STRING,
     NUMBER,
     INTEGER,
     DOUBLE,
-    STRING,
+    DOUBLE_EXP,
+    DOUBLE_DOT,
     OPERATOR,
-    KEYWORD
+    DELIMITER
 } Tstate;
 
 //type of token
@@ -54,10 +64,23 @@ typedef enum {
     //operators
     T_OPERATOR,
     //delimiters
-    T_DELIMITER
+    T_DELIMITER,
+    T_LEFT_BRACKET,
+    T_RIGHT_BRACKET,
+    T_COMMA,
+    T_EOL
 
 } Ttoken;
 
 //hlavicka funkce simulujici lexikalni analyzator
 void setSourceFile(FILE *f);
-int getNextToken(string *attr);
+
+void store_token(sToken*);
+sToken *getNextToken();
+
+// bool isDelimiter(char input);
+// bool isOperator(char input);
+
+// bool isFromKeywords(char *input);
+// bool isFromOperators(char *input);
+#endif

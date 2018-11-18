@@ -4,3 +4,8 @@
 *.o
 project
 main.c
+*.sh
+*.dSYM
+sedlacek
+hruska
+demel

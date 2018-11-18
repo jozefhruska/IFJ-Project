@@ -12,78 +12,86 @@
  *	May the force be with you.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "str.h"
 #include "symtable.h"
 
-void tableInit(tSymbolTable *T)
-// funkce inicializuje tabulku symbolu
-{
-  T->first = NULL;
+void BTInit(BTNodePtr *node) {
+	(* node) = NULL;
 }
 
-int tableInsert(tSymbolTable *T, string *key, int varType)
-// funkce vlozi do tabulky symbolu novy identifikator
-{
-  tTableItem *ptr;
-  int found;
-  ptr = T->first;
-  found = 0;
-  // nejprve zjistime, zda se v tabulce polozka s danym klicem jiz nenachazi
-  while ((ptr != NULL) && (!found))
-  {
-    found = (strCmpString(&(ptr->key), key) == 0);
-    if (!found) ptr = ptr->nextItem;
-  }
-  if (found)
-  {
-     return 1;
-  }
-  else
-  {
-    // vlozime do tabulky novou polozku
-    tTableItem *newItem;
-    newItem = (tTableItem*) malloc(sizeof(tTableItem));
-    strInit(&(newItem->key));
-    strCopyString(&(newItem->key), key);
-    newItem->data.varType = varType;
-    newItem->nextItem = T->first;
-    T->first = newItem;
-    return 0;
-  }
+BTNodePtr BTSearch(BTNodePtr node, char *key) {
+	if (node != NULL) {
+		if (node->key > key) return BTSearch(node->LPtr, key);
+		else if (node->key < key) return BTSearch(node->RPtr, key);
+		else return node;
+	} else return NULL;
 }
 
-tData *tableSearch(tSymbolTable *T, string *key)
-// pokud se dana polozka s klicem key v tabulce symbolu nachazi,
-// funkce vrati ukazatel na data teto polozky, jinak vrati NULL
-{
-  tTableItem *ptr;
-  int found;
-  ptr = T->first;
-  found = 0;
-  while ((ptr != NULL) && (!found))
-  {
-    found = (strCmpString(&(ptr->key), key) == 0);
-    if (!found) ptr = ptr->nextItem;
-  }
-  if (found)
-     return &(ptr->data);
-  else
-     return NULL;
+void BTInsert(BTNodePtr *node, char *key, BTNodeType type, void *data) {
+	if (*node != NULL) {
+		if ((* node)->key > key) {
+			BTInsert(&(* node)->LPtr, key, type, data);
+			return;
+		} else if ((* node)->key < key) {
+			BTInsert(&(* node)->RPtr, key, type, data);
+			return;
+		} else (* node)->data = data;
+	} else {
+		if ((*node = malloc(sizeof(struct sBTNode))) != NULL) {
+			(* node)->key = key;
+			(* node)->type = type;
+			(* node)->data = data;
+			(* node)->LPtr = NULL;
+			(* node)->RPtr = NULL;
+		} else return;
+	}
 }
 
-void tableFree(tSymbolTable *T)
-// funkce dealokuje tabulku symbolu
-{
-  tTableItem *ptr;
-  while (T->first != NULL)
-  {
-     ptr = T->first;
-     T->first = T->first->nextItem;
-     // uvolnime klic
-     strFree(&ptr->key);
-     // nakonec uvolnime celou polozku
-     free(ptr);
-  }
+void ReplaceByRightmost (BTNodePtr PtrReplaced, BTNodePtr *node) {
+	if ((* node)->RPtr != NULL) ReplaceByRightmost(PtrReplaced, &((* node)->RPtr));
+	else {
+		PtrReplaced->key = (* node)->key;
+		PtrReplaced->type = (* node)->type;
+		PtrReplaced->data = (* node)->data;
+
+		BTNodePtr tempNode = *node;
+		*node = (* node)->LPtr;
+		free(tempNode);
+	}
 }
+
+void BTDelete(BTNodePtr *node, char *key) {
+	if ((* node) != NULL) {
+		if ((* node)->key > key) BTDelete(&((* node)->LPtr), key);
+		else if ((* node)->key < key) BTDelete(&((* node)->RPtr), key);
+		else {
+			if (((* node)->LPtr == NULL) && ((* node)->RPtr == NULL)) {
+					free(*node);
+					*node = NULL;
+			} else if (((* node)->LPtr != NULL) && ((* node)->RPtr == NULL)) {
+					BTNodePtr itemToDelete = *node;
+					*node = (* node)->LPtr;
+					free(itemToDelete);
+			} else if (((* node)->LPtr == NULL) && ((* node)->RPtr != NULL)) {
+					BTNodePtr itemToDelete = *node;
+					*node = (* node)->RPtr;
+					free(itemToDelete);
+			} else ReplaceByRightmost((* node), &((* node)->LPtr));
+		}
+	}
+}
+
+void BTDispose(BTNodePtr *node) {
+	if ((* node) != NULL) {
+		BTDispose(&(* node)->LPtr);
+		BTDispose(&(* node)->RPtr);
+
+		free(*node);
+		*node = NULL;
+	}
+}
+
+void STableInit(STable *table) {
+	BTInit(&(table->root));
+}
+
+
