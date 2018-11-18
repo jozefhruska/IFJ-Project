@@ -20,23 +20,18 @@
 #include "error_handler.h"
 #include "symtable.h"
 
-tSymbolTable *globalSymTable; // global symbol table
-tSymbolTable *tempSymTable; // temporary symbol table
-tSymbolTable *currentSymTable; // current local symbol table
-tSymbolTableStack *symTableStack; // stack of local symbol talbes
+STable *globalSymTable; // global symbol table
+STable *currentSymTable; // local symbol table for current function
 
 /**
  * @brief Creates new global table
  */
 void initGlobalSymTable()
 {
-    globalSymTable = NULL;
-    tempSymTable = NULL;
     currentSymTable = NULL;
-    symTableStack = NULL;
 
     // init global symbol table
-    tableInit(globalSymTable);
+    STableInit(globalSymTable);
 }
 
 /**
@@ -47,20 +42,28 @@ void addFunction(char *name)
 {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
+        return;
     }
 
-    tData *symTableItem = tableSearch(globalSymTable, name);
+    if (currentSymTable == NULL) {
+        // current function was not finished!
+        // can't define function inside another function
+        error_fatal(ERROR_SEMANTIC_OTHER);
+        return;
+    }
+
+    BTNodePtr symTableItem = STSearch(globalSymTable, name);
 
     // is the function in the global sym table?
     if (symTableItem != NULL) {
         // the symbol is declared, but is not a function
-        if (isFunction(symTableItem) == false) {
+        if (symTableItem->type != TYPE_FUNCTION) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
 
-        // the function is declared and defined yut
-        if (isDeclared(symTableItem) && isDefined(symTableItem)) {
+        // the function is defined yet
+        if (symTableItem->defined) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
@@ -68,13 +71,11 @@ void addFunction(char *name)
         // the function is not in global sym table
 
         // add function into global table
-        symTableItem = tableInsert(globalSymTable, name, TYPE_FUNCTION);
-        symTableItem->declared = true;
-        symTableItem->defined = false;
+        // todo create data for the function
+        symTableItem = STableInsertFunction(globalSymTable, name);
 
         // null parameters
-        tableInit(tempSymTable);
-        tempSymTable->parameters = stackInit();
+        STableInit(currentSymTable);
     }
 }
 
