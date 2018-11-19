@@ -18,6 +18,9 @@
 #define FALSE 0
 #define TRUE 1
 
+#ifndef LIST_HEADER
+#define LIST_HEADER
+
 extern int errflg;
 extern int solved;
 
@@ -52,3 +55,5 @@ void DLActualize (tDLList *, void *);
 void DLSucc (tDLList *);
 void DLPred (tDLList *);
 int DLActive (tDLList *);
+
+#endif
