@@ -2,6 +2,7 @@
 #define __scanner
 //hlavicka pro lexikalni analyzator
 #include "token.h"
+#include "list.h"
 #include <stdio.h>
 
 //lengths

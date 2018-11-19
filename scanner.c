@@ -127,29 +127,37 @@ int hexadecimalToDecimal(string *hexValue)
 }
 
 // convert integer to string
-char *itoa(int i, char b[])
+char *itoa(int i, char *b)
 {
     char const digit[] = "0123456789";
     char* p = b;
-    if(i<0){
+
+    if (i < 0)
+	{
         *p++ = '-';
         i *= -1;
     }
     int shifter = i;
-    do{ //Move to where representation ends
+    do
+	{ //Move to where representation ends
         ++p;
-        shifter = shifter/10;
-    }while(shifter);
+    	shifter = shifter/10;
+    } while (shifter);
     *p = '\0';
-    do{ //Move back, inserting digits as u go
+    do
+	{ //Move back, inserting digits as u go
         *--p = digit[i%10];
         i = i/10;
-    }while(i);
+    } while (i);
+
     return b;
 }
 
 // variable to save input file
 FILE *source;
+
+// variable to save previous token
+sToken previous;
 
 void setSourceFile(FILE *f)
 {
@@ -190,19 +198,16 @@ sToken *getNextToken()
 		{
 		// ---------------------------------------- INIT CASE ----------------------------------------
 		case INIT:
-
 			// white space
 			if (isspace(c) && c != '\n')
 			{
 				state = INIT;
 			}
-
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
 				return token;
 			}
-
 			// end of line
 			else if (c == '\n')
 			{
@@ -210,46 +215,54 @@ sToken *getNextToken()
 				tokenChangeBoth(token, &output, T_EOL);
 				return token;
 			}
-
+			// line comment
 			else if (c == '#')
 			{
 				state = LINE_COMMENT;
 			}
-
 			// identifier or keyword
 			else if (c == '_' || islower(c))
 			{
 				strAddChar(&output, c);
 				state = ID;
 			}
-
 			// not classified number
 			else if (isdigit(c))
 			{
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
-
 			else if (c == '"')
 			{
 				state = STRING;
 			}
-
 			// operator
 			else if (isOperator(c))
 			{
 				strAddChar(&output, c);
 				state = OPERATOR;
 			}
-
-			//delimiter
-			else if (isDelimiter(c))
+			//delimiter '('
+			else if (c == '(')
 			{
 				strAddChar(&output, c);
-				tokenChangeBoth(token, &output, T_DELIMITER);
+				tokenChangeBoth(token, &output, T_LEFT_BRACKET);
 				return token;
 			}
-
+			//delimiter ')'
+			else if (c == ')')
+			{
+				strAddChar(&output, c);
+				tokenChangeBoth(token, &output, T_RIGHT_BRACKET);
+				return token;
+			}
+			//delimiter ','
+			else if (c == ',')
+			{
+				strAddChar(&output, c);
+				tokenChangeBoth(token, &output, T_COMMA);
+				return token;
+			}
 			// error handling
 			else
 			{
@@ -298,7 +311,7 @@ sToken *getNextToken()
 			if (isspace(c) || c == '(' || c == EOF)
 			{
 				ungetc(c, source);
-				tokenChangeBoth(token, &output, T_ID_FUNC);
+				tokenChangeBoth(token, &output, T_ID);
 				return token;
 			}
 			// char after ? or ! is illegal
