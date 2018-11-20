@@ -12,6 +12,8 @@
  *	May the force be with you.
  */
 
+#include <stdbool.h>
+#include <string.h>
 #include "list.h"
 
 int errflg;
@@ -255,4 +257,22 @@ void DLPred(tDLList *L) {
 
 int DLActive(tDLList *L) {
 	return (L->Act) ? 1 : 0;
+}
+
+bool DLSearchString(tDLList *List, char *string) {
+    // go to the first item
+    DLFirst(List);
+
+    // for each item in the list
+    while (List->Act != List->Last || (List->Act == List->Last && List->Act != NULL) ) {
+        // if the active node is the wanted one
+        if ((char *) strcmp(List->Act->data, string) == 0) {
+            return true;
+        }
+
+        // move to the next item
+        DLSucc(List);
+    }
+
+    return false;
 }
