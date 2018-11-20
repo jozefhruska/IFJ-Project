@@ -16,6 +16,7 @@
 #define IFJ_PROJECT_SEMANTIC_H
 
 #include <stdbool.h>
+#include "symtable.h"
 
 /**
  * @brief Union representing any data
@@ -91,5 +92,21 @@ bool isFunctionDefined(char *name);
  * @return bool
  */
 bool isVarDeclared(char *name);
+
+/**
+ * @brief Returns true, if the function has a parameter with the name, false otherwise.
+ * @param functionName Name of the function
+ * @param paramName Name of the variable
+ * @return bool
+ */
+bool isParamDeclared(char *functionName, char *paramName);
+
+/**
+ * @brief Returns pointer to the parameter with the name of the function
+ * @param functionName Name of the functoin
+ * @param paramName Name of the parameter
+ * @return Pointer to BTVatiableData
+ */
+BTVariableData *getParam(char *functionName, char *paramName);
 
 #endif //IFJ_PROJECT_SEMANTIC_H

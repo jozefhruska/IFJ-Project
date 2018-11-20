@@ -234,3 +234,77 @@ bool isVarDeclared(char *name)
 
     return variable == NULL;
 }
+
+/**
+ * @brief Returns true, if the function has a parameter with the name, false otherwise.
+ * @param functionName Name of the function
+ * @param paramName Name of the variable
+ * @return bool
+ */
+bool isParamDeclared(char *functionName, char *paramName)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return false;
+    }
+
+    // search for the function
+    BTNodePtr func = STSearch(globalSymTable, functionName);
+
+    // function doesn't exist
+    if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return false;
+    }
+
+    // search for the parameter in the function
+    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
+
+    if (paramList == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return false;
+    }
+
+    bool found = DLSearchString(paramList, paramName);
+
+    return found;
+}
+
+/**
+ * @brief Returns pointer to the parameter with the name of the function
+ * @param functionName Name of the functoin
+ * @param paramName Name of the parameter
+ * @return Pointer to BTVatiableData
+ */
+BTVariableData *getParam(char *functionName, char *paramName)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return NULL;
+    }
+
+    // search for the function
+    BTNodePtr func = STSearch(globalSymTable, functionName);
+
+    // function doesn't exist
+    if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return NULL;
+    }
+
+    // search for the parameter in the function
+    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
+
+    if (paramList == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return NULL;
+    }
+
+    bool found = DLSearchString(paramList, paramName);
+
+    if (found == FALSE) {
+        return NULL;
+    }
+
+    return (BTVariableData *) paramList->Act->data;
+}
