@@ -7,3 +7,4 @@ int parser_parse_cond();
 int parser_parse_cond_else_block();
 int parser_parse_loop();
 int parser_parse_assign();
+int parser_parse_func_call();

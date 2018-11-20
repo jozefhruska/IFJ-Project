@@ -19,7 +19,8 @@ int parser_parse_prog(){
         /* <prog> -> e */
         return PARSE_SUCCESS;
     } else if(cmp_token(token, T_KEYWORD, "if") ||
-              cmp_token(token, T_KEYWORD, "while")){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
+              cmp_token(token, T_KEYWORD, "while") ||
+              cmp_token_type(token, T_ID)){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
         /* <prog> -> <body><prog> */
         store_token(token);
         parser_parse_body();
@@ -45,6 +46,8 @@ int parser_parse_func(){
     if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
+
+    parser_parse_body();
 
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
@@ -83,16 +86,24 @@ int parser_parse_params_next(){
 
 int parser_parse_body(){
     sToken *token = getNextToken();
-    /* TODO: DOPLNIT PRAVIDLA PRO LOOP A ASSIGN! */
+
     if(cmp_token(token, T_KEYWORD, "if")){
+        /* <body> -> <cond><body> */
         store_token(token);
         parser_parse_cond();
         return parser_parse_body();
     } else if(cmp_token(token, T_KEYWORD, "while")){
+        /* <body> -> <loop><body> */
         store_token(token);
         parser_parse_loop();
         return parser_parse_body();
+    } else if(cmp_token_type(token, T_ID)){
+        //TODO: Tady se podívat, jestli další token je =
+        store_token(token);
+        parser_parse_assign();
+        return parser_parse_body();
     } else {
+        /* <body> -> e */
         store_token(token);
         return 0;
     }
@@ -159,5 +170,38 @@ int parser_parse_loop(){
 }
 
 int parser_parse_assign(){
+    sToken *token = getNextToken();
+    if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
+    token = getNextToken();
+    if(!cmp_token(token, T_OPERATOR, "=")) error_fatal(ERROR_SYNTACTIC);
+
+    /* 
+        TODO: Zeptat se sémantiky, jestli je další identifikátor funkce. Pokud ano,
+        tak zavolám parsování funcion_call. Pokud ne, tak parsuju expression.
+        Pokud se v expression vyskytne nějaká funkce, tak je to error!
+    */
+
+    /* <assign> -> id = <func_call> */
+    parser_parse_func_call();
+    token = getNextToken();
+    if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
+    return 0;
+}
+
+int parser_parse_func_call(){
+    sToken *token = getNextToken();
+    if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
+    token = getNextToken();
+    if(cmp_token_type(token, T_LEFT_BRACKET)){
+        /* <func_call> -> id (<params>) */
+        parser_parse_params();
+        token = getNextToken();
+        if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
+    } else {
+        /* <func_call> -> id <params> */
+        store_token(token);
+        parser_parse_params();
+    }
+
     return 0;
 }
