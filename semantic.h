@@ -85,4 +85,11 @@ void functionDefinition(char *name);
  */
 bool isFunctionDefined(char *name);
 
+/**
+ * @brief Returns true, if the global variable is declared, false otherwise.
+ * @param name Name of the variable
+ * @return bool
+ */
+bool isVarDeclared(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H
