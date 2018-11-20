@@ -21,9 +21,17 @@
 #include "symtable.h"
 #include "list.h"
 
-STable *globalSymTable; // global symbol table
+/**
+ * Macro for casting data attribute from function symtable item
+ */
+#define SEM_DATA_FUNCTION(tabItem) ((BTFunctionData *)(tabItem->data))
 
-STable *currentSymTable; // local symbol table for current function
+/**
+ * Macro for casting data attribute from variable symtable item
+ */
+#define SEM_DATA_VARIABLE(tabItem) ((BTVariableData *)(tabItem->data))
+
+STable *globalSymTable; // global symbol table
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
 /**
@@ -31,7 +39,6 @@ BTNodePtr currentFunction; // item from the global symbol table, currently creat
  */
 void initGlobalSymTable()
 {
-    currentSymTable = NULL;
     currentFunction = NULL;
 
     // init global symbol table
@@ -49,7 +56,7 @@ void addFunction(char *name)
         return;
     }
 
-    if (currentSymTable == NULL) {
+    if (currentFunction == NULL) {
         // current function was not finished!
         // can't define function inside another function
         error_fatal(ERROR_SEMANTIC_OTHER);
@@ -67,24 +74,24 @@ void addFunction(char *name)
         }
 
         // the function is defined yet
-        if (currentFunction->defined) {
+        if (SEM_DATA_FUNCTION(currentFunction)->defined) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
     } else {
         // the function is not in global sym table
 
+        // create list empty list of parameters
+        tDLList *paramList = malloc(sizeof(tDLList));
+        if (paramList == NULL) {
+            error_fatal(ERROR_INTERNAL);
+            return;
+        }
+
+        DLInitList(paramList);
+
         // add function into global table
-        // todo create data for the function
-        currentFunction = STableInsertFunction(globalSymTable, name);
-
-        // create new sym table
-        STableInit(currentSymTable);
-
-        // create list of parameters
-        tDLList *parameters = malloc(sizeof(tDLList));
-        DLInitList(parameters);
-        currentFunction->data->parameters = parameters;
+        STableInsertFunction(globalSymTable, name, paramList); // TODO: set declared true, defined false
     }
 }
 

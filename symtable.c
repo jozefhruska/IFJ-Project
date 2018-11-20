@@ -67,7 +67,7 @@ void BTDelete(BTNodePtr *node, char *key) {
 			if (((* node)->LPtr == NULL) && ((* node)->RPtr == NULL)) {
 					free(*node);
 					*node = NULL;
-			} else if (((* node)->LPtr != NULL) && ((* node)->RPtr == NULL)) {
+			} else if (((* node4)->LPtr != NULL) && ((* node)->RPtr == NULL)) {
 					BTNodePtr itemToDelete = *node;
 					*node = (* node)->LPtr;
 					free(itemToDelete);
