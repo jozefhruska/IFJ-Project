@@ -18,7 +18,8 @@ int parser_parse_prog(){
     } else if(cmp_token_type(token, T_EOF)){
         /* <prog> -> e */
         return PARSE_SUCCESS;
-    } else if(cmp_token(token, T_KEYWORD, "if")){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
+    } else if(cmp_token(token, T_KEYWORD, "if") ||
+              cmp_token(token, T_KEYWORD, "while")){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
         /* <prog> -> <body><prog> */
         store_token(token);
         parser_parse_body();
@@ -87,6 +88,10 @@ int parser_parse_body(){
         store_token(token);
         parser_parse_cond();
         return parser_parse_body();
+    } else if(cmp_token(token, T_KEYWORD, "while")){
+        store_token(token);
+        parser_parse_loop();
+        return parser_parse_body();
     } else {
         store_token(token);
         return 0;
@@ -128,5 +133,31 @@ int parser_parse_cond_else_block(){
         /* <cond_else_block> -> e */
         store_token(token);
     }
+    return 0;
+}
+
+int parser_parse_loop(){
+    /* <loop> -> .... */
+    sToken *token = getNextToken();
+    if(!cmp_token(token, T_KEYWORD, "while")) error_fatal(ERROR_SYNTACTIC);
+
+    parser_parse_expression();
+
+    token = getNextToken();
+    if(!cmp_token(token, T_KEYWORD, "do")) error_fatal(ERROR_SYNTACTIC);
+    
+    token = getNextToken();
+    if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
+
+    parser_parse_body();
+
+    token = getNextToken();
+    if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
+    token = getNextToken();
+    if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
+    return 0;
+}
+
+int parser_parse_assign(){
     return 0;
 }
