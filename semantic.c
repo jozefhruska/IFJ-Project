@@ -169,3 +169,26 @@ void endFunction()
     // all good, exit the function
     currentFunction = NULL;
 }
+
+/**
+ * @brief Sets the function defined to true
+ * @param name Name of the function
+ */
+void functionDefinition(char *name)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    // search for the function
+    BTNodePtr func = STableInsertVariable(globalSymTable, name);
+
+    // the function doesn't exist
+    if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return;
+    }
+
+    SEM_DATA_FUNCTION(func)->defined = true;
+}
