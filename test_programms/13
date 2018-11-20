@@ -1,0 +1,10 @@
+def secti (a, b)
+    a = b
+    if(a == b) then
+    end
+end
+if(a > b) then
+    while(true) do
+        a = secti(a, b)
+    end
+end
