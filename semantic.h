@@ -116,4 +116,11 @@ BTVariableData *getParam(char *functionName, char *paramName);
  */
 bool isFunctionDeclared(char *name);
 
+/**
+ * @brief Returns the global variable, if found, null otherwise.
+ * @param name Name of the global variable
+ * @return
+ */
+BTVariableData* getVar(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H

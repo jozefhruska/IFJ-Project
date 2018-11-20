@@ -297,7 +297,18 @@ BTVariableData* getVar(char *name)
     }
 
     // search for the variable
-    BTNodePtr variable =
+    BTNodePtr variable = STSearch(globalSymTable, name);
+
+    if (variable == NULL) {
+        return NULL;
+    }
+
+    // if not a variable
+    if (variable->type != TYPE_VARIABLE) {
+        return NULL;
+    }
+
+    return SEM_DATA_VARIABLE(variable);
 }
 
 /**
