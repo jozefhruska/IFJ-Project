@@ -151,6 +151,7 @@ void addVar(char *name)
 
 /**
  * @brief End of function declaration or definition
+ * @pre First call addFunction()
  */
 void endFunction()
 {
