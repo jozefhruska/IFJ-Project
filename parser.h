@@ -6,6 +6,9 @@
 
 
 int parse();
+int cmp_token_type(sToken*, Ttoken);
 int cmp_token(sToken*, Ttoken, char*);
+
+void debug_print_token(sToken*);
 
 #endif

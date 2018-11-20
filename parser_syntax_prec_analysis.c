@@ -6,7 +6,7 @@ int parser_parse_expression(){
     sToken *token;
     do{
         token = getNextToken();
-    } while(!(cmp_token(token, T_KEYWORD, "then") || cmp_token(token, T_DELIMITER, ")")));
-    if(cmp_token(token, T_DELIMITER, ")")) store_token(token);
+    } while(!(cmp_token(token, T_KEYWORD, "then") || cmp_token_type(token, T_EOL)));
+    store_token(token);
     return 0;
 }

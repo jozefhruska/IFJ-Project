@@ -184,13 +184,27 @@ sToken *getNextToken()
 				state = OPERATOR;
 			}
 
-			//delimiter
-			else if (isDelimiter(c))
-			{
-				strAddChar(&output, c);
-				tokenChangeBoth(token, &output, T_DELIMITER);
-				return token;
-			}
+			//delimiter '('
+            else if (c == '(')
+            {
+                strAddChar(&output, c);
+                tokenChangeBoth(token, &output, T_LEFT_BRACKET);
+                return token;
+            }
+            //delimiter ')'
+            else if (c == ')')
+            {
+                strAddChar(&output, c);
+                tokenChangeBoth(token, &output, T_RIGHT_BRACKET);
+                return token;
+            }
+            //delimiter ','
+            else if (c == ',')
+            {
+                strAddChar(&output, c);
+                tokenChangeBoth(token, &output, T_COMMA);
+                return token;
+            }
 
 			// error handling
 			else
