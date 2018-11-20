@@ -220,6 +220,11 @@ bool isFunctionDefined(char *name)
         return;
     }
 
+    // if not a function
+    if (func->type != TYPE_FUNCTION) {
+        return false;
+    }
+
     return SEM_DATA_FUNCTION(func)->defined;
 }
 
@@ -239,6 +244,15 @@ bool isVarDeclared(char *name)
     BTNodePtr variable = STSearch(globalSymTable, name);
 
     return variable == NULL;
+}
+
+/**
+ * @brief Returns the global variable, if found, null otherwise.
+ * @param name Name of the global variable
+ * @return
+ */
+BTVariableData* getVar(char *name) {
+
 }
 
 /**
