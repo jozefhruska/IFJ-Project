@@ -272,7 +272,16 @@ bool isVarDeclared(char *name)
     // search for the variable
     BTNodePtr variable = STSearch(globalSymTable, name);
 
-    return variable == NULL;
+    if (variable == NULL) {
+        return false;
+    }
+
+    // if not a variable
+    if (variable->type != TYPE_VARIABLE) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -280,8 +289,15 @@ bool isVarDeclared(char *name)
  * @param name Name of the global variable
  * @return
  */
-BTVariableData* getVar(char *name) {
+BTVariableData* getVar(char *name)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return NULL;
+    }
 
+    // search for the variable
+    BTNodePtr variable =
 }
 
 /**
