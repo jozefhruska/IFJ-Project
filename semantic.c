@@ -182,7 +182,7 @@ void functionDefinition(char *name)
     }
 
     // search for the function
-    BTNodePtr func = STableInsertVariable(globalSymTable, name);
+    BTNodePtr func = STSearch(globalSymTable, name);
 
     // the function doesn't exist
     if (func == NULL) {
@@ -200,19 +200,20 @@ void functionDefinition(char *name)
 }
 
 /**
- * @brief Returns true, if the function val defined via functionDefinition(), returns false otherwise.
+ * @brief Returns true, if the function has been defined via functionDefinition(), returns false otherwise.
  * @param name Name of the function
+ * @pre Function must be declared via addFunction()
  * @return bool Function defined
  */
 bool isFunctionDefined(char *name)
 {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
-        return;
+        return false;
     }
 
     // search for the function
-    BTNodePtr func = STableInsertVariable(globalSymTable, name);
+    BTNodePtr func = STSearch(globalSymTable, name);
 
     // the function doesn't exist
     if (func == NULL) {
@@ -226,6 +227,34 @@ bool isFunctionDefined(char *name)
     }
 
     return SEM_DATA_FUNCTION(func)->defined;
+}
+
+/**
+ * @brief Returns true, if the fuction has been declared via addFunction(), returns false otherwise
+ * @param name Name of the function
+ * @return bool Declared
+ */
+bool isFunctionDeclared(char *name)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return false;
+    }
+
+    // search for the function
+    BTNodePtr func = STSearch(globalSymTable, name);
+
+    // the function doesn't exist
+    if (func == NULL) {
+        return false;
+    }
+
+    // if not a function
+    if (func->type != TYPE_FUNCTION) {
+        return false;
+    }
+
+    return true;
 }
 
 /**

@@ -109,4 +109,11 @@ bool isParamDeclared(char *functionName, char *paramName);
  */
 BTVariableData *getParam(char *functionName, char *paramName);
 
+/**
+ * @brief Returns true, if the fuction has been declared via addFunction(), returns false otherwise
+ * @param name Name of the function
+ * @return bool Declared
+ */
+bool isFunctionDeclared(char *name);
+
 #endif //IFJ_PROJECT_SEMANTIC_H
