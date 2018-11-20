@@ -143,3 +143,22 @@ void addVar(char *name)
         STableInsertVariable(currentSymTable, var); // todo: var type in symbol table...?
     }
 }
+
+/**
+ * @brief End of function declaration or definition
+ */
+void endFunction()
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    if (currentSymTable == NULL || currentFunction == NULL) {
+        // make sure we're in a function
+        error_fatal(ERROR_SEMANTIC_OTHER);
+        return;
+    }
+
+    currentFunction->data->localSymTab = currentSymTable;
+}
