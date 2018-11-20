@@ -82,42 +82,42 @@ int strAddChar(string *s1, char c)
    return SUCCESS;
 }
 
-int strCopyString(string *s1, string *s2)
-// prekopiruje retezec s2 do s1
-{
-   int newLength = s2->length;
-   if (newLength >= s1->allocSize)
-   {
-      // pamet nestaci, je potreba provest realokaci
-      if ((s1->str = (char*) realloc(s1->str, newLength + 1)) == NULL)
-         return ERROR;
-      s1->allocSize = newLength + 1;
-   }
-   strcpy(s1->str, s2->str);
-   s1->length = newLength;
-   return SUCCESS;
-}
+// int strCopyString(string *s1, string *s2)
+// // prekopiruje retezec s2 do s1
+// {
+//    int newLength = s2->length;
+//    if (newLength >= s1->allocSize)
+//    {
+//       // pamet nestaci, je potreba provest realokaci
+//       if ((s1->str = (char*) realloc(s1->str, newLength + 1)) == NULL)
+//          return ERROR;
+//       s1->allocSize = newLength + 1;
+//    }
+//    strcpy(s1->str, s2->str);
+//    s1->length = newLength;
+//    return SUCCESS;
+// }
 
-int strCmpString(string *s1, string *s2)
-// porovna oba retezce a vrati vysledek
-{
-   return strcmp(s1->str, s2->str);
-}
+// int strCmpString(string *s1, string *s2)
+// // porovna oba retezce a vrati vysledek
+// {
+//    return strcmp(s1->str, s2->str);
+// }
 
-int strCmpConstStr(string *s1, char* s2)
-// porovna nas retezec s konstantnim retezcem
-{
-   return strcmp(s1->str, s2);
-}
+// int strCmpConstStr(string *s1, char* s2)
+// // porovna nas retezec s konstantnim retezcem
+// {
+//    return strcmp(s1->str, s2);
+// }
 
-char *strGetStr(string *s)
-// vrati textovou cast retezce
-{
-   return s->str;
-}
+// char *strGetStr(string *s)
+// // vrati textovou cast retezce
+// {
+//    return s->str;
+// }
 
-int strGetLength(string *s)
-// vrati delku daneho retezce
-{
-   return s->length;
-}
+// int strGetLength(string *s)
+// // vrati delku daneho retezce
+// {
+//    return s->length;
+// }
