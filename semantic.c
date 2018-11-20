@@ -97,6 +97,7 @@ void addFunction(char *name)
 
 /**
  * @brief Add new parameter into list of function's parameters
+ * @pre First call addFunction()
  * @param name
  */
 void addParam(char *name)
@@ -108,23 +109,23 @@ void addParam(char *name)
     }
 
     // make sure we're in a function
-    if (currentSymTable == NULL || currentFunction == NULL || currentFunction->data->parameters == NULL) {
+    if (currentFunction == NULL || SEM_DATA_FUNCTION(currentFunction)->params == NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
     // create new parameter
-    // allocate memory for parameter name
-    char *param = malloc(strlen(name) + 1);
+    // allocate memory for parameter
+    BTVariableData *param = malloc(sizeof(BTVariableData));
     if (param == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
     }
 
-    strcpy(parameter->name, name);
+    param->key = name;
 
     // add new parameter to the list
-    DLInsertLast(currentFunction->data->parameters, (void *) param);
+    DLInsertLast(SEM_DATA_FUNCTION(currentFunction)->params, (void *) param);
 }
 
 /**

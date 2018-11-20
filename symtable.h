@@ -37,7 +37,7 @@ typedef struct sBTVariableData {
 typedef struct sBTFunctionData {
 	char *key;
 	BTVariableType type;
-	tDLList *params;
+	tDLList *params; // BTVariableData[]
 	bool defined;
 	bool declared;
 } BTFunctionData;
