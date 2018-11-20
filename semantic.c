@@ -159,11 +159,12 @@ void endFunction()
         return;
     }
 
-    if (currentSymTable == NULL || currentFunction == NULL) {
-        // make sure we're in a function
+    // make sure we're in a function
+    if (currentFunction == NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
-    currentFunction->data->localSymTab = currentSymTable;
+    // all good, exit the function
+    currentFunction = NULL;
 }
