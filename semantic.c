@@ -91,7 +91,7 @@ void addFunction(char *name)
         DLInitList(paramList);
 
         // add function into global table
-        STableInsertFunction(globalSymTable, name, paramList); // TODO: set declared true, defined false
+        STableInsertFunction(globalSymTable, name, paramList); // TODO: set declared true, defined false, remove variable type
     }
 }
 
@@ -134,22 +134,19 @@ void addParam(char *name)
  */
 void addVar(char *name)
 {
-    // alloc mem for name string
-    char *var = malloc(strlen(name) + 1);
-    if (var == NULL) {
+    if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
     }
 
-    strcpy(var, name);
-
-    if (currentFunction == NULL) {
-        // if is not in a function definition, add new global variable
-        STableInsertVariable(globalSymTable, var); // todo: var type in symbol table...?
-    } else {
-        // if is in a function definition, add new local variable
-        STableInsertVariable(currentSymTable, var); // todo: var type in symbol table...?
+    // if in a function, add it as a parameter
+    if (currentFunction != NULL) {
+        addParam(name);
+        return;
     }
+
+    // in global
+    STableInsertVariable(globalSymTable, name);
 }
 
 /**
