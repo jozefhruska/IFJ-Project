@@ -150,7 +150,7 @@ void addVar(char *name)
 }
 
 /**
- * @brief End of function declaration or definition
+ * @brief End of function declaration or definition. After this next addFunction() can be called
  * @pre First call addFunction()
  */
 void endFunction()
@@ -186,6 +186,12 @@ void functionDefinition(char *name)
 
     // the function doesn't exist
     if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return;
+    }
+
+    // if not a function
+    if (func->type != TYPE_FUNCTION) {
         error_fatal(ERROR_SEMANTIC_DEF);
         return;
     }
