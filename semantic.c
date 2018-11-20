@@ -192,3 +192,27 @@ void functionDefinition(char *name)
 
     SEM_DATA_FUNCTION(func)->defined = true;
 }
+
+/**
+ * @brief Returns true, if the function val defined via functionDefinition(), returns false otherwise.
+ * @param name Name of the function
+ * @return bool Function defined
+ */
+bool isFunctionDefined(char *name)
+{
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    // search for the function
+    BTNodePtr func = STableInsertVariable(globalSymTable, name);
+
+    // the function doesn't exist
+    if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return;
+    }
+
+    return SEM_DATA_FUNCTION(func)->defined;
+}

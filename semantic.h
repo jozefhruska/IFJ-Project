@@ -15,6 +15,8 @@
 #ifndef IFJ_PROJECT_SEMANTIC_H
 #define IFJ_PROJECT_SEMANTIC_H
 
+#include <stdbool.h>
+
 /**
  * @brief Union representing any data
  */
@@ -63,5 +65,24 @@ void addParam(char *name);
  * @param name
  */
 void addVar(char *name);
+
+/**
+ * @brief End of function declaration or definition
+ * @pre First call addFunction()
+ */
+void endFunction();
+
+/**
+ * @brief Sets the function defined to true
+ * @param name Name of the function
+ */
+void functionDefinition(char *name);
+
+/**
+ * @brief Returns true, if the function val defined via functionDefinition(), returns false otherwise.
+ * @param name Name of the function
+ * @return bool Function defined
+ */
+bool isFunctionDefined(char *name);
 
 #endif //IFJ_PROJECT_SEMANTIC_H
