@@ -4,6 +4,7 @@
 #include "token.h"
 #include "list.h"
 #include <stdio.h>
+#include "list.h"
 
 //lengths
 #define KEYWORDS_LENGTH 9

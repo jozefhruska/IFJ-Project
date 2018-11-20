@@ -26,11 +26,12 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
-sToken *storedToken = NULL;
+tDLList *storedTokens;
+void DLInitList (storedTokens);
 
 void store_token(sToken *token)
 {
-	storedToken = token;
+	void DLInsertFirst (storedTokens, token);
 }
 
 /*================= END OFDML EDIT ==================*/
@@ -157,7 +158,7 @@ char *itoa(int i, char *b)
 FILE *source;
 
 // variable to save previous token
-sToken previous;
+sToken *previous;
 
 void setSourceFile(FILE *f)
 {
@@ -167,12 +168,27 @@ void setSourceFile(FILE *f)
 sToken *getNextToken()
 // main function of lexical analysator
 {
+	// if (previous)
+	// {
+	// 	printf("PREVIOUS token state: %d\n", previous->type);
+	// }
+
+	sToken *token;
+	token = (sToken *)malloc(sizeof(struct Token));
+	
 	/*================= DML EDIT ==================*/
-	if(storedToken != NULL){
-		sToken *tmp = storedToken;
-		storedToken = NULL;
-		return tmp;
-	}
+	// void DLCopyLast(storedTokens, token);
+	// // return token;
+	// if (token != NULL)
+	// {
+	// 	printf("stored token: %s\n", (char *)token->data);
+	// }
+	
+
+	// if(token != NULL){
+	// 	void DLDeleteLast(storedTokens);
+	// 	return token;
+	// }
 	/*================= END OFDML EDIT ==================*/
 
 	Tstate state = INIT;
@@ -186,9 +202,6 @@ sToken *getNextToken()
 	strInit(&stack);
 	strInit(&output);
 
-	sToken *token;
-	token = (sToken *)malloc(sizeof(struct Token));
-
 	tokenClear(token);
 
 	while ((c = fgetc(source)))
@@ -201,11 +214,14 @@ sToken *getNextToken()
 			// white space
 			if (isspace(c) && c != '\n')
 			{
+				strAddChar(&output, '\n');
+				tokenChangeBoth(previous, &output, T_EOL);
 				state = INIT;
 			}
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
+				previous = token;
 				return token;
 			}
 			// end of line
@@ -213,6 +229,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
+				previous = token;
 				return token;
 			}
 			// line comment
@@ -247,6 +264,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_LEFT_BRACKET);
+				previous = token;
 				return token;
 			}
 			//delimiter ')'
@@ -254,6 +272,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_RIGHT_BRACKET);
+				previous = token;
 				return token;
 			}
 			//delimiter ','
@@ -261,6 +280,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_COMMA);
+				previous = token;
 				return token;
 			}
 			// error handling
@@ -295,11 +315,13 @@ sToken *getNextToken()
 				if (isFromKeywords(output.str))
 				{
 					tokenChangeBoth(token, &output, T_KEYWORD);
+					previous = token;
 					return token;
 				}
 				else
 				{
 					tokenChangeBoth(token, &output, T_ID);
+					previous = token;
 					return token;
 				}
 			}
@@ -312,6 +334,7 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_ID);
+				previous = token;
 				return token;
 			}
 			// char after ? or ! is illegal
@@ -349,10 +372,17 @@ sToken *getNextToken()
 				ungetc(c, source);
 				state = DOUBLE;
 			}
+			else if (!isspace(c) && c != '\n' && c != EOF)
+			{
+				tokenChangeType(token, T_ERR);
+				return token;
+			}
 			else
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
+				token->data = strtol((char *)token->data, NULL, 10);
+				previous = token;
 				return token;
 			}
 			break;
@@ -366,7 +396,7 @@ sToken *getNextToken()
 			}
 			else if (c == 'e' || c == 'E')
 			{
-				strAddChar(&output, c);
+				strAddChar(&output, 'e');
 				c = fgetc(source);
 				if (c == '+' || c == '-')
 				{
@@ -389,10 +419,11 @@ sToken *getNextToken()
 			}
 			else if (c == 'e' || c == 'E')
 			{
-				strAddChar(&output, c);
+				// strAddChar(&output, c);
+				strAddChar(&output, 'e'); // GETTING READY FOR CONVERSION TO DOUBLE
 				buff = fgetc(source);
 				
-				if (buff == '+' || buff == '-' || isdigit(buff))
+				if (buff == '+' || buff == '-')
 				{
 					strAddChar(&output, buff);
 					buff = fgetc(source);
@@ -401,6 +432,11 @@ sToken *getNextToken()
 						tokenChangeType(token, T_ERR);
 						return token;
 					}
+					strAddChar(&output, buff);
+					state = DOUBLE_EXP;
+				}
+				else if (isdigit(buff))
+				{
 					strAddChar(&output, buff);
 					state = DOUBLE_EXP;
 				}
@@ -413,6 +449,10 @@ sToken *getNextToken()
 			else
 			{
 				tokenChangeBoth(token, &output, T_DOUBLE);
+				double convert;
+				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
+				token->data = (void *)&convert;
+				previous = token;
 				return token;
 			}
 		break;
@@ -429,16 +469,23 @@ sToken *getNextToken()
 				if (isspace(c) || c == EOF)
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
+					double convert;
+					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
+					token->data = (void *)&convert;
 				}
 				else if (isOperator(c))
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
+					double convert;
+					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
+					token->data = (void *)&convert;
 				}
 				else
 				{
 					tokenChangeType(token, T_ERR);
 				}
 				ungetc(c, source);
+				previous = token;
 				return token;
 			}
 		break;
@@ -448,6 +495,7 @@ sToken *getNextToken()
 			if (c == '"') // end of string
 			{
 				tokenChangeBoth(token, &output, T_STRING);
+				previous = token;
 				return token;
 			}
 			else if (c == '\\') // escape sequence
@@ -535,12 +583,7 @@ sToken *getNextToken()
 			ungetc(c, source);
 			integer = hexadecimalToDecimal(&stack);
 			strClear(&stack);
-			itoa(integer, stack.str);
-
-			for (int j = 0; stack.str[j]; j++)
-			{
-				strAddChar(&output, stack.str[j]);
-			}
+			strAddChar(&output, (char)integer);
 		break;
 
 		// ---------------------------------------- OPERATOR CASE ----------------------------------------
@@ -551,6 +594,7 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
+					previous = token;
 					return token;
 				}
 				state = OPERATOR;
@@ -563,6 +607,7 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
+					previous = token;
 					return token;
 				}
 				else
@@ -579,11 +624,13 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
+				previous = token;
 				return token;
 			}
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
+				previous = token;
 				return token;
 			}
 		break;
