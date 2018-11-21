@@ -70,27 +70,35 @@ void endFunction();
 bool isFunctionDefined(char *name);
 
 /**
- * @brief Returns true, if the function has a parameter with the name, false otherwise.
- * @param functionName Name of the function
- * @param paramName Name of the variable
- * @return bool
- */
-bool isParamDeclared(char *functionName, char *paramName);
-
-/**
- * @brief Returns pointer to the parameter with the name of the function
- * @param functionName Name of the functoin
- * @param paramName Name of the parameter
- * @return Pointer to BTVatiableData
- */
-BTVariableData *getParam(char *functionName, char *paramName);
-
-/**
  * @brief Returns true, if the fuction has been declared via addFunction(), returns false otherwise
  * @param name Name of the function
  * @return bool Declared
  */
 bool isFunctionDeclared(char *name);
+
+/**
+* @brief Returns true, if the function has a parameter with the name, false otherwise.
+* @param functionName Name of the function
+* @param paramName Name of the variable
+* @return bool
+*/
+bool isParamDeclared(char *functionName, char *paramName);
+
+/**
+* @brief Returns pointer to the parameter with the name of the function
+* @param functionName Name of the functoin
+* @param paramName Name of the parameter
+* @return Pointer to BTVatiableData or NULL if not found.
+*/
+BTVariableData *getParam(char *functionName, char *paramName);
+
+/**
+* @brief Returns nth parameter of the function. Can return a private variable instead of parameter.
+* @param functionName Name of the function.
+* @param n Index of the parameter, starts with 0.
+* @return Pointer to BTVariableData or NULL if not found.
+*/
+BTVariableData *getNthParam(char *functionName, unsigned int n);
 
 /*
  *
@@ -112,7 +120,7 @@ void addVar(char *name);
 bool isVarDeclared(char *name);
 
 /**
- * @brief Returns the global variable, if found, null otherwise.
+ * @brief Returns the global variable, if found, NULL otherwise.
  * @param name Name of the global variable
  * @return
  */

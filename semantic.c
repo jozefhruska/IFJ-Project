@@ -317,3 +317,59 @@ BTVariableData *getParam(char *functionName, char *paramName) {
 
     return (BTVariableData *) paramList->Act->data;
 }
+
+/**
+ * @brief Returns nth parameter of the function. Can return a private variable instead of parameter.
+ * @param functionName Name of the function.
+ * @param n Index of the parameter, starts with 0.
+ * @return Pointer to BTVariableData or NULL if not found.
+ */
+BTVariableData *getNthParam(char *functionName, unsigned int n) {
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return NULL;
+    }
+
+    // search for the function
+    BTNodePtr func = STSearch(globalSymTable, functionName);
+
+    // function doesn't exist
+    if (func == NULL) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return NULL;
+    }
+
+    // not a function
+    if (func->type != TYPE_FUNCTION) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return NULL;
+    }
+
+    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
+
+    // list is ok
+    if (paramList == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return NULL;
+    }
+
+    unsigned int i = 0; // current index
+    DLFirst(paramList); // go to the first param
+
+    while (i < n) {
+        if (paramList->Act == paramList->Last) {
+            break;
+        } else {
+            DLSucc(paramList);
+        }
+
+        i++;
+    }
+
+    // if found
+    if (i == n) {
+        return (BTVariableData *) paramList->Act;
+    }
+
+    return NULL;
+}
