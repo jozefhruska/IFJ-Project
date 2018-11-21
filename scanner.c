@@ -214,7 +214,7 @@ sToken *getNextToken()
 			// white space
 			if (isspace(c) && c != '\n')
 			{
-				strAddChar(&output, '\n');
+				strAddChar(&stack, ' ');
 				tokenChangeBoth(previous, &output, T_EOL);
 				state = INIT;
 			}
