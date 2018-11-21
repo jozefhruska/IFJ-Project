@@ -100,6 +100,12 @@ BTVariableData *getParam(char *functionName, char *paramName);
 */
 BTVariableData *getNthParam(char *functionName, unsigned int n);
 
+/**
+ * @brief Check, if each function in symbol table has been defined.
+ * @return true if each function defined, else false
+ */
+bool eachFunctionDefined();
+
 /*
  *
  * Global variables
