@@ -1,7 +1,10 @@
 def secti (a, b)
     a = b
     if(a == b) then
+<<<<<<< HEAD
         dosomething
+=======
+>>>>>>> master
     end
 end
 if(a > b) then

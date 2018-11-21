@@ -26,13 +26,45 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
-// tDLList *storedTokens;
-// DLInitList (storedTokens);
+TokenBuffer *stored_tokens = NULL;
 
-// void store_token(sToken *token)
-// {
-// 	DLInsertFirst (storedTokens, token);
-// }
+void BufferInit(TokenBuffer **buffer){
+	(*buffer)->first_element = NULL;
+}
+
+void BufferPush(TokenBuffer *buffer, sToken *token){
+	if(buffer->first_element == NULL){
+		TokenBufferElement *newElement = (TokenBufferElement*)malloc(sizeof(TokenBufferElement));
+		newElement->next = NULL;
+		newElement->data = token;
+		buffer->first_element = newElement;	
+	} else {
+		TokenBufferElement *endOfBuffer = buffer->first_element;
+		while(endOfBuffer->next != NULL) endOfBuffer = endOfBuffer->next;
+		TokenBufferElement *newElement = (TokenBufferElement*)malloc(sizeof(TokenBufferElement));
+		newElement->next = NULL;
+		newElement->data = token;
+		endOfBuffer->next = newElement;
+	}
+}
+
+sToken *BufferPop(TokenBuffer *buffer){
+	TokenBufferElement *elem = buffer->first_element;
+	buffer->first_element = elem->next;
+	sToken *retValue = elem->data;
+	free(elem);
+	return retValue;
+}
+
+void store_token(sToken *token){
+	if(stored_tokens == NULL){
+		stored_tokens = malloc(sizeof(TokenBuffer));
+		BufferInit(&stored_tokens);
+		BufferPush(stored_tokens, token);
+	} else {
+		BufferPush(stored_tokens, token);
+	}
+}
 
 /*================= END OFDML EDIT ==================*/
 
@@ -172,6 +204,12 @@ sToken *getNextToken()
 	// {
 	// 	printf("PREVIOUS token state: %d\n", previous->type);
 	// }
+
+	if(stored_tokens != NULL){
+		if(stored_tokens->first_element != NULL){
+			return BufferPop(stored_tokens);
+		}
+	}
 
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));

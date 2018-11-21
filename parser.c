@@ -24,6 +24,14 @@ int parse(FILE *source){
     return result;
 }
 
+int cmp_token_type(sToken* token, Ttoken token_type){
+    return( token->type == token_type );
+}
+
 int cmp_token(sToken* token, Ttoken token_type, char *token_data){
 	return( token->type == token_type && strcmp(token->data, token_data) == 0 );
+}
+
+void debug_print_token(sToken *token){
+    printf("Token: %s (type = %d)\n", (char*)token->data, token->type);
 }

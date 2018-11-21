@@ -75,8 +75,16 @@ typedef enum {
 
 } Ttoken;
 
+typedef struct _buffer_element {
+    struct _buffer_element *next;
+    sToken *data;
+} TokenBufferElement;
+
+typedef struct _buffer {
+    TokenBufferElement *first_element;
+} TokenBuffer;
+
 //hlavicka funkce simulujici lexikalni analyzator
-void store_token(sToken *token);
 
 bool isDelimiter(char input);
 bool isOperator(char input);
@@ -89,4 +97,9 @@ char *itoa(int i, char b[]);
 void setSourceFile(FILE *f);
 
 sToken *getNextToken();
+void store_token(sToken *token);
+
+void BufferInit(TokenBuffer**);
+void BufferPush(TokenBuffer*, sToken*);
+sToken *BufferPop(TokenBuffer*);
 #endif
