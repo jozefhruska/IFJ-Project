@@ -1,7 +1,6 @@
 def secti (a, b)
     a = b
     if(a == b) then
-        dosomething
     end
 end
 if(a > b) then

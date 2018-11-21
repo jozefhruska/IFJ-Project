@@ -26,12 +26,10 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
-tDLList *storedTokens;
-void DLInitList (storedTokens);
+sToken *stored_token = NULL;
 
-void store_token(sToken *token)
-{
-	void DLInsertFirst (storedTokens, token);
+void store_token(sToken *token){
+	stored_token = token;
 }
 
 /*================= END OFDML EDIT ==================*/
@@ -172,6 +170,12 @@ sToken *getNextToken()
 	// {
 	// 	printf("PREVIOUS token state: %d\n", previous->type);
 	// }
+
+	if(stored_token != NULL){
+		sToken *ret = stored_token;
+		stored_token = NULL;
+		return ret;
+	}
 
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));
