@@ -26,13 +26,13 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
-tDLList *storedTokens;
-void DLInitList (storedTokens);
+// tDLList *storedTokens;
+// DLInitList (storedTokens);
 
-void store_token(sToken *token)
-{
-	void DLInsertFirst (storedTokens, token);
-}
+// void store_token(sToken *token)
+// {
+// 	DLInsertFirst (storedTokens, token);
+// }
 
 /*================= END OFDML EDIT ==================*/
 
@@ -215,7 +215,7 @@ sToken *getNextToken()
 			if (isspace(c) && c != '\n')
 			{
 				strAddChar(&stack, ' ');
-				tokenChangeBoth(previous, &output, T_EOL);
+				tokenChangeBoth(previous, &output, SPACE);
 				state = INIT;
 			}
 			else if (c == EOF)
@@ -249,10 +249,38 @@ sToken *getNextToken()
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
+			// start of string
 			else if (c == '"')
 			{
 				state = STRING;
 			}
+			// possible block comment
+			// else if (c == '=')
+			// {
+			// 	strAddChar(&stack, c);
+			// 	buff = fgetc(source);
+			// 	if (!islower(buff))
+			// 	{
+			// 		tokenChangeBoth(token, &output, T_OPERATOR);
+			// 		return token;
+			// 	}
+			// 	else if (islower(buff))
+			// 	{
+			// 		count = 1;
+			// 		strAddChar(&stack, buff);
+			// 		do
+			// 		{
+			// 			buff = fgetc(source);
+			// 			count++;
+			// 			if(islower(buff))
+			// 			{
+			// 				strAddChar(&stack, buff);
+			// 			}
+			// 		} while (!islower(buff));
+
+			// 		printf("%s\n", stack.str);
+			// 	}
+			// }
 			// operator
 			else if (isOperator(c))
 			{
@@ -381,7 +409,7 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = strtol((char *)token->data, NULL, 10);
+				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				previous = token;
 				return token;
 			}

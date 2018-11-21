@@ -4,7 +4,6 @@
 #include "token.h"
 #include "list.h"
 #include <stdio.h>
-#include "list.h"
 
 //lengths
 #define KEYWORDS_LENGTH 9
@@ -39,6 +38,8 @@ typedef enum {
     INIT,
     ID,
     ID_FUNC,
+    SPACE,
+    START,
     STRING,
     STRING_ESCAPE,
     STRING_HEXA,
