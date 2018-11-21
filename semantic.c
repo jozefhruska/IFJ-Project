@@ -34,23 +34,15 @@
 STable *globalSymTable; // global symbol table
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
-/**
- * @brief Creates new global table
- */
-void initGlobalSymTable()
-{
+
+void initGlobalSymTable() {
     currentFunction = NULL;
 
     // init global symbol table
     STableInit(globalSymTable);
 }
 
-/**
- * @brief Start of creating new function, or it's declaration
- * @param name
- */
-void addFunction(char *name)
-{
+void addFunction(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
@@ -91,17 +83,12 @@ void addFunction(char *name)
         DLInitList(paramList);
 
         // add function into global table
-        STableInsertFunction(globalSymTable, name, paramList); // TODO: set declared true, defined false, remove variable type
+        STableInsertFunction(globalSymTable, name,
+                             paramList); // TODO: set declared true, defined false, remove variable type
     }
 }
 
-/**
- * @brief Add new parameter into list of function's parameters
- * @pre First call addFunction()
- * @param name
- */
-void addParam(char *name)
-{
+void addParam(char *name) {
     // global table defined
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
@@ -128,12 +115,7 @@ void addParam(char *name)
     DLInsertLast(SEM_DATA_FUNCTION(currentFunction)->params, (void *) param);
 }
 
-/**
- * @brief Create new variable,
- * @param name
- */
-void addVar(char *name)
-{
+void addVar(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
@@ -149,12 +131,7 @@ void addVar(char *name)
     STableInsertVariable(globalSymTable, name);
 }
 
-/**
- * @brief End of function declaration or definition. After this next addFunction() can be called
- * @pre First call addFunction()
- */
-void endFunction()
-{
+void endFunction() {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
@@ -170,12 +147,7 @@ void endFunction()
     currentFunction = NULL;
 }
 
-/**
- * @brief Sets the function defined to true
- * @param name Name of the function
- */
-void functionDefinition(char *name)
-{
+void functionDefinition(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return;
@@ -199,14 +171,7 @@ void functionDefinition(char *name)
     SEM_DATA_FUNCTION(func)->defined = true;
 }
 
-/**
- * @brief Returns true, if the function has been defined via functionDefinition(), returns false otherwise.
- * @param name Name of the function
- * @pre Function must be declared via addFunction()
- * @return bool Function defined
- */
-bool isFunctionDefined(char *name)
-{
+bool isFunctionDefined(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return false;
@@ -229,13 +194,7 @@ bool isFunctionDefined(char *name)
     return SEM_DATA_FUNCTION(func)->defined;
 }
 
-/**
- * @brief Returns true, if the fuction has been declared via addFunction(), returns false otherwise
- * @param name Name of the function
- * @return bool Declared
- */
-bool isFunctionDeclared(char *name)
-{
+bool isFunctionDeclared(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return false;
@@ -257,13 +216,7 @@ bool isFunctionDeclared(char *name)
     return true;
 }
 
-/**
- * @brief Returns true, if the global variable is declared, false otherwise.
- * @param name Name of the variable
- * @return bool
- */
-bool isVarDeclared(char *name)
-{
+bool isVarDeclared(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return false;
@@ -284,13 +237,7 @@ bool isVarDeclared(char *name)
     return true;
 }
 
-/**
- * @brief Returns the global variable, if found, null otherwise.
- * @param name Name of the global variable
- * @return
- */
-BTVariableData* getVar(char *name)
-{
+BTVariableData *getVar(char *name) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return NULL;
@@ -311,14 +258,7 @@ BTVariableData* getVar(char *name)
     return SEM_DATA_VARIABLE(variable);
 }
 
-/**
- * @brief Returns true, if the function has a parameter with the name, false otherwise.
- * @param functionName Name of the function
- * @param paramName Name of the variable
- * @return bool
- */
-bool isParamDeclared(char *functionName, char *paramName)
-{
+bool isParamDeclared(char *functionName, char *paramName) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return false;
@@ -346,14 +286,7 @@ bool isParamDeclared(char *functionName, char *paramName)
     return found;
 }
 
-/**
- * @brief Returns pointer to the parameter with the name of the function
- * @param functionName Name of the functoin
- * @param paramName Name of the parameter
- * @return Pointer to BTVatiableData
- */
-BTVariableData *getParam(char *functionName, char *paramName)
-{
+BTVariableData *getParam(char *functionName, char *paramName) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return NULL;

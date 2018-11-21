@@ -18,36 +18,22 @@
 #include <stdbool.h>
 #include "symtable.h"
 
-/**
- * @brief Union representing any data
+/*
+ *
+ * Symbol table
+ *
  */
-typedef union {
-    int i;
-    float f;
-    char *s;
-} tDataValue;
-
-/**
- * @brief Types of any data enumeration
- */
-typedef enum {
-    INTEGER,
-    FLOAT,
-    STRING
-} tDataType;
-
-/**
- * @brief Struct representing any data and it's type
- */
-typedef struct {
-    tDataValue value;
-    tDataType dataType;
-} tData;
 
 /**
  * @brief Creates new global table
  */
 void initGlobalSymTable();
+
+/*
+ *
+ * Functions
+ *
+ */
 
 /**
  * @brief Start of creating new function, or it's declaration
@@ -56,22 +42,12 @@ void initGlobalSymTable();
 void addFunction(char *name);
 
 /**
- * @brief Add new parameter into stack of function's parameters
+ * @brief Add new parameter into list of function's parameters.
+ * Can be used for creating new private variables too.
+ * @pre First call addFunction()
  * @param name
  */
 void addParam(char *name);
-
-/**
- * @brief Create new variable,
- * @param name
- */
-void addVar(char *name);
-
-/**
- * @brief End of function declaration or definition
- * @pre First call addFunction()
- */
-void endFunction();
 
 /**
  * @brief Sets the function defined to true
@@ -80,18 +56,18 @@ void endFunction();
 void functionDefinition(char *name);
 
 /**
- * @brief Returns true, if the function val defined via functionDefinition(), returns false otherwise.
+ * @brief End of function declaration or definition. After this next addFunction() can be called again.
+ * @pre First call addFunction()
+ */
+void endFunction();
+
+/**
+ * @brief Returns true, if the function has been defined via functionDefinition(), returns false otherwise.
  * @param name Name of the function
+ * @pre Function must be declared via addFunction()
  * @return bool Function defined
  */
 bool isFunctionDefined(char *name);
-
-/**
- * @brief Returns true, if the global variable is declared, false otherwise.
- * @param name Name of the variable
- * @return bool
- */
-bool isVarDeclared(char *name);
 
 /**
  * @brief Returns true, if the function has a parameter with the name, false otherwise.
@@ -115,6 +91,25 @@ BTVariableData *getParam(char *functionName, char *paramName);
  * @return bool Declared
  */
 bool isFunctionDeclared(char *name);
+
+/*
+ *
+ * Global variables
+ *
+ */
+
+/**
+* @brief Create new global variable.
+* @param name
+*/
+void addVar(char *name);
+
+/**
+ * @brief Returns true, if the global variable is declared, false otherwise.
+ * @param name Name of the variable
+ * @return bool
+ */
+bool isVarDeclared(char *name);
 
 /**
  * @brief Returns the global variable, if found, null otherwise.
