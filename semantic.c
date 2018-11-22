@@ -103,23 +103,13 @@ void addParam(char *name) {
     }
 
     // make sure we're in a function
-    if (currentFunction == NULL || SEM_DATA_FUNCTION(currentFunction)->params == NULL) {
+    if (currentFunction == NULL || currentFunction->data->params == NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
-    // create new parameter
-    // allocate memory for parameter
-    BTVariableData *param = malloc(sizeof(BTVariableData));
-    if (param == NULL) {
-        error_fatal(ERROR_INTERNAL);
-        return;
-    }
-
-    param->key = name;
-
     // add new parameter to the list
-    DLInsertLast(SEM_DATA_FUNCTION(currentFunction)->params, (void *) param);
+    DLInsertLast(currentFunction->data->params, (void *) name);
 }
 
 void addVar(char *name) {
