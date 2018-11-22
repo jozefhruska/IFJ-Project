@@ -12,6 +12,8 @@
  *	May the force be with you.
  */
 
+#include <string.h>
+
 #include "symtable.h"
 
 void BTInit(BTNodePtr *node) {
@@ -20,18 +22,18 @@ void BTInit(BTNodePtr *node) {
 
 BTNodePtr BTSearch(BTNodePtr node, char *key) {
 	if (node != NULL) {
-		if (node->key > key) return BTSearch(node->LPtr, key);
-		else if (node->key < key) return BTSearch(node->RPtr, key);
+		if (strcmp(key, node->key) < 0) return BTSearch(node->LPtr, key);
+		else if (strcmp(key, node->key) > 0) return BTSearch(node->RPtr, key);
 		else return node;
 	} else return NULL;
 }
 
 void BTInsert(BTNodePtr *node, char *key, BTNodeType type, BTFunctionData *data) {
 	if (*node != NULL) {
-		if ((* node)->key > key) {
+		if (strcmp(key, (* node)->key) < 0) {
 			BTInsert(&(* node)->LPtr, key, type, data);
 			return;
-		} else if ((* node)->key < key) {
+		} else if (strcmp(key, (* node)->key) > 0) {
 			BTInsert(&(* node)->RPtr, key, type, data);
 			return;
 		} else (* node)->data = data;
@@ -61,8 +63,8 @@ void ReplaceByRightmost (BTNodePtr PtrReplaced, BTNodePtr *node) {
 
 void BTDelete(BTNodePtr *node, char *key) {
 	if ((* node) != NULL) {
-		if ((* node)->key > key) BTDelete(&((* node)->LPtr), key);
-		else if ((* node)->key < key) BTDelete(&((* node)->RPtr), key);
+		if (strcmp((* node)->key, key) > 0) BTDelete(&((* node)->LPtr), key);
+		else if (strcmp((* node)->key, key) < 0) BTDelete(&((* node)->RPtr), key);
 		else {
 			if (((* node)->LPtr == NULL) && ((* node)->RPtr == NULL)) {
 					free(*node);
