@@ -10,3 +10,6 @@ sedlacek
 hruska
 demel
 build.sh
+CMakeLists.txt
+cmake-build-debug/*
+tests/*

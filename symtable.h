@@ -32,7 +32,7 @@ typedef enum {
  * @brief  Structure additional function data in a Binary Table node.
  */
 typedef struct sBTFunctionData {
-	tDLList *params;
+	tDLList *params; // char*[]
 	bool defined;
 	bool declared;
 } BTFunctionData;
