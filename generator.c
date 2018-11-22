@@ -14,13 +14,38 @@
 
 #include "generator.h"
 
-void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
-	switch (type) {
-		case INSTR_MOVE:
-			printf("createInstruction - MOVE\n");
-			break;
-		case INSTR_CREATEFRAME:
-			printf("createInstruction - CREATEFRAME\n");
-			break;
+SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value) {
+	SymbolPtr symbol;
+
+	if ((symbol = malloc(sizeof(struct sSymbol))) != NULL) {
+		symbol->type = type;
+		symbol->location = location;
+		symbol->key = key;
+		symbol->value = value;
+
+		return symbol;
+	} else {
+		error_fatal(ERROR_INTERNAL);
+		return NULL;
 	}
 }
+
+void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
+	/* Initialize stack at first attempt to create an instruction */
+	if (InstructionStack == NULL) {
+		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
+		else error_fatal(ERROR_INTERNAL);
+	}
+
+	InstructionPtr instruction;
+	if ((instruction = malloc(sizeof(struct sInstruction))) != NULL) {
+		instruction->type = type;
+		instruction->symbol[0] = symbols[0];
+		instruction->symbol[1] = symbols[1];
+		instruction->symbol[2] = symbols[2];
+
+		DLInsertLast(InstructionStack, (void *) instruction);
+	} else error_fatal(ERROR_INTERNAL);
+}
+
+resolveIntruction();

@@ -16,6 +16,7 @@
 #define GENERATOR_HEADER
 
 #include "list.h"
+#include "error_handler.h"
 
 typedef enum {
 	/* Frame manipulation & function call instructions */
@@ -113,17 +114,18 @@ typedef enum {
 
 typedef struct sSymbol {
 	SymbolType type;
+	SymbolLocation location;
 	char *key;
 	void *value;
 } *SymbolPtr;
 
 typedef struct sInstruction {
 	InstructionType type;
-	SymbolPtr *symbol[3];
+	SymbolPtr symbol[3];
 } *InstructionPtr;
 
 
-
+SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
 void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[2]);
 
 #endif
