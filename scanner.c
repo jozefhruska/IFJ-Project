@@ -26,7 +26,7 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
-/*
+
 TokenBuffer *stored_tokens = NULL;
 
 void BufferInit(TokenBuffer **buffer){
@@ -66,13 +66,7 @@ void store_token(sToken *token){
 		BufferPush(stored_tokens, token);
 	}
 }
-*/
 
-sToken *stored_token = NULL;
-
-void store_token(sToken *token){
-	stored_token = token;
-}
 
 /*================= END OFDML EDIT ==================*/
 
@@ -221,20 +215,13 @@ sToken *getNextToken()
 	// 	printf("PREVIOUS token state: %d\n", previous->type);
 	// }
 
-	/*
+	
 	if(stored_tokens != NULL){
 		if(stored_tokens->first_element != NULL){
 			return BufferPop(stored_tokens);
 		}
 	}
-	*/
-
-	if(stored_token != NULL){
-		sToken *retValue = stored_token;
-		stored_token = NULL;
-		return retValue;
-	}
-
+	
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));
 

@@ -24,6 +24,8 @@
  *
  */
 
+STable *globalSymTable; // global symbol table
+
 /**
  * @brief Creates new global table
  */
@@ -86,26 +88,26 @@ bool isFunctionDeclared(char *name);
 bool isParamDeclared(char *functionName, char *paramName);
 
 /**
-* @brief Returns pointer to the parameter with the name of the function
-* @param functionName Name of the functoin
-* @param paramName Name of the parameter
-* @return Pointer to BTVatiableData or NULL if not found.
-*/
-BTVariableData *getParam(char *functionName, char *paramName);
-
-/**
-* @brief Returns nth parameter of the function. Can return a private variable instead of parameter.
-* @param functionName Name of the function.
-* @param n Index of the parameter, starts with 0.
-* @return Pointer to BTVariableData or NULL if not found.
-*/
-BTVariableData *getNthParam(char *functionName, unsigned int n);
+ * @brief Returns nth parameter of the function. Can return a private variable instead of parameter.
+ * @param functionName Name of the function.
+ * @param n Index of the parameter, starts with 0.
+ * @pre The function must be declared via addFunction()
+ * @return Pointer to BTVariableData or NULL if not found.
+ */
+char *getNthParam(char *functionName, unsigned int n);
 
 /**
  * @brief Check, if each function in symbol table has been defined.
  * @return true if each function defined, else false
  */
 bool eachFunctionDefined();
+
+/**
+ * @brief Checks if each function in the tree is defined - preorder
+ * @param root Pointer to the root
+ * @return true if each function in tree is defined, else otherwise
+ */
+bool eachFunctionInTreeDefined(BTNodePtr root);
 
 /*
  *

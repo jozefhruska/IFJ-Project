@@ -22,7 +22,6 @@
 #include "list.h"
 
 
-STable *globalSymTable; // global symbol table
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
 
@@ -30,6 +29,7 @@ void initGlobalSymTable() {
     currentFunction = NULL;
 
     // init global symbol table
+    globalSymTable = malloc(sizeof(STable));
     STableInit(globalSymTable);
 }
 
@@ -263,46 +263,14 @@ bool isParamDeclared(char *functionName, char *paramName) {
     return found;
 }
 
-BTVariableData *getParam(char *functionName, char *paramName) {
+char *getNthParam(char *functionName, unsigned int n) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
         return NULL;
     }
 
     // search for the function
-    BTNodePtr func = STSearch(globalSymTable, functionName);
-
-    // function doesn't exist
-    if (func == NULL) {
-        error_fatal(ERROR_SEMANTIC_DEF);
-        return NULL;
-    }
-
-    // search for the parameter in the function
-    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
-
-    if (paramList == NULL) {
-        error_fatal(ERROR_INTERNAL);
-        return NULL;
-    }
-
-    bool found = DLSearchString(paramList, paramName);
-
-    if (found == FALSE) {
-        return NULL;
-    }
-
-    return (BTVariableData *) paramList->Act->data;
-}
-
-BTVariableData *getNthParam(char *functionName, unsigned int n) {
-    if (globalSymTable == NULL) {
-        error_fatal(ERROR_INTERNAL);
-        return NULL;
-    }
-
-    // search for the function
-    BTNodePtr func = STSearch(globalSymTable, functionName);
+    BTNodePtr func = STableSearch(globalSymTable, functionName);
 
     // function doesn't exist
     if (func == NULL) {
@@ -316,7 +284,7 @@ BTVariableData *getNthParam(char *functionName, unsigned int n) {
         return NULL;
     }
 
-    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
+    tDLList *paramList = func->data->params;
 
     // list is ok
     if (paramList == NULL) {
@@ -338,8 +306,8 @@ BTVariableData *getNthParam(char *functionName, unsigned int n) {
     }
 
     // if found
-    if (i == n) {
-        return (BTVariableData *) paramList->Act;
+    if (i == n && paramList->Act != NULL) {
+        return (char *) paramList->Act->data;
     }
 
     return NULL;
@@ -351,20 +319,15 @@ bool eachFunctionDefined() {
         return false;
     }
 
-    return eachFunctionInTreeDefined(globalSymTable);
+    return eachFunctionInTreeDefined(globalSymTable->root);
 }
 
-/**
- * @brief Checks if each function in the tree is defined - preorder
- * @param root Pointer to the root
- * @return true if each function in tree is defined, else otherwise
- */
 bool eachFunctionInTreeDefined(BTNodePtr root) {
     if (root == NULL) {
         return true;
     }
 
-    if (root->type == TYPE_FUNCTION && SEM_DATA_FUNCTION(root)->defined == false) {
+    if (root->type == TYPE_FUNCTION && root->data->defined == false) {
         return false;
     }
 

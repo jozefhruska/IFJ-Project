@@ -12,6 +12,8 @@
  *	May the force be with you.
  */
 
+#include <string.h>
+
 #include "symtable.h"
 
 void BTInit(BTNodePtr *node) {
@@ -20,18 +22,18 @@ void BTInit(BTNodePtr *node) {
 
 BTNodePtr BTSearch(BTNodePtr node, char *key) {
 	if (node != NULL) {
-		if (node->key > key) return BTSearch(node->LPtr, key);
-		else if (node->key < key) return BTSearch(node->RPtr, key);
+		if (strcmp(key, node->key) < 0) return BTSearch(node->LPtr, key);
+		else if (strcmp(key, node->key) > 0) return BTSearch(node->RPtr, key);
 		else return node;
 	} else return NULL;
 }
 
 void BTInsert(BTNodePtr *node, char *key, BTNodeType type, BTFunctionData *data) {
 	if (*node != NULL) {
-		if ((* node)->key > key) {
+		if (strcmp(key, (* node)->key) < 0) {
 			BTInsert(&(* node)->LPtr, key, type, data);
 			return;
-		} else if ((* node)->key < key) {
+		} else if (strcmp(key, (* node)->key) > 0) {
 			BTInsert(&(* node)->RPtr, key, type, data);
 			return;
 		} else (* node)->data = data;
@@ -61,13 +63,13 @@ void ReplaceByRightmost (BTNodePtr PtrReplaced, BTNodePtr *node) {
 
 void BTDelete(BTNodePtr *node, char *key) {
 	if ((* node) != NULL) {
-		if ((* node)->key > key) BTDelete(&((* node)->LPtr), key);
-		else if ((* node)->key < key) BTDelete(&((* node)->RPtr), key);
+		if (strcmp((* node)->key, key) > 0) BTDelete(&((* node)->LPtr), key);
+		else if (strcmp((* node)->key, key) < 0) BTDelete(&((* node)->RPtr), key);
 		else {
 			if (((* node)->LPtr == NULL) && ((* node)->RPtr == NULL)) {
 					free(*node);
 					*node = NULL;
-			} else if (((* node4)->LPtr != NULL) && ((* node)->RPtr == NULL)) {
+			} else if (((* node)->LPtr != NULL) && ((* node)->RPtr == NULL)) {
 					BTNodePtr itemToDelete = *node;
 					*node = (* node)->LPtr;
 					free(itemToDelete);
@@ -98,14 +100,12 @@ void STableInit(STable *table) {
 	BTInit(&(table->root));
 
 	BTFunctionData *functionData;
-	tDLList *params;
 
 	/* Built-in function - inputs() */
 	STableInsert(table, "inputs", TYPE_FUNCTION);
 	functionData = (BTFunctionData *) STableSearch(table, "inputs")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -115,7 +115,6 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "inputi")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -125,7 +124,6 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "inputf")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -135,7 +133,6 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "print")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL; /* TODO: print() function params */
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -143,13 +140,10 @@ void STableInit(STable *table) {
 	/* Built-in function - length(s) */
 	STableInsert(table, "length", TYPE_FUNCTION);
 	functionData = (BTFunctionData *) STableSearch(table, "length")->data;
-	params = malloc(sizeof(tDLList));
 
-	if (functionData != NULL && params != NULL) {
-		DLInitList(params);
-		DLInsertLast(params, "s");
+	if (functionData != NULL) {
+		DLInsertLast(functionData->params, "s");
 
-		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -157,15 +151,12 @@ void STableInit(STable *table) {
 	/* Built-in function - substr(s, i, n) */
 	STableInsert(table, "substr", TYPE_FUNCTION);
 	functionData = (BTFunctionData *) STableSearch(table, "substr")->data;
-	params = malloc(sizeof(tDLList));
 
-	if (functionData != NULL && params != NULL) {
-		DLInitList(params);
-		DLInsertLast(params, "s");
-		DLInsertLast(params, "i");
-		DLInsertLast(params, "n");
+	if (functionData != NULL) {
+		DLInsertLast(functionData->params, "s");
+		DLInsertLast(functionData->params, "i");
+		DLInsertLast(functionData->params, "n");
 
-		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -173,14 +164,11 @@ void STableInit(STable *table) {
 	/* Built-in function - ord(s, i) */
 	STableInsert(table, "ord", TYPE_FUNCTION);
 	functionData = (BTFunctionData *) STableSearch(table, "ord")->data;
-	params = malloc(sizeof(tDLList));
 
-	if (functionData != NULL && params != NULL) {
-		DLInitList(params);
-		DLInsertLast(params, "s");
-		DLInsertLast(params, "i");
+	if (functionData != NULL) {
+		DLInsertLast(functionData->params, "s");
+		DLInsertLast(functionData->params, "i");
 
-		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -188,13 +176,10 @@ void STableInit(STable *table) {
 	/* Built-in function - chr(i) */
 	STableInsert(table, "chr", TYPE_FUNCTION);
 	functionData = (BTFunctionData *) STableSearch(table, "chr")->data;
-	params = malloc(sizeof(tDLList));
 
-	if (functionData != NULL && params != NULL) {
-		DLInitList(params);
-		DLInsertLast(params, "i");
+	if (functionData != NULL) {
+		DLInsertLast(functionData->params, "i");
 
-		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
