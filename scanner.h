@@ -48,6 +48,7 @@ typedef enum {
     DOUBLE_EXP,
     DOUBLE_DOT,
     OPERATOR,
+    BLOCK_COMMENT,
     LINE_COMMENT
 } Tstate;
 

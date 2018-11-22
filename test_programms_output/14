@@ -62,13 +62,6 @@ token value:
 
 state: 13
 ====
-token value: dosomething
-state: 2
-====
-token value: 
-
-state: 13
-====
 token value: end
 state: 7
 ====
