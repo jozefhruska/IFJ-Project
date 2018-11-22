@@ -26,6 +26,7 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 /*================= DML EDIT ==================*/
 
+/*
 TokenBuffer *stored_tokens = NULL;
 
 void BufferInit(TokenBuffer **buffer){
@@ -64,6 +65,13 @@ void store_token(sToken *token){
 	} else {
 		BufferPush(stored_tokens, token);
 	}
+}
+*/
+
+sToken *stored_token = NULL;
+
+void store_token(sToken *token){
+	stored_token = token;
 }
 
 /*================= END OFDML EDIT ==================*/
@@ -190,11 +198,19 @@ char *itoa(int i, char *b)
 FILE *source;
 
 // variable to save previous token
-sToken *previous;
+sToken *previous = NULL;
 
 void setSourceFile(FILE *f)
 {
 	source = f;
+}
+
+void StorePrevious(sToken *token){
+	if(previous != NULL){
+		//TODO: Uvolňovat paměť předchozího tokenu
+	}
+	previous = malloc(sizeof(sToken));
+	*previous = *token;
 }
 
 sToken *getNextToken()
@@ -205,15 +221,23 @@ sToken *getNextToken()
 	// 	printf("PREVIOUS token state: %d\n", previous->type);
 	// }
 
+	/*
 	if(stored_tokens != NULL){
 		if(stored_tokens->first_element != NULL){
 			return BufferPop(stored_tokens);
 		}
 	}
+	*/
+
+	if(stored_token != NULL){
+		sToken *retValue = stored_token;
+		stored_token = NULL;
+		return retValue;
+	}
 
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));
-	
+
 	/*================= DML EDIT ==================*/
 	// void DLCopyLast(storedTokens, token);
 	// // return token;
@@ -259,7 +283,7 @@ sToken *getNextToken()
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			// end of line
@@ -267,7 +291,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			// line comment
@@ -302,7 +326,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_LEFT_BRACKET);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			//delimiter ')'
@@ -310,7 +334,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_RIGHT_BRACKET);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			//delimiter ','
@@ -318,7 +342,7 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_COMMA);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			// error handling
@@ -353,13 +377,13 @@ sToken *getNextToken()
 				if (isFromKeywords(output.str))
 				{
 					tokenChangeBoth(token, &output, T_KEYWORD);
-					previous = token;
+					StorePrevious(token);
 					return token;
 				}
 				else
 				{
 					tokenChangeBoth(token, &output, T_ID);
-					previous = token;
+					StorePrevious(token);
 					return token;
 				}
 			}
@@ -372,7 +396,7 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_ID);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			// char after ? or ! is illegal
@@ -420,7 +444,7 @@ sToken *getNextToken()
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
 				token->data = strtol((char *)token->data, NULL, 10);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			break;
@@ -490,7 +514,7 @@ sToken *getNextToken()
 				double convert;
 				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 				token->data = (void *)&convert;
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 		break;
@@ -523,7 +547,7 @@ sToken *getNextToken()
 					tokenChangeType(token, T_ERR);
 				}
 				ungetc(c, source);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 		break;
@@ -533,7 +557,7 @@ sToken *getNextToken()
 			if (c == '"') // end of string
 			{
 				tokenChangeBoth(token, &output, T_STRING);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			else if (c == '\\') // escape sequence
@@ -632,7 +656,7 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
-					previous = token;
+					StorePrevious(token);
 					return token;
 				}
 				state = OPERATOR;
@@ -645,7 +669,7 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
-					previous = token;
+					//StorePrevious(token);
 					return token;
 				}
 				else
@@ -662,13 +686,13 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
-				previous = token;
+				StorePrevious(token);
 				return token;
 			}
 		break;
