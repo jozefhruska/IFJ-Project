@@ -107,7 +107,9 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "inputs")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
+		DLInitList(params);
+
+		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -117,7 +119,9 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "inputi")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
+		DLInitList(params);
+
+		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -127,7 +131,9 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "inputf")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL;
+		DLInitList(params);
+
+		functionData->params = params;
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
@@ -137,7 +143,9 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "print")->data;
 
 	if (functionData != NULL) {
-		functionData->params = NULL; /* TODO: print() function params */
+		DLInitList(params);
+
+		functionData->params = params; /* TODO: print() function params */
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
 	}
