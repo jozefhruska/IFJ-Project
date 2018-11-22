@@ -242,16 +242,16 @@ bool isParamDeclared(char *functionName, char *paramName) {
     }
 
     // search for the function
-    BTNodePtr func = STSearch(globalSymTable, functionName);
+    BTNodePtr func = STableSearch(globalSymTable, functionName);
 
     // function doesn't exist
-    if (func == NULL) {
+    if (func == NULL || func->type != TYPE_FUNCTION) {
         error_fatal(ERROR_SEMANTIC_DEF);
         return false;
     }
 
     // search for the parameter in the function
-    tDLList *paramList = SEM_DATA_FUNCTION(func)->params;
+    tDLList *paramList = func->data->params;
 
     if (paramList == NULL) {
         error_fatal(ERROR_INTERNAL);

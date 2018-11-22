@@ -77,11 +77,12 @@ bool isFunctionDefined(char *name);
 bool isFunctionDeclared(char *name);
 
 /**
-* @brief Returns true, if the function has a parameter with the name, false otherwise.
-* @param functionName Name of the function
-* @param paramName Name of the variable
-* @return bool
-*/
+ * @brief Returns true, if the function has a parameter with the name, false otherwise.
+ * @param functionName Name of the function
+ * @param paramName Name of the variable
+ * @pre The function must be declared via addFunction()
+ * @return bool
+ */
 bool isParamDeclared(char *functionName, char *paramName);
 
 /**
