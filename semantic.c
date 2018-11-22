@@ -175,20 +175,21 @@ bool isFunctionDefined(char *name) {
     }
 
     // search for the function
-    BTNodePtr func = STSearch(globalSymTable, name);
+    BTNodePtr func = STableSearch(globalSymTable, name);
 
     // the function doesn't exist
     if (func == NULL) {
         error_fatal(ERROR_SEMANTIC_DEF);
-        return;
+        return false;
     }
 
     // if not a function
     if (func->type != TYPE_FUNCTION) {
+        error_fatal(ERROR_SEMANTIC_DEF);
         return false;
     }
 
-    return SEM_DATA_FUNCTION(func)->defined;
+    return func->data->defined;
 }
 
 bool isFunctionDeclared(char *name) {
