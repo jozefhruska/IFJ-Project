@@ -61,6 +61,8 @@ void addFunction(char *name) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
+
+        currentFunction = func;
     } else {
         // the function is not in global sym table
 
@@ -88,6 +90,8 @@ void addFunction(char *name) {
         func->data->params = paramList;
         func->data->defined = false;
         func->data->declared = true;
+
+        currentFunction = func;
     }
 }
 
