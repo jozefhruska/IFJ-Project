@@ -9,6 +9,7 @@ main.c
 sedlacek
 hruska
 demel
+buchta
 build.sh
 CMakeLists.txt
 cmake-build-debug/*
