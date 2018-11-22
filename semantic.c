@@ -208,7 +208,6 @@ bool isFunctionDeclared(char *name) {
 
     // if not a function
     if (func->type != TYPE_FUNCTION) {
-        error_fatal(ERROR_SEMANTIC_DEF);
         return false;
     }
 
@@ -222,7 +221,7 @@ bool isVarDeclared(char *name) {
     }
 
     // search for the variable
-    BTNodePtr variable = STSearch(globalSymTable, name);
+    BTNodePtr variable = STableSearch(globalSymTable, name);
 
     if (variable == NULL) {
         return false;
