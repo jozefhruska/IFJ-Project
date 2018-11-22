@@ -125,11 +125,4 @@ void addVar(char *name);
  */
 bool isVarDeclared(char *name);
 
-/**
- * @brief Returns the global variable, if found, NULL otherwise.
- * @param name Name of the global variable
- * @return
- */
-BTVariableData* getVar(char *name);
-
 #endif //IFJ_PROJECT_SEMANTIC_H

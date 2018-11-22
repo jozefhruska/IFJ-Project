@@ -235,27 +235,6 @@ bool isVarDeclared(char *name) {
     return true;
 }
 
-BTVariableData *getVar(char *name) {
-    if (globalSymTable == NULL) {
-        error_fatal(ERROR_INTERNAL);
-        return NULL;
-    }
-
-    // search for the variable
-    BTNodePtr variable = STSearch(globalSymTable, name);
-
-    if (variable == NULL) {
-        return NULL;
-    }
-
-    // if not a variable
-    if (variable->type != TYPE_VARIABLE) {
-        return NULL;
-    }
-
-    return SEM_DATA_VARIABLE(variable);
-}
-
 bool isParamDeclared(char *functionName, char *paramName) {
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
