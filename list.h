@@ -56,4 +56,12 @@ void DLSucc (tDLList *);
 void DLPred (tDLList *);
 int DLActive (tDLList *);
 
+/**
+ * @brief Searchs for the string in the list, if finds, returns true and active is the found one. Otherwise returns false.
+ * @param List
+ * @param string Value of searched string
+ * @return bool Found
+ */
+bool DLSearchString(tDLList *List, char *string);
+
 #endif

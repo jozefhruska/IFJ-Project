@@ -103,4 +103,7 @@ void store_token(sToken *token);
 void BufferInit(TokenBuffer**);
 void BufferPush(TokenBuffer*, sToken*);
 sToken *BufferPop(TokenBuffer*);
+
+void StorePrevious(sToken*);
+
 #endif
