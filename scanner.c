@@ -317,54 +317,59 @@ sToken *getNextToken()
 				state = STRING;
 			}
 			// possible block comment
-			else if (c == '=')
-			{
-				strAddChar(&stack, c);
-				buff = fgetc(source);
-				if (!islower(buff))
-				{
-					ungetc(buff, source);
-					strClear(&stack);
-					strAddChar(&output, c);
-					state = OPERATOR;
-				}
-				else if (islower(buff))
-				{
-					count = 1;
-					strAddChar(&stack, buff);
-					while (islower(buff))
-					{
-						buff = fgetc(source);
-						count++;
-						if(islower(buff))
-						{
-							strAddChar(&stack, buff);
-						}
-					} 
+			// else if (c == '=')
+			// {
+			// 	strAddChar(&stack, c);
+			// 	buff = fgetc(source);
+			// 	if (!islower(buff))
+			// 	{
+			// 		ungetc(buff, source);
+			// 		strClear(&stack);
+			// 		strAddChar(&output, c);
+			// 		state = OPERATOR;
+			// 	}
+			// 	else if (islower(buff))
+			// 	{
+			// 		count = 1;
+			// 		strAddChar(&stack, buff);
+			// 		while (islower(buff))
+			// 		{
+			// 			buff = fgetc(source);
+			// 			count++;
+			// 			if(islower(buff))
+			// 			{
+			// 				strAddChar(&stack, buff);
+			// 			}
+			// 		} 
 
-					if (!strcmp(stack.str, "=begin"))
-					{
-						state = BLOCK_COMMENT;
-					}
-					else if (!strcmp(stack.str, "=end"))
-					{
-						tokenChangeType(token, T_ERR);
-						return token;
-					}
-					else
-					{
-						for (int i = count; i>=1; i--)
-						{
-							ungetc(stack.str[i], source);
-						}
+			// 		// if(previous == NULL)
+			// 		// {
+			// 			if (!strcmp(stack.str, "=begin"))
+			// 			{
+			// 				state = BLOCK_COMMENT;
+			// 			}
+			// 			else if (!strcmp(stack.str, "=end"))
+			// 			{
+			// 				tokenChangeType(token, T_ERR);
+			// 				return token;
+			// 			}
+			// 		// }
+			// 		else
+			// 		{
+			// 			// printf("%s\n", stack.str);
+			// 			for (int i = count; i>=1; i--)
+			// 			{
+			// 				ungetc(stack.str[i], source);
+			// 				// printf("%c\n", stack.str[i]);
+			// 			}
 
-						strClear(&stack);
-						strAddChar(&output, '=');
-						tokenChangeBoth(token, &output, T_OPERATOR);
-						return token;
-					}
-				}
-			}
+			// 			strClear(&stack);
+			// 			strAddChar(&output, '=');
+			// 			tokenChangeBoth(token, &output, T_OPERATOR);
+			// 			return token;
+			// 		}
+			// 	}
+			// }
 			// operator
 			else if (isOperator(c))
 			{
@@ -748,51 +753,51 @@ sToken *getNextToken()
 		break;
 
 		// ---------------------------------------- BLOCK_COMMENT CASE ----------------------------------------
-		case BLOCK_COMMENT:
-			if (c == '=')
-			{
-				strClear(&stack);
-				strAddChar(&stack, c);
-				buff = fgetc(source);
-				if (!islower(buff))
-				{
-					state = BLOCK_COMMENT;
-				}
-				else if (islower(buff))
-				{
-					count = 1;
-					strAddChar(&stack, buff);
-					while (islower(buff))
-					{
-						buff = fgetc(source);
-						count++;
-						if(islower(buff))
-						{
-							strAddChar(&stack, buff);
-						}
-					} 
+		// case BLOCK_COMMENT:
+		// 	if (c == '=')
+		// 	{
+		// 		strClear(&stack);
+		// 		strAddChar(&stack, c);
+		// 		buff = fgetc(source);
+		// 		if (!islower(buff))
+		// 		{
+		// 			state = BLOCK_COMMENT;
+		// 		}
+		// 		else if (islower(buff))
+		// 		{
+		// 			count = 1;
+		// 			strAddChar(&stack, buff);
+		// 			while (islower(buff))
+		// 			{
+		// 				buff = fgetc(source);
+		// 				count++;
+		// 				if(islower(buff))
+		// 				{
+		// 					strAddChar(&stack, buff);
+		// 				}
+		// 			} 
 
-					if (!strcmp(stack.str, "=end"))
-					{
-						state = INIT;
-					}
-					else
-					{
-						state = BLOCK_COMMENT;
-					}
-				}
-			}
-			else if (c != '=' && c != EOF)
-			{
-				state = BLOCK_COMMENT;
-			}
-			else if (c == EOF)
-			{
-				tokenChangeType(token, T_EOF);
-				previous = token;
-				return token;
-			}
-		break;
+		// 			if (!strcmp(stack.str, "=end"))
+		// 			{
+		// 				state = INIT;
+		// 			}
+		// 			else
+		// 			{
+		// 				state = BLOCK_COMMENT;
+		// 			}
+		// 		}
+		// 	}
+		// 	else if (c != '=' && c != EOF)
+		// 	{
+		// 		state = BLOCK_COMMENT;
+		// 	}
+		// 	else if (c == EOF)
+		// 	{
+		// 		tokenChangeType(token, T_EOF);
+		// 		previous = token;
+		// 		return token;
+		// 	}
+		// break;
 		}
 	}
 	tokenChangeType(token, T_ERR);
