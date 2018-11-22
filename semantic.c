@@ -199,7 +199,7 @@ bool isFunctionDeclared(char *name) {
     }
 
     // search for the function
-    BTNodePtr func = STSearch(globalSymTable, name);
+    BTNodePtr func = STableSearch(globalSymTable, name);
 
     // the function doesn't exist
     if (func == NULL) {
@@ -208,6 +208,7 @@ bool isFunctionDeclared(char *name) {
 
     // if not a function
     if (func->type != TYPE_FUNCTION) {
+        error_fatal(ERROR_SEMANTIC_DEF);
         return false;
     }
 
