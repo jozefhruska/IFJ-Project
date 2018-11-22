@@ -24,6 +24,8 @@
  *
  */
 
+STable *globalSymTable; // global symbol table
+
 /**
  * @brief Creates new global table
  */
@@ -99,6 +101,13 @@ char *getNthParam(char *functionName, unsigned int n);
  * @return true if each function defined, else false
  */
 bool eachFunctionDefined();
+
+/**
+ * @brief Checks if each function in the tree is defined - preorder
+ * @param root Pointer to the root
+ * @return true if each function in tree is defined, else otherwise
+ */
+bool eachFunctionInTreeDefined(BTNodePtr root);
 
 /*
  *

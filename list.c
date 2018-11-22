@@ -266,7 +266,7 @@ bool DLSearchString(tDLList *List, char *string) {
     // for each item in the list
     while (List->Act != List->Last || (List->Act == List->Last && List->Act != NULL) ) {
         // if the active node is the wanted one
-        if ((char *) strcmp(List->Act->data, string) == 0) {
+        if (strcmp((char *) List->Act->data, string) == 0) {
             return true;
         }
 

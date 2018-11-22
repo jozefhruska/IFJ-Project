@@ -22,7 +22,6 @@
 #include "list.h"
 
 
-STable *globalSymTable; // global symbol table
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
 
@@ -30,6 +29,7 @@ void initGlobalSymTable() {
     currentFunction = NULL;
 
     // init global symbol table
+    globalSymTable = malloc(sizeof(STable));
     STableInit(globalSymTable);
 }
 
@@ -319,14 +319,9 @@ bool eachFunctionDefined() {
         return false;
     }
 
-    return eachFunctionInTreeDefined(globalSymTable);
+    return eachFunctionInTreeDefined(globalSymTable->root);
 }
 
-/**
- * @brief Checks if each function in the tree is defined - preorder
- * @param root Pointer to the root
- * @return true if each function in tree is defined, else otherwise
- */
 bool eachFunctionInTreeDefined(BTNodePtr root) {
     if (root == NULL) {
         return true;
