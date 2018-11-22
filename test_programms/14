@@ -1,6 +1,7 @@
 def secti (a, b)
     a = b
     if(a == b) then
+        volam_nejakou_funkci
     end
 end
 if(a > b) then
