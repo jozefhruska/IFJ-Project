@@ -332,7 +332,7 @@ bool eachFunctionInTreeDefined(BTNodePtr root) {
         return true;
     }
 
-    if (root->type == TYPE_FUNCTION && SEM_DATA_FUNCTION(root)->defined == false) {
+    if (root->type == TYPE_FUNCTION && root->data->defined == false) {
         return false;
     }
 
