@@ -21,15 +21,6 @@
 #include "symtable.h"
 #include "list.h"
 
-/**
- * Macro for casting data attribute from function symtable item
- */
-#define SEM_DATA_FUNCTION(tabItem) ((BTFunctionData *)(tabItem->data))
-
-/**
- * Macro for casting data attribute from variable symtable item
- */
-#define SEM_DATA_VARIABLE(tabItem) ((BTVariableData *)(tabItem->data))
 
 STable *globalSymTable; // global symbol table
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
@@ -48,30 +39,33 @@ void addFunction(char *name) {
         return;
     }
 
-    if (currentFunction == NULL) {
+    if (currentFunction != NULL) {
         // current function was not finished!
         // can't define function inside another function
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
-    currentFunction = STSearch(globalSymTable, name);
+    BTNodePtr func = STableSearch(globalSymTable, name);
 
     // is the function in the global sym table?
-    if (currentFunction != NULL) {
+    if (func != NULL) {
         // the symbol is declared, but is not a function
-        if (currentFunction->type != TYPE_FUNCTION) {
+        if (func->type != TYPE_FUNCTION) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
 
         // the function is defined yet
-        if (SEM_DATA_FUNCTION(currentFunction)->defined) {
+        if (func->data->defined) {
             error_fatal(ERROR_SEMANTIC_DEF);
             return;
         }
     } else {
         // the function is not in global sym table
+
+        // add function into global table
+        STableInsert(globalSymTable, name, TYPE_FUNCTION);
 
         // create list empty list of parameters
         tDLList *paramList = malloc(sizeof(tDLList));
@@ -82,9 +76,18 @@ void addFunction(char *name) {
 
         DLInitList(paramList);
 
-        // add function into global table
-        STableInsertFunction(globalSymTable, name,
-                             paramList); // TODO: set declared true, defined false, remove variable type
+        // add params and default values
+        func = STableSearch(globalSymTable, name);
+
+        // can't insert into global sym table
+        if (func == NULL) {
+            error_fatal(ERROR_INTERNAL);
+            return;
+        }
+
+        func->data->params = paramList;
+        func->data->defined = false;
+        func->data->declared = true;
     }
 }
 
