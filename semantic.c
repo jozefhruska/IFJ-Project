@@ -306,8 +306,8 @@ char *getNthParam(char *functionName, unsigned int n) {
     }
 
     // if found
-    if (i == n) {
-        return (char *) paramList->Act;
+    if (i == n && paramList->Act != NULL) {
+        return (char *) paramList->Act->data;
     }
 
     return NULL;
