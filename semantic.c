@@ -118,14 +118,14 @@ void addVar(char *name) {
         return;
     }
 
-    // if in a function, add it as a parameter
+    // if in a function, can't add global variable
     if (currentFunction != NULL) {
-        addParam(name);
+        error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
 
     // in global
-    STableInsertVariable(globalSymTable, name);
+    STableInsert(globalSymTable, name, TYPE_VARIABLE);
 }
 
 void endFunction() {
