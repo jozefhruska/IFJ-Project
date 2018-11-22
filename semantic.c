@@ -151,7 +151,7 @@ void functionDefinition(char *name) {
     }
 
     // search for the function
-    BTNodePtr func = STSearch(globalSymTable, name);
+    BTNodePtr func = STableSearch(globalSymTable, name);
 
     // the function doesn't exist
     if (func == NULL) {
@@ -165,7 +165,7 @@ void functionDefinition(char *name) {
         return;
     }
 
-    SEM_DATA_FUNCTION(func)->defined = true;
+    func->data->defined = true;
 }
 
 bool isFunctionDefined(char *name) {
