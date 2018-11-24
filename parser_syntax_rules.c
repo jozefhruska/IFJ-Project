@@ -98,9 +98,26 @@ int parser_parse_body(){
         parser_parse_loop();
         return parser_parse_body();
     } else if(cmp_token_type(token, T_ID)){
-        //TODO: Tady se podívat, jestli další token je =
-        store_token(token);
-        parser_parse_assign();
+
+        sToken *next_token = getNextToken();
+
+        if(cmp_token(next_token, T_OPERATOR, "=")){
+            store_token(token);
+            store_token(next_token);
+            parser_parse_assign();
+        } else {
+            /* 
+                TODO: Zeptat se sémantiky, jestli je další identifikátor funkce. Pokud ano,
+                tak zavolám parsování funcion_call. Pokud ne, tak parsuju expression.
+                Pokud se v expression vyskytne nějaká funkce, tak je to error!
+            */
+            store_token(token);
+            store_token(next_token);
+            parser_parse_func_call();
+            token = getNextToken();
+            if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
+        }
+
         return parser_parse_body();
     } else {
         /* <body> -> e */
@@ -174,7 +191,6 @@ int parser_parse_assign(){
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token(token, T_OPERATOR, "=")) error_fatal(ERROR_SYNTACTIC);
-
     /* 
         TODO: Zeptat se sémantiky, jestli je další identifikátor funkce. Pokud ano,
         tak zavolám parsování funcion_call. Pokud ne, tak parsuju expression.

@@ -45,5 +45,8 @@ void error_fatal(int errorCode) {
 			break;
 	}
 	/* End process with given error code */
-	exit(errorCode);
+
+    #ifndef ERROR_NOT_EXIT
+	    exit(errorCode);
+    #endif
 }
