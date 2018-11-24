@@ -23,11 +23,71 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 		symbol->key = key;
 		symbol->value = value;
 
+		//return concateSymbol(symbol); // GETTING READY FOR STRING CONVERSION (example -> "int@42")
 		return symbol;
 	} else {
 		error_fatal(ERROR_INTERNAL);
 		return NULL;
 	}
+}
+
+// concatenate into one string variables/constants and their values
+char *concateSymbol(SymbolPtr symbol) {
+	// variables
+	char *location;
+
+	if (symbol->location == SL_GF) {
+		location = "GF";
+	} else if (symbol->location == SL_LF) {
+		location = "LF";
+	} else if (symbol->location == SL_TF) {
+		location = "TF";
+	} 
+	// constants
+	else {
+		char *type;
+
+		if (symbol->type == ST_INTEGER) {
+			type = "int";
+		} else if (symbol->type == ST_FLOAT) {
+			type = "float";
+		} else if (symbol->type == ST_STRING) {
+			type = "string";
+		} else {
+			error_fatal(ERROR_INTERNAL);
+			return NULL;
+		}
+
+		if (symbol->value != NULL) {
+			return stringConcate(type, (char *)symbol->value, "@");
+		} else {
+			error_fatal(ERROR_INTERNAL);
+			return NULL;
+		}
+	}
+
+	if (symbol->value != NULL) {
+		return stringConcate(location, (char *)symbol->value, "@");
+	} else {
+		error_fatal(ERROR_INTERNAL);
+		return NULL;
+	}
+}
+
+// same preparation for every generating of function
+void functionStart() {
+	// LABEL $foo
+	// PUSHFRAME
+
+	
+}
+
+// same ending for every generating of function
+void functionEnd() {
+	// POPFRAME
+	// RETURN
+
+
 }
 
 void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
@@ -48,4 +108,4 @@ void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPt
 	} else error_fatal(ERROR_INTERNAL);
 }
 
-resolveIntruction();
+int resolveIntruction();

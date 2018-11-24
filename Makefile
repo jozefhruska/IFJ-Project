@@ -10,8 +10,11 @@ hruska: list.c list.h symtable.c symtable.h error_handler.c error_handler.h main
 sedlacek: main.c
 	$(CC) $(CFLAGS) scanner.c token.c list.c main.c -o sedlacek
 
+sedlacek_gen: main.c
+	$(CC) $(CFLAGS) list.c generator.c generator_str.c error_handler.c main.c -o sedlacek_gen
+
 buchta: semantic.c error_handler.c list.c symtable.c tests/semantic.c
 	$(CC) $(CFLAGS) tests/semantic.c semantic.c error_handler.c list.c symtable.c -o buchta -DERROR_NOT_EXIT
 
 clean:
-	rm demel sedlacek hruska
+	rm demel sedlacek hruska sedlacek_gen
