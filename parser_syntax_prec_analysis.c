@@ -2,7 +2,22 @@
 #include "scanner.h"
 #include "parser.h"
 
+char __GLOBAL_PREC_TABLE[7][7] = {
+    {'>', '<', '>', '<', '>', '<', '>'},
+    {'>', '>', '>', '<', '>', '<', '>'},
+    {'<', '<', 'X', '<', '>', '<', '>'},
+    {'<', '<', '<', '<', '=', '>', 'X'},
+    {'>', '>', '>', 'X', '>', 'X', '>'},
+    {'>', '>', '>', 'X', '>', 'X', '>'},
+    {'<', '<', '<', '<', 'X', '<', 'X'}
+};
+
 int parser_parse_expression(){
+    
+    return 0;
+}
+
+int _parser_parse_expression(){
     sToken *token;
     do{
         token = getNextToken();
