@@ -243,7 +243,7 @@ sToken *getNextToken()
 			if (isspace(c) && c != '\n')
 			{
 				strAddChar(&stack, 'x');
-				tokenChangeBoth(previous, &stack, SPACE);
+				tokenChangeBoth(previous, &stack, T_SPACE);
 				state = INIT;
 			}
 			else if (c == EOF)
@@ -320,7 +320,6 @@ sToken *getNextToken()
 						if (!strcmp(stack.str, "=begin"))
 						{
 							state = BLOCK_COMMENT;
-							printf("Jdu do BLOCK_COMMENT\n");
 						}
 						else 
 						{
@@ -476,7 +475,7 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = strtol((char *)token->data, NULL, 10);
+				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				StorePrevious(token);
 				return token;
 			}
@@ -768,11 +767,9 @@ sToken *getNextToken()
 								strAddChar(&stack, buff);
 							}
 						}
-						printf("inside B_C\n");
 
 						if (!strcmp(stack.str, "=end"))
 						{
-							printf("inside condition B_C\n");
 							while (buff != '\n' && buff != EOF)
 							{
 								buff = fgetc(source);

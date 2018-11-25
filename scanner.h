@@ -38,8 +38,6 @@ typedef enum {
     INIT,
     ID,
     ID_FUNC,
-    SPACE,
-    START,
     STRING,
     STRING_ESCAPE,
     STRING_HEXA,
@@ -72,7 +70,8 @@ typedef enum {
     T_LEFT_BRACKET,
     T_RIGHT_BRACKET,
     T_COMMA,
-    T_EOL
+    T_EOL,
+    T_SPACE
 
 } Ttoken;
 
