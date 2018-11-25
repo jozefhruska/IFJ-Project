@@ -28,6 +28,8 @@ static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", 
 
 
 TokenBuffer *stored_tokens = NULL;
+// int line = 0;
+// int character = 0;
 
 void BufferInit(TokenBuffer **buffer){
 	(*buffer)->first_element = NULL;
@@ -207,8 +209,8 @@ void StorePrevious(sToken *token){
 	*previous = *token;
 }
 
-sToken *getNextToken()
 // main function of lexical analysator
+sToken *getNextToken()
 {
 	if(stored_tokens != NULL){
 		if(stored_tokens->first_element != NULL){
@@ -225,6 +227,17 @@ sToken *getNextToken()
 	int count;
   	int integer;
 
+	// counters to see where error is beninging
+	// if (line == NULL) {
+	// 	line = (int *)malloc(sizeof(int));
+	// 	line = 0;
+	// }
+
+	// if (character == NULL) {
+	// 	character = (int *)malloc(sizeof(int));
+	// 	character = 0;
+	// }
+
 	string output;
 	string stack;
 	strInit(&stack);
@@ -234,7 +247,8 @@ sToken *getNextToken()
 
 	while ((c = fgetc(source)))
 	{
-
+		// character++;
+		// printf("number? %d\n", character);
 		switch (state)
 		{
 		// ---------------------------------------- INIT CASE ----------------------------------------
