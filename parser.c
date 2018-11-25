@@ -5,21 +5,9 @@
 #include "error_handler.h"
 
 int parse(FILE *source){
-	/*
-        int result = parser_parse_prog();
-        return result;
-    */
 
 	setSourceFile(source);
-
-	/*
-    do{
-        sToken *myToken = getNextToken();
-        if(myToken->type == 1 || myToken->type == 0 || myToken->type == -1) return 0;
-	    printf("Token: %d, %s\n", myToken->type, (char*)myToken->data);
-    } while(1);
-    */
-    
+	
 	int result = parser_parse_prog();
     return result;
 }
@@ -34,4 +22,15 @@ int cmp_token(sToken* token, Ttoken token_type, char *token_data){
 
 void debug_print_token(sToken *token){
     printf("Token: %s (type = %d)\n", (char*)token->data, token->type);
+}
+
+void debug_print_PAStack(sPA_Stack *stack){
+    if(stack->firstItem == NULL) return;
+    sPA_Stack_Item *current = stack->firstItem;
+    printf("===== TOP STACK =====\n");
+    while(current != NULL){
+        printf("%s (TYPE = %d, TOKEN_ID = %d)\n", current->token_attr, current->type, current->token_type);
+        current = current->next;
+    }
+    printf("===== BOT STACK =====\n");
 }
