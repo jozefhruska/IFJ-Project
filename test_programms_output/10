@@ -1,0 +1,14 @@
+====
+token value: prom_a
+state: 2
+====
+token value: =
+state: 8
+====
+token value: volam_funkci
+state: 2
+====
+token value: 
+
+state: 13
+ending state: 0

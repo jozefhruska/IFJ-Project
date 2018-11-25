@@ -1,0 +1,171 @@
+====
+token value: def
+state: 7
+====
+token value: secti
+state: 2
+====
+token value: (
+state: 10
+====
+token value: a
+state: 2
+====
+token value: ,
+state: 12
+====
+token value: b
+state: 2
+====
+token value: )
+state: 11
+====
+token value: 
+
+state: 13
+====
+token value: a
+state: 2
+====
+token value: =
+state: 8
+====
+token value: b
+state: 2
+====
+token value: 
+
+state: 13
+====
+token value: if
+state: 7
+====
+token value: (
+state: 10
+====
+token value: a
+state: 2
+====
+token value: ==
+state: 8
+====
+token value: b
+state: 2
+====
+token value: )
+state: 11
+====
+token value: then
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: volam_nejakou_funkci
+state: 2
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: if
+state: 7
+====
+token value: (
+state: 10
+====
+token value: a
+state: 2
+====
+token value: >
+state: 8
+====
+token value: b
+state: 2
+====
+token value: )
+state: 11
+====
+token value: then
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: while
+state: 7
+====
+token value: (
+state: 10
+====
+token value: true
+state: 2
+====
+token value: )
+state: 11
+====
+token value: do
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: a
+state: 2
+====
+token value: =
+state: 8
+====
+token value: secti
+state: 2
+====
+token value: (
+state: 10
+====
+token value: a
+state: 2
+====
+token value: ,
+state: 12
+====
+token value: b
+state: 2
+====
+token value: )
+state: 11
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+ending state: 0

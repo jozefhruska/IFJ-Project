@@ -4,7 +4,6 @@
 #include "token.h"
 #include "list.h"
 #include <stdio.h>
-#include "list.h"
 
 //lengths
 #define KEYWORDS_LENGTH 9
@@ -47,6 +46,7 @@ typedef enum {
     DOUBLE_EXP,
     DOUBLE_DOT,
     OPERATOR,
+    BLOCK_COMMENT,
     LINE_COMMENT
 } Tstate;
 
@@ -70,7 +70,8 @@ typedef enum {
     T_LEFT_BRACKET,
     T_RIGHT_BRACKET,
     T_COMMA,
-    T_EOL
+    T_EOL,
+    T_SPACE
 
 } Ttoken;
 
