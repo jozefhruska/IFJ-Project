@@ -99,8 +99,6 @@ int parser_parse_expression(){
                 incomming = ConvertTokenToStackItem(getNextToken());
             break;
             case '<':
-                //PAPush(stack, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
-                //PAInsertAfter(top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
                 PAInsertBefore(stack, top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
                 PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
                 incomming = ConvertTokenToStackItem(getNextToken());
@@ -150,11 +148,12 @@ int ResolveExpression(sPA_Stack *inputStack){
         current_item = PAPop(stack);
         if(current_item != NULL) error_fatal(ERROR_SYNTACTIC);
     } else if(current_item->token_type == _PREC_L_BRACKET){
-
+        
     } else if(current_item->type == _NONTERMINAL){
         current_item = PAPop(stack);
         if(!(current_item->type == _TERMINAL && current_item->token_type == _PREC_PLUS_MINUS) &&
-            !(current_item->type == _TERMINAL && current_item->token_type == _PREC_MULT_SUBS)) error_fatal(ERROR_SYNTACTIC);
+            !(current_item->type == _TERMINAL && current_item->token_type == _PREC_MULT_SUBS) &&
+            !(current_item->type == _TERMINAL && current_item->token_type == _PREC_RELATION)) error_fatal(ERROR_SYNTACTIC);
         current_item = PAPop(stack);
         if(current_item->type != _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
     }
