@@ -1,4 +1,7 @@
 if (vyraz) then
     if (neco_dalsiho == blbost) then
+=begin
+    end
+=end
     end
 end

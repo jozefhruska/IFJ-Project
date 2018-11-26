@@ -2,24 +2,13 @@
 #include <string.h>
 #include "parser.h"
 #include "parser_syntax_rules.h"
+#include "parser_syntax_prec_analysis.h"
 #include "error_handler.h"
 
 int parse(FILE *source){
-	/*
-        int result = parser_parse_prog();
-        return result;
-    */
 
 	setSourceFile(source);
-
-	/*
-    do{
-        sToken *myToken = getNextToken();
-        if(myToken->type == 1 || myToken->type == 0 || myToken->type == -1) return 0;
-	    printf("Token: %d, %s\n", myToken->type, (char*)myToken->data);
-    } while(1);
-    */
-    
+	
 	int result = parser_parse_prog();
     return result;
 }
@@ -34,4 +23,23 @@ int cmp_token(sToken* token, Ttoken token_type, char *token_data){
 
 void debug_print_token(sToken *token){
     printf("Token: %s (type = %d)\n", (char*)token->data, token->type);
+}
+
+void debug_print_PAStack(sPA_Stack *stack){
+    if(stack->firstItem == NULL) return;
+    sPA_Stack_Item *current = stack->firstItem;
+    printf("===== TOP STACK =====\n");
+    while(current != NULL){
+        if(current->type == _NONTERMINAL){
+            printf("E (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", current->token_attr, current->type, current->token_type, current->lex_token_type);
+        } else if(current->lex_token_type == T_INT){
+            printf("%ld (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (long*)current->token_attr, current->type, current->token_type, current->lex_token_type);
+        } else if(current->lex_token_type == T_DOUBLE){
+            printf("%f (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (double*)current->token_attr, current->type, current->token_type, current->lex_token_type);
+        } else {
+            printf("%s (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (char*)current->token_attr, current->type, current->token_type, current->lex_token_type);
+        }
+        current = current->next;
+    }
+    printf("===== BOT STACK =====\n");
 }

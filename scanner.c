@@ -21,13 +21,15 @@
 
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
-static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'};					   // single operator
-static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   // single operator
+static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
 
 /*================= DML EDIT ==================*/
 
 
 TokenBuffer *stored_tokens = NULL;
+// int line = 0;
+// int character = 0;
 
 void BufferInit(TokenBuffer **buffer){
 	(*buffer)->first_element = NULL;
@@ -207,15 +209,9 @@ void StorePrevious(sToken *token){
 	*previous = *token;
 }
 
-sToken *getNextToken()
 // main function of lexical analysator
+sToken *getNextToken()
 {
-	// if (previous)
-	// {
-	// 	printf("PREVIOUS token state: %d\n", previous->type);
-	// }
-
-	
 	if(stored_tokens != NULL){
 		if(stored_tokens->first_element != NULL){
 			return BufferPop(stored_tokens);
@@ -225,26 +221,22 @@ sToken *getNextToken()
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));
 
-	/*================= DML EDIT ==================*/
-	// void DLCopyLast(storedTokens, token);
-	// // return token;
-	// if (token != NULL)
-	// {
-	// 	printf("stored token: %s\n", (char *)token->data);
-	// }
-	
-
-	// if(token != NULL){
-	// 	void DLDeleteLast(storedTokens);
-	// 	return token;
-	// }
-	/*================= END OFDML EDIT ==================*/
-
 	Tstate state = INIT;
 	char c;
 	char buff;
 	int count;
   	int integer;
+
+	// counters to see where error is beninging
+	// if (line == NULL) {
+	// 	line = (int *)malloc(sizeof(int));
+	// 	line = 0;
+	// }
+
+	// if (character == NULL) {
+	// 	character = (int *)malloc(sizeof(int));
+	// 	character = 0;
+	// }
 
 	string output;
 	string stack;
@@ -255,7 +247,8 @@ sToken *getNextToken()
 
 	while ((c = fgetc(source)))
 	{
-
+		// character++;
+		// printf("number? %d\n", character);
 		switch (state)
 		{
 		// ---------------------------------------- INIT CASE ----------------------------------------
@@ -263,8 +256,8 @@ sToken *getNextToken()
 			// white space
 			if (isspace(c) && c != '\n')
 			{
-				strAddChar(&stack, ' ');
-				tokenChangeBoth(previous, &output, SPACE);
+				strAddChar(&stack, 'x');
+				tokenChangeBoth(previous, &stack, T_SPACE);
 				state = INIT;
 			}
 			else if (c == EOF)
@@ -304,59 +297,69 @@ sToken *getNextToken()
 				state = STRING;
 			}
 			// possible block comment
-			// else if (c == '=')
-			// {
-			// 	strAddChar(&stack, c);
-			// 	buff = fgetc(source);
-			// 	if (!islower(buff))
-			// 	{
-			// 		ungetc(buff, source);
-			// 		strClear(&stack);
-			// 		strAddChar(&output, c);
-			// 		state = OPERATOR;
-			// 	}
-			// 	else if (islower(buff))
-			// 	{
-			// 		count = 1;
-			// 		strAddChar(&stack, buff);
-			// 		while (islower(buff))
-			// 		{
-			// 			buff = fgetc(source);
-			// 			count++;
-			// 			if(islower(buff))
-			// 			{
-			// 				strAddChar(&stack, buff);
-			// 			}
-			// 		} 
+			else if (c == '=')
+			{
+				strClear(&stack);
+				strClear(&output);
 
-			// 		// if(previous == NULL)
-			// 		// {
-			// 			if (!strcmp(stack.str, "=begin"))
-			// 			{
-			// 				state = BLOCK_COMMENT;
-			// 			}
-			// 			else if (!strcmp(stack.str, "=end"))
-			// 			{
-			// 				tokenChangeType(token, T_ERR);
-			// 				return token;
-			// 			}
-			// 		// }
-			// 		else
-			// 		{
-			// 			// printf("%s\n", stack.str);
-			// 			for (int i = count; i>=1; i--)
-			// 			{
-			// 				ungetc(stack.str[i], source);
-			// 				// printf("%c\n", stack.str[i]);
-			// 			}
+				strAddChar(&stack, c);
+				buff = fgetc(source);
+				if (!islower(buff))
+				{
+					ungetc(buff, source);
+					strClear(&stack);
+					strAddChar(&output, c);
+					state = OPERATOR;
+				}
+				else if (islower(buff))
+				{
+					count = 1;
+					strAddChar(&stack, buff);
+					while (islower(buff))
+					{
+						buff = fgetc(source);
+						count++;
+						if(islower(buff))
+						{
+							strAddChar(&stack, buff);
+						}
+						else
+						{
+							ungetc(buff, source);
+						}
+					} 
 
-			// 			strClear(&stack);
-			// 			strAddChar(&output, '=');
-			// 			tokenChangeBoth(token, &output, T_OPERATOR);
-			// 			return token;
-			// 		}
-			// 	}
-			// }
+					if(previous == NULL || previous->type == T_EOL)
+					{
+						if (!strcmp(stack.str, "=begin"))
+						{
+							state = BLOCK_COMMENT;
+						}
+						else 
+						{
+							for (int i = count-1; i>=1; i--)
+							{
+								ungetc(stack.str[i], source);
+							}
+							strClear(&stack);
+							strAddChar(&output, '=');
+							tokenChangeBoth(token, &output, T_OPERATOR);
+							return token;
+						}
+					}
+					else
+					{
+						for (int i = count-1; i>=1; i--)
+						{
+							ungetc(stack.str[i], source);
+						}
+						strClear(&stack);
+						strAddChar(&output, '=');
+						tokenChangeBoth(token, &output, T_OPERATOR);
+						return token;
+					}
+				}
+			}
 			// operator
 			else if (isOperator(c))
 			{
@@ -398,6 +401,7 @@ sToken *getNextToken()
 
 		// ---------------------------------------- ID CASE ----------------------------------------
 		case ID:
+
 			// komentar
 			if (isalnum(c) || c == '_')
 			{
@@ -485,7 +489,7 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = strtol((char *)token->data, NULL, 10);
+				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				StorePrevious(token);
 				return token;
 			}
@@ -711,7 +715,6 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
-					//StorePrevious(token);
 					return token;
 				}
 				else
@@ -740,51 +743,63 @@ sToken *getNextToken()
 		break;
 
 		// ---------------------------------------- BLOCK_COMMENT CASE ----------------------------------------
-		// case BLOCK_COMMENT:
-		// 	if (c == '=')
-		// 	{
-		// 		strClear(&stack);
-		// 		strAddChar(&stack, c);
-		// 		buff = fgetc(source);
-		// 		if (!islower(buff))
-		// 		{
-		// 			state = BLOCK_COMMENT;
-		// 		}
-		// 		else if (islower(buff))
-		// 		{
-		// 			count = 1;
-		// 			strAddChar(&stack, buff);
-		// 			while (islower(buff))
-		// 			{
-		// 				buff = fgetc(source);
-		// 				count++;
-		// 				if(islower(buff))
-		// 				{
-		// 					strAddChar(&stack, buff);
-		// 				}
-		// 			} 
+		case BLOCK_COMMENT:
+			if (c == EOF)
+			{
+				tokenChangeType(token, T_ERR);
+				previous = token;
+				return token;
+			}
+			else if (c != '\n')
+			{
+				state = BLOCK_COMMENT;
+			}
+			else if (c == '\n')
+			{
+				c = fgetc(source);
 
-		// 			if (!strcmp(stack.str, "=end"))
-		// 			{
-		// 				state = INIT;
-		// 			}
-		// 			else
-		// 			{
-		// 				state = BLOCK_COMMENT;
-		// 			}
-		// 		}
-		// 	}
-		// 	else if (c != '=' && c != EOF)
-		// 	{
-		// 		state = BLOCK_COMMENT;
-		// 	}
-		// 	else if (c == EOF)
-		// 	{
-		// 		tokenChangeType(token, T_EOF);
-		// 		previous = token;
-		// 		return token;
-		// 	}
-		// break;
+				if (c == '=')
+				{
+					
+					strClear(&stack);
+					strAddChar(&stack, c);
+					buff = fgetc(source);
+					if (!islower(buff))
+					{
+						state = BLOCK_COMMENT;
+					}
+					else if (islower(buff))
+					{
+						count = 1;
+						strAddChar(&stack, buff);
+						while (islower(buff))
+						{
+							buff = fgetc(source);
+							count++;
+							if(islower(buff))
+							{
+								strAddChar(&stack, buff);
+							}
+						}
+
+						if (!strcmp(stack.str, "=end"))
+						{
+							while (buff != '\n' && buff != EOF)
+							{
+								buff = fgetc(source);
+							}
+
+							state = INIT;
+						}
+						else
+						{
+							state = BLOCK_COMMENT;
+						}
+					}
+				}
+			}
+			
+		break;
 		}
 	}
 	tokenChangeType(token, T_ERR);

@@ -1,6 +1,9 @@
 CFLAGS=-std=c99 -Wall -pedantic -g
 CC=gcc
 
+make:
+	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c pokusne_odevzdani.c -o compilator
+
 demel: main.c
 	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c -o demel
 
@@ -17,4 +20,4 @@ buchta: semantic.c error_handler.c list.c symtable.c tests/semantic.c
 	$(CC) $(CFLAGS) tests/semantic.c semantic.c error_handler.c list.c symtable.c -o buchta -DERROR_NOT_EXIT
 
 clean:
-	rm demel sedlacek hruska sedlacek_gen
+	rm demel sedlacek hruska compilator sedlacek_gen

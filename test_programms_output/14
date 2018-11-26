@@ -62,6 +62,13 @@ token value:
 
 state: 13
 ====
+token value: volam_nejakou_funkci
+state: 2
+====
+token value: 
+
+state: 13
+====
 token value: end
 state: 7
 ====

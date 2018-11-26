@@ -13,3 +13,4 @@ buchta
 build.sh
 CMakeLists.txt
 cmake-build-debug/*
+test
