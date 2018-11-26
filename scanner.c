@@ -21,8 +21,8 @@
 
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
-static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'};					   // single operator
-static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   // single operator
+static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
 
 /*================= DML EDIT ==================*/
 
