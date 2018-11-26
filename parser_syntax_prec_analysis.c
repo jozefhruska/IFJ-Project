@@ -22,12 +22,13 @@ void PAInit(sPA_Stack **stack){
 }
 
 
-void PAPush(sPA_Stack *stack, int type, int token_type, void *token_attr){
+void PAPush(sPA_Stack *stack, int type, int token_type, int lex_token_type, void *token_attr){
     sPA_Stack_Item *newItem = (sPA_Stack_Item*)malloc(sizeof(sPA_Stack_Item));
     if(newItem == NULL) error_fatal(ERROR_INTERNAL);
     newItem->token_type = token_type;
     newItem->token_attr = token_attr;
     newItem->type = type;
+    newItem->lex_token_type = lex_token_type;
 
     if(stack->firstItem == NULL){
         newItem->next = NULL;
@@ -38,7 +39,7 @@ void PAPush(sPA_Stack *stack, int type, int token_type, void *token_attr){
     }
 }
 
-void PAInsertBefore(sPA_Stack *stack, sPA_Stack_Item *stack_item, int type, int token_type, void *token_attr){
+void PAInsertBefore(sPA_Stack *stack, sPA_Stack_Item *stack_item, int type, int token_type, int lex_token_type, void *token_attr){
     sPA_Stack_Item *tmp = stack->firstItem;
     if(tmp == NULL) error_fatal(ERROR_INTERNAL);
     else if(tmp == stack_item){
@@ -48,20 +49,22 @@ void PAInsertBefore(sPA_Stack *stack, sPA_Stack_Item *stack_item, int type, int 
         newItem->token_type = token_type;
         newItem->token_attr = token_attr;
         newItem->next = tmp;
+        newItem->lex_token_type = lex_token_type;
         stack->firstItem = newItem;
     } else {
         while(!((tmp->next == stack_item) || (tmp->next == NULL))) tmp = tmp->next;
-        PAInsertAfter(tmp, type, token_type, token_attr);
+        PAInsertAfter(tmp, type, token_type, _PREC_NULL, token_attr);
     }
 }
 
-void PAInsertAfter(sPA_Stack_Item *stack_item, int type, int token_type, void *token_attr){
+void PAInsertAfter(sPA_Stack_Item *stack_item, int type, int token_type, int lex_token_type, void *token_attr){
     sPA_Stack_Item *newItem = (sPA_Stack_Item*)malloc(sizeof(sPA_Stack_Item));
     if(newItem == NULL) error_fatal(ERROR_INTERNAL);
     newItem->type = type;
     newItem->token_type = token_type;
     newItem->token_attr = token_attr;
     newItem->next = stack_item->next;
+    newItem->lex_token_type = lex_token_type;
     stack_item->next = newItem;
 }
 
@@ -73,40 +76,89 @@ sPA_Stack_Item *PAGetTerminal(sPA_Stack *stack){
 }
 
 sPA_Stack_Item *PAPop(sPA_Stack *stack){
+    if(stack->firstItem == NULL) return NULL;
     sPA_Stack_Item *toReturn = stack->firstItem;
     stack->firstItem = stack->firstItem->next;
     return toReturn;
 }
 
 int parser_parse_expression(){
-    sPA_Stack *stack;
+    sPA_Stack *stack, *subexpression;
     PAInit(&stack);
-    PAPush(stack, _TERMINAL, _PREC_DOLAR, "$");
+    PAPush(stack, _TERMINAL, _PREC_DOLAR, _PREC_NULL, "$");
 
     sPA_Stack_Item *incomming = ConvertTokenToStackItem(getNextToken());
+    sPA_Stack_Item *top;
 
     do{
-        sPA_Stack_Item *top = PAGetTerminal(stack);
+        top = PAGetTerminal(stack);
 
         switch(__GLOBAL_PREC_TABLE[top->token_type][incomming->token_type]){
             case '=':
-                PAPush(stack, incomming->type, incomming->token_type, incomming->token_attr);
+                PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
                 incomming = ConvertTokenToStackItem(getNextToken());
             break;
             case '<':
-                PAPush(stack, _SYM_LOWER, _PREC_NULL, "<");
-                PAPush(stack, incomming->type, incomming->token_type, incomming->token_attr);
+                //PAPush(stack, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
+                //PAInsertAfter(top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
+                PAInsertBefore(stack, top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
+                PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
                 incomming = ConvertTokenToStackItem(getNextToken());
             break;
             case '>':
-                debug_print_PAStack(stack);
-                return 0;
+                PAInit(&subexpression);
+                
+                sPA_Stack_Item *item = PAPop(stack);
+
+                while(!((item->type == _SYM_LOWER) || (item == NULL))){
+                    PAPush(subexpression, item->type, item->token_type, item->lex_token_type, item->token_attr);
+                    item = item->next;
+                }
+
+                if(item == NULL) error_fatal(ERROR_SYNTACTIC);
+
+                ResolveExpression(subexpression);
+                //PAPop(stack);
+                sPA_Stack_Item *_s = PAPop(stack);
+                while(_s->type != _SYM_LOWER) _s = PAPop(stack);
+
+                PAPush(stack, _NONTERMINAL, _PREC_NULL, _PREC_NULL, NULL);
             break;
             default:
                 error_fatal(ERROR_SYNTACTIC);
         }
 
-    } while(!(incomming->token_type == _PREC_DOLAR));
+
+    } while (!((incomming->token_type == _PREC_DOLAR) && ParsedSuccessfully(stack)));
+    return 0;
+}
+
+int ResolveExpression(sPA_Stack *inputStack){
+    /* Input stack is in reverse order. We need to make sure that terminals and non-terminals are in right order! */
+    sPA_Stack *stack;
+    PAInit(&stack);
+
+    sPA_Stack_Item *tmp = PAPop(inputStack);
+    while(tmp != NULL){
+        PAPush(stack, tmp->type, tmp->token_type, tmp->lex_token_type, tmp->token_attr);
+        tmp = tmp->next;
+    }
+
+    sPA_Stack_Item *current_item = PAPop(stack);
+
+    if(current_item->token_type == _PREC_ID){
+        current_item = PAPop(stack);
+        if(current_item != NULL) error_fatal(ERROR_SYNTACTIC);
+    } else if(current_item->token_type == _PREC_L_BRACKET){
+
+    } else if(current_item->type == _NONTERMINAL){
+        current_item = PAPop(stack);
+        if(!(current_item->type == _TERMINAL && current_item->token_type == _PREC_PLUS_MINUS) &&
+            !(current_item->type == _TERMINAL && current_item->token_type == _PREC_MULT_SUBS)) error_fatal(ERROR_SYNTACTIC);
+        current_item = PAPop(stack);
+        if(current_item->type != _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
+    }
+
     return 0;
 }
 
@@ -123,6 +175,8 @@ sPA_Stack_Item *ConvertTokenToStackItem(sToken *token){
     sPA_Stack_Item *ret = (sPA_Stack_Item*)malloc(sizeof(sPA_Stack_Item));
     ret->next = NULL;
     ret->token_attr = token->data;
+    ret->type = _TERMINAL;
+    ret->lex_token_type = token->type;
 
     /* Mapping token type to stack item type */
     switch(token->type){
@@ -143,9 +197,28 @@ sPA_Stack_Item *ConvertTokenToStackItem(sToken *token){
         case T_LEFT_BRACKET:
             ret->token_type = _PREC_L_BRACKET;
         break;
+        case T_KEYWORD:
+            if(cmp_token(token, T_KEYWORD, "then")){
+                ret->token_type = _PREC_DOLAR;
+                store_token(token);
+            } else {
+                error_fatal(ERROR_SYNTACTIC);
+            }
+        break;
+        case T_EOL:
+            ret->token_type = _PREC_DOLAR;
+            store_token(token);
+        break;
         default:
             error_fatal(ERROR_SYNTACTIC);
     }
 
     return ret;
+}
+
+int ParsedSuccessfully(sPA_Stack *stack){
+    if(stack->firstItem->type == _NONTERMINAL){
+        if(stack->firstItem->next->type == _TERMINAL && stack->firstItem->next->token_type == _PREC_DOLAR) return 1;
+    }
+    return 0;
 }

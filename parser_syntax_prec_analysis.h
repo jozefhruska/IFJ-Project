@@ -26,6 +26,7 @@ enum __GLOBAL_PREC_STACK_TYPES {
 typedef struct PREC_ANALYSIS_STACK_ITEM {
     int type;
     int token_type;
+    int lex_token_type;
     void* token_attr;
     struct PREC_ANALYSIS_STACK_ITEM *next;
 } sPA_Stack_Item;
@@ -35,12 +36,14 @@ typedef struct PREC_ANALYSIS_STACK {
 } sPA_Stack;
 
 void PAInit(sPA_Stack**);
-void PAPush(sPA_Stack*, int type, int token_type, void *token_attr);
-void PAInsertAfter(sPA_Stack_Item*, int type, int token_type, void *token_attr);
-void PAInsertBefore(sPA_Stack*,sPA_Stack_Item*, int type, int token_type, void *token_attr);
+void PAPush(sPA_Stack*, int type, int token_type, int lex_token_type,  void *token_attr);
+void PAInsertAfter(sPA_Stack_Item*, int type, int token_type, int lex_token_type, void *token_attr);
+void PAInsertBefore(sPA_Stack*,sPA_Stack_Item*, int type, int token_type, int lex_token_type, void *token_attr);
 sPA_Stack_Item *PAPop(sPA_Stack*);
 sPA_Stack_Item *PAGetTerminal(sPA_Stack*);
 
 sPA_Stack_Item *ConvertTokenToStackItem(sToken*);
+int ResolveExpression(sPA_Stack*);
+int ParsedSuccessfully(sPA_Stack*);
 
 #endif
