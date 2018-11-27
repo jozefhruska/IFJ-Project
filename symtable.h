@@ -29,10 +29,18 @@ typedef enum {
 } BTNodeType;
 
 /**
+ * @brief Structure for parameters of a function
+ */
+typedef struct {
+	char *name;
+	bool isParameter; // true - is parameter, false - is local variable
+} BTFunctionParam;
+
+/**
  * @brief  Structure additional function data in a Binary Table node.
  */
 typedef struct sBTFunctionData {
-	tDLList *params; // char*[]
+	tDLList *params; // BTFunctionParam[]
 	bool defined;
 	bool declared;
 } BTFunctionData;

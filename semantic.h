@@ -81,7 +81,7 @@ bool isFunctionDefined(char *name);
 bool isFunctionDeclared(char *name);
 
 /**
- * @brief Returns true, if the function has a parameter with the name, false otherwise.
+ * @brief Returns true, if the function has a parameter or local variable with the name, false otherwise.
  * @param functionName Name of the function
  * @param paramName Name of the variable
  * @pre The function must be declared via addFunction()
@@ -129,5 +129,13 @@ void addVar(char *name);
  * @return bool
  */
 bool isVarDeclared(char *name);
+
+/**
+ * @brief Searchs for the string in the list, if finds, returns true and active is the found one. Otherwise returns false.
+ * @param List
+ * @param string Value of searched string
+ * @return bool Found
+ */
+bool DLSearchString(tDLList *List, char *string);
 
 #endif //IFJ_PROJECT_SEMANTIC_H

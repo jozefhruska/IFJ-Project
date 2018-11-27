@@ -258,21 +258,3 @@ void DLPred(tDLList *L) {
 int DLActive(tDLList *L) {
 	return (L->Act) ? 1 : 0;
 }
-
-bool DLSearchString(tDLList *List, char *string) {
-    // go to the first item
-    DLFirst(List);
-
-    // for each item in the list
-    while ((List->Act != List->Last && List->Act != NULL) || (List->Act == List->Last && List->Act != NULL) ) {
-        // if the active node is the wanted one
-        if (strcmp((char *) List->Act->data, string) == 0) {
-            return true;
-        }
-
-        // move to the next item
-        DLSucc(List);
-    }
-
-    return false;
-}

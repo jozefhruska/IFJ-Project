@@ -273,9 +273,27 @@ bool isParamDeclared(char *functionName, char *paramName) {
         return false;
     }
 
-    bool found = DLSearchString(paramList, paramName);
+    bool found = DLSearchParam(paramList, paramName);
 
     return found;
+}
+
+bool DLSearchParam(tDLList *List, char *string) {
+    // go to the first item
+    DLFirst(List);
+
+    // for each item in the list
+    while ((List->Act != List->Last && List->Act != NULL) || (List->Act == List->Last && List->Act != NULL) ) {
+        // if the active node is the wanted one
+        if (strcmp(((BTFunctionParam *) List->Act->data)->name, string) == 0) {
+            return true;
+        }
+
+        // move to the next item
+        DLSucc(List);
+    }
+
+    return false;
 }
 
 char *getNthParam(char *functionName, unsigned int n) {
@@ -322,7 +340,7 @@ char *getNthParam(char *functionName, unsigned int n) {
 
     // if found
     if (i == n && paramList->Act != NULL) {
-        return (char *) paramList->Act->data;
+        return ((BTFunctionParam *) paramList->Act->data)->name;
     }
 
     return NULL;
