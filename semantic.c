@@ -95,7 +95,7 @@ void addFunction(char *name) {
     }
 }
 
-void addParam(char *name) {
+void addParam(char *name, bool isParam) {
     // global table defined
     if (globalSymTable == NULL) {
         error_fatal(ERROR_INTERNAL);
@@ -108,8 +108,23 @@ void addParam(char *name) {
         return;
     }
 
+    // make sure param doesn't exist
+    if (isParamDeclared(currentFunction->key, name) == false) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return;
+    }
+
     // add new parameter to the list
-    DLInsertLast(currentFunction->data->params, (void *) name);
+    BTFunctionParam *param = malloc(sizeof(BTFunctionParam));
+    if (param == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    param->name = name;
+    param->isParameter = isParam;
+
+    DLInsertLast(currentFunction->data->params, (void *) param);
 }
 
 void addVar(char *name) {

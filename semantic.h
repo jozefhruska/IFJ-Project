@@ -46,10 +46,12 @@ void addFunction(char *name);
 /**
  * @brief Add new parameter into list of function's parameters.
  * Can be used for creating new private variables too.
+ * If the parameter is in the list, throws an error
  * @pre First call addFunction()
- * @param name
+ * @param name Name of the parameter
+ * @param isParam true if is a parameter, false if is a local variable
  */
-void addParam(char *name);
+void addParam(char *name, bool isParam);
 
 /**
  * @brief Sets the function defined to true
