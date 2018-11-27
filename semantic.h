@@ -136,6 +136,6 @@ bool isVarDeclared(char *name);
  * @param string Value of searched string
  * @return bool Found
  */
-bool DLSearchString(tDLList *List, char *string);
+bool DLSearchParam(tDLList *List, char *string);
 
 #endif //IFJ_PROJECT_SEMANTIC_H

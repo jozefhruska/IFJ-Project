@@ -71,7 +71,7 @@ int main() {
     // new function
     addFunction("mojeFunkce");
     TEST_FALSE(isParamDeclared("mojeFunkce", "s"));
-    addParam("s");
+    addParam("s", true);
     TEST(isParamDeclared("mojeFunkce", "s"));
     TEST_ERROR(addFunction("mojeFunkce"));
     endFunction();
@@ -79,7 +79,7 @@ int main() {
     TEST_FALSE(isFunctionDefined("mojeFunkce"));
     TEST(isFunctionDeclared("mojeFunkce"));
 
-    TEST_ERROR(addParam("v")); // out of function, can't add parameter
+    TEST_ERROR(addParam("v", true)); // out of function, can't add parameter
     functionDefinition("mojeFunkce");
     TEST(isFunctionDefined("mojeFunkce"));
     TEST(isFunctionDeclared("mojeFunkce"));
@@ -95,7 +95,7 @@ int main() {
     TEST_FALSE(isParamDeclared("funkceDva", ""));
     TEST_NULL(getNthParam("funkceDva", 0));
     TEST_NULL(getNthParam("funkceDva", 1));
-    addParam("priVar");
+    addParam("priVar", true);
     TEST(strcmp(getNthParam("funkceDva", 0), "priVar") == 0);
     TEST(isParamDeclared("funkceDva", "priVar"));
     TEST_FALSE(isParamDeclared("funkceDva", "priVar "));

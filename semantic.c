@@ -109,7 +109,7 @@ void addParam(char *name, bool isParam) {
     }
 
     // make sure param doesn't exist
-    if (isParamDeclared(currentFunction->key, name) == false) {
+    if (isParamDeclared(currentFunction->key, name)) {
         error_fatal(ERROR_SEMANTIC_DEF);
         return;
     }
