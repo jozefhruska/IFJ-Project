@@ -8,7 +8,17 @@
 #include "error_handler.h"
 #include "scanner.h"
 
+#include "semantic.h"
+
 int parser_parse_prog(){
+    // TODO: init global symbol table once in main, remove untill // TODO: end remove
+    static bool globalSymTableInit = false;
+    if (globalSymTableInit == false) {
+        globalSymTableInit = true;
+        initGlobalSymTable();
+    }
+    // TODO: end remove
+
     sToken *token = getNextToken();
     if(cmp_token(token, T_KEYWORD, "def")){
         /* <prog> -> <func><prog> */
@@ -37,7 +47,10 @@ int parser_parse_func(){
     sToken *token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "def")) error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
-    if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
+    if(cmp_token_type(token, T_ID)) // function name
+        addFunction((char *) token->data);
+    else
+        error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token_type(token, T_LEFT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
     parser_parse_params();
