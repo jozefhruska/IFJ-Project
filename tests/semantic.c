@@ -64,6 +64,7 @@ int main() {
     TEST_NULL(getNthParam("inputi", 100));
     TEST_NULL(getNthParam("inputi", -1));
     TEST_NULL(getNthParam("inputi", 2));
+    TEST(getParamCount("inputi") == 0);
 
     TEST_FALSE(isParamDeclared("inputi", "s"));
     TEST_FALSE(isParamDeclared("inputi", "inputi"));
@@ -71,8 +72,10 @@ int main() {
     // new function
     addFunction("mojeFunkce");
     TEST_FALSE(isParamDeclared("mojeFunkce", "s"));
+    TEST(getParamCount("mojeFunkce") == 0);
     addParam("s", true);
     TEST(isParamDeclared("mojeFunkce", "s"));
+    TEST(getParamCount("mojeFunkce") == 1);
     TEST_ERROR(addFunction("mojeFunkce"));
     endFunction();
 
@@ -95,9 +98,13 @@ int main() {
     TEST_FALSE(isParamDeclared("funkceDva", ""));
     TEST_NULL(getNthParam("funkceDva", 0));
     TEST_NULL(getNthParam("funkceDva", 1));
-    addParam("priVar", true);
+    addParam("priVar", false);
     TEST(strcmp(getNthParam("funkceDva", 0), "priVar") == 0);
     TEST(isParamDeclared("funkceDva", "priVar"));
+    addParam("param1", true);
+    addParam("param2", true);
+    addParam("ahoj", true);
+    TEST(getParamCount("funkceDva") == 3);
     TEST_FALSE(isParamDeclared("funkceDva", "priVar "));
 
     // global variables, still in a function, can't add

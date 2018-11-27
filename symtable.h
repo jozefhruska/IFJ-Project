@@ -40,7 +40,7 @@ typedef struct {
  * @brief  Structure additional function data in a Binary Table node.
  */
 typedef struct sBTFunctionData {
-	tDLList *params; // BTFunctionParam[]
+	tDLList *params; // BTFunctionParam* []
 	bool defined;
 	bool declared;
 } BTFunctionData;

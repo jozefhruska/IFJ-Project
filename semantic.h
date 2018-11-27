@@ -111,6 +111,14 @@ bool eachFunctionDefined();
  */
 bool eachFunctionInTreeDefined(BTNodePtr root);
 
+/**
+ * @brief Returns number of parameters, that the function has.
+ * Parameters only, private variables are excluded.
+ * @param functionName Name of the function
+ * @return Parameters count of the function
+ */
+unsigned getParamCount(char *functionName);
+
 /*
  *
  * Global variables

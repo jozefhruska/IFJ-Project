@@ -366,3 +366,31 @@ bool eachFunctionInTreeDefined(BTNodePtr root) {
 
     return eachFunctionInTreeDefined(root->LPtr) && eachFunctionInTreeDefined(root->RPtr);
 }
+
+unsigned getParamCount(char *functionName) {
+    unsigned count = 0;
+
+    // search for the function
+    BTNodePtr fct = BTSearch(globalSymTable->root, functionName);
+
+    if (fct == NULL || fct->type != TYPE_FUNCTION) {
+        // function not found or not a function
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return 0;
+    }
+
+    tDLList *params = fct->data->params;
+    DLFirst(params);
+
+    // run for all the items
+    while (params->Act != NULL) {
+        if (((BTFunctionParam *) params->Act->data)->isParameter) {
+            // count only parameters, not private variables
+            count++;
+        }
+
+        DLSucc(params);
+    }
+
+    return count;
+}
