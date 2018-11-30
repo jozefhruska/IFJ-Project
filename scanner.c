@@ -18,11 +18,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "error_handler.h"
 
 static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
-static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '<', '>', '=', '!'};					   // single operator
-static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   // single operator
+static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
 
 /*================= DML EDIT ==================*/
 
@@ -207,15 +208,9 @@ void StorePrevious(sToken *token){
 	*previous = *token;
 }
 
-sToken *getNextToken()
 // main function of lexical analysator
+sToken *getNextToken()
 {
-	// if (previous)
-	// {
-	// 	printf("PREVIOUS token state: %d\n", previous->type);
-	// }
-
-	
 	if(stored_tokens != NULL){
 		if(stored_tokens->first_element != NULL){
 			return BufferPop(stored_tokens);
@@ -224,21 +219,6 @@ sToken *getNextToken()
 	
 	sToken *token;
 	token = (sToken *)malloc(sizeof(struct Token));
-
-	/*================= DML EDIT ==================*/
-	// void DLCopyLast(storedTokens, token);
-	// // return token;
-	// if (token != NULL)
-	// {
-	// 	printf("stored token: %s\n", (char *)token->data);
-	// }
-	
-
-	// if(token != NULL){
-	// 	void DLDeleteLast(storedTokens);
-	// 	return token;
-	// }
-	/*================= END OFDML EDIT ==================*/
 
 	Tstate state = INIT;
 	char c;
@@ -255,7 +235,6 @@ sToken *getNextToken()
 
 	while ((c = fgetc(source)))
 	{
-
 		switch (state)
 		{
 		// ---------------------------------------- INIT CASE ----------------------------------------
@@ -263,8 +242,8 @@ sToken *getNextToken()
 			// white space
 			if (isspace(c) && c != '\n')
 			{
-				strAddChar(&stack, ' ');
-				tokenChangeBoth(previous, &output, SPACE);
+				// strAddChar(&stack, ' ');
+				// tokenChangeBoth(previous, &stack, T_SPACE);
 				state = INIT;
 			}
 			else if (c == EOF)
@@ -278,6 +257,8 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -304,59 +285,73 @@ sToken *getNextToken()
 				state = STRING;
 			}
 			// possible block comment
-			// else if (c == '=')
-			// {
-			// 	strAddChar(&stack, c);
-			// 	buff = fgetc(source);
-			// 	if (!islower(buff))
-			// 	{
-			// 		ungetc(buff, source);
-			// 		strClear(&stack);
-			// 		strAddChar(&output, c);
-			// 		state = OPERATOR;
-			// 	}
-			// 	else if (islower(buff))
-			// 	{
-			// 		count = 1;
-			// 		strAddChar(&stack, buff);
-			// 		while (islower(buff))
-			// 		{
-			// 			buff = fgetc(source);
-			// 			count++;
-			// 			if(islower(buff))
-			// 			{
-			// 				strAddChar(&stack, buff);
-			// 			}
-			// 		} 
+			else if (c == '=')
+			{
+				strClear(&stack);
+				strClear(&output);
 
-			// 		// if(previous == NULL)
-			// 		// {
-			// 			if (!strcmp(stack.str, "=begin"))
-			// 			{
-			// 				state = BLOCK_COMMENT;
-			// 			}
-			// 			else if (!strcmp(stack.str, "=end"))
-			// 			{
-			// 				tokenChangeType(token, T_ERR);
-			// 				return token;
-			// 			}
-			// 		// }
-			// 		else
-			// 		{
-			// 			// printf("%s\n", stack.str);
-			// 			for (int i = count; i>=1; i--)
-			// 			{
-			// 				ungetc(stack.str[i], source);
-			// 				// printf("%c\n", stack.str[i]);
-			// 			}
+				strAddChar(&stack, c);
+				buff = fgetc(source);
+				if (!islower(buff))
+				{
+					ungetc(buff, source);
+					strClear(&stack);
+					strAddChar(&output, c);
+					state = OPERATOR;
+				}
+				else if (islower(buff))
+				{
+					count = 1;
+					strAddChar(&stack, buff);
+					while (islower(buff))
+					{
+						buff = fgetc(source);
+						count++;
+						if(islower(buff))
+						{
+							strAddChar(&stack, buff);
+						}
+						else
+						{
+							ungetc(buff, source);
+						}
+					} 
 
-			// 			strClear(&stack);
-			// 			strAddChar(&output, '=');
-			// 			tokenChangeBoth(token, &output, T_OPERATOR);
-			// 			return token;
-			// 		}
-			// 	}
-			// }
+					if(previous == NULL || previous->type == T_EOL)
+					{
+						if (!strcmp(stack.str, "=begin"))
+						{
+							state = BLOCK_COMMENT;
+						}
+						else 
+						{
+							for (int i = count-1; i>=1; i--)
+							{
+								ungetc(stack.str[i], source);
+							}
+							strClear(&stack);
+							strAddChar(&output, '=');
+							tokenChangeBoth(token, &output, T_OPERATOR);
+							if (token == NULL)
+								error_fatal(ERROR_INTERNAL);
+							return token;
+						}
+					}
+					else
+					{
+						for (int i = count-1; i>=1; i--)
+						{
+							ungetc(stack.str[i], source);
+						}
+						strClear(&stack);
+						strAddChar(&output, '=');
+						tokenChangeBoth(token, &output, T_OPERATOR);
+						if (token == NULL)
+							error_fatal(ERROR_INTERNAL);
+						return token;
+					}
+				}
+			}
 			// operator
 			else if (isOperator(c))
 			{
@@ -368,6 +363,8 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_LEFT_BRACKET);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -376,6 +373,8 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_RIGHT_BRACKET);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -384,20 +383,22 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_COMMA);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
 			// error handling
 			else
 			{
-				tokenChangeType(token, T_ERR);
-				return token;
+				error_fatal(ERROR_LEXICAL);
 			}
 
 			break;
 
 		// ---------------------------------------- ID CASE ----------------------------------------
 		case ID:
+
 			// komentar
 			if (isalnum(c) || c == '_')
 			{
@@ -419,12 +420,16 @@ sToken *getNextToken()
 				if (isFromKeywords(output.str))
 				{
 					tokenChangeBoth(token, &output, T_KEYWORD);
+					if (token == NULL)
+						error_fatal(ERROR_INTERNAL);
 					StorePrevious(token);
 					return token;
 				}
 				else
 				{
 					tokenChangeBoth(token, &output, T_ID);
+					if (token == NULL)
+						error_fatal(ERROR_INTERNAL);
 					StorePrevious(token);
 					return token;
 				}
@@ -438,54 +443,65 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_ID);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
 			// char after ? or ! is illegal
 			else
 			{
-				ungetc(c, source);
-				tokenChangeType(token, T_ERR);
-				return token;
+				error_fatal(ERROR_LEXICAL);
 			}
 			break;
 
 		// ---------------------------------------- NUMBER CASE ----------------------------------------
 		case NUMBER:
-			//
 			if (isdigit(c))
 			{
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
-			// char after ? or ! is illegal
+			// potential double number
 			else if (c == '.')
 			{
 				buff = fgetc(source);
 				if (!isdigit(buff))
 				{
-					tokenChangeType(token, T_ERR);
-					return token;
+					error_fatal(ERROR_LEXICAL);
 				}
 				ungetc(buff, source);
 				ungetc(c, source);
 				state = DOUBLE;
 			}
+			// potentional double number
 			else if (c == 'e' || c == 'E')
 			{
 				ungetc(c, source);
 				state = DOUBLE;
 			}
-			else if (!isspace(c) && c != '\n' && c != EOF)
+			else if (isOperator(c))
 			{
-				tokenChangeType(token, T_ERR);
+				ungetc(c, source);
+				tokenChangeBoth(token, &output, T_INT);
+				token->data = (void *)strtol((char *)token->data, NULL, 10);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
+				StorePrevious(token);
 				return token;
 			}
+			else if (!isspace(c) && c != '\n' && c != EOF)
+			{
+				error_fatal(ERROR_LEXICAL);
+			}
+			// integer number
 			else
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = strtol((char *)token->data, NULL, 10);
+				token->data = (void *)strtol((char *)token->data, NULL, 10);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -533,8 +549,7 @@ sToken *getNextToken()
 					buff = fgetc(source);
 					if (!isdigit(buff))
 					{
-						tokenChangeType(token, T_ERR);
-						return token;
+						error_fatal(ERROR_LEXICAL);
 					}
 					strAddChar(&output, buff);
 					state = DOUBLE_EXP;
@@ -546,8 +561,7 @@ sToken *getNextToken()
 				}
 				else
 				{
-					tokenChangeType(token, T_ERR);
-					return token;
+					error_fatal(ERROR_LEXICAL);
 				}
 			}
 			else
@@ -556,6 +570,8 @@ sToken *getNextToken()
 				double convert;
 				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 				token->data = (void *)&convert;
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -586,9 +602,11 @@ sToken *getNextToken()
 				}
 				else
 				{
-					tokenChangeType(token, T_ERR);
+					error_fatal(ERROR_LEXICAL);
 				}
 				ungetc(c, source);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -599,6 +617,8 @@ sToken *getNextToken()
 			if (c == '"') // end of string
 			{
 				tokenChangeBoth(token, &output, T_STRING);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
@@ -606,13 +626,13 @@ sToken *getNextToken()
 			{
 				state = STRING_ESCAPE;
 			}
-			else if (c != '\n')
+			else if (c != '\n' && c > 31)
 			{
 				strAddChar(&output, c);
 			}
 			else
 			{
-				tokenChangeType(token, T_ERR);
+				error_fatal(ERROR_LEXICAL);
 			}
 		break;
 
@@ -648,8 +668,7 @@ sToken *getNextToken()
 			}
 			else
 			{
-				tokenChangeType(token, T_ERR);
-				return token;
+				error_fatal(ERROR_LEXICAL);
 			}
 			
 		break;
@@ -679,8 +698,7 @@ sToken *getNextToken()
 				}
 				else
 				{
-					tokenChangeType(token, T_ERR);
-					return token;
+					error_fatal(ERROR_LEXICAL);
 				}
 			}
 
@@ -698,6 +716,8 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
+					if (token == NULL)
+						error_fatal(ERROR_INTERNAL);
 					StorePrevious(token);
 					return token;
 				}
@@ -711,13 +731,13 @@ sToken *getNextToken()
 				if (isFromOperators(output.str))
 				{
 					tokenChangeBoth(token, &output, T_OPERATOR);
-					//StorePrevious(token);
+					if (token == NULL)
+						error_fatal(ERROR_INTERNAL);
 					return token;
 				}
 				else
 				{
-					tokenChangeType(token, T_ERR);
-					return token;
+					error_fatal(ERROR_LEXICAL);
 				}
 			}
 		break;
@@ -728,65 +748,79 @@ sToken *getNextToken()
 			{
 				strAddChar(&output, c);
 				tokenChangeBoth(token, &output, T_EOL);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
+				if (token == NULL)
+					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
 				return token;
 			}
 		break;
 
 		// ---------------------------------------- BLOCK_COMMENT CASE ----------------------------------------
-		// case BLOCK_COMMENT:
-		// 	if (c == '=')
-		// 	{
-		// 		strClear(&stack);
-		// 		strAddChar(&stack, c);
-		// 		buff = fgetc(source);
-		// 		if (!islower(buff))
-		// 		{
-		// 			state = BLOCK_COMMENT;
-		// 		}
-		// 		else if (islower(buff))
-		// 		{
-		// 			count = 1;
-		// 			strAddChar(&stack, buff);
-		// 			while (islower(buff))
-		// 			{
-		// 				buff = fgetc(source);
-		// 				count++;
-		// 				if(islower(buff))
-		// 				{
-		// 					strAddChar(&stack, buff);
-		// 				}
-		// 			} 
+		case BLOCK_COMMENT:
+			if (c == EOF)
+			{
+				error_fatal(ERROR_LEXICAL);
+			}
+			else if (c != '\n')
+			{
+				state = BLOCK_COMMENT;
+			}
+			else if (c == '\n')
+			{
+				c = fgetc(source);
 
-		// 			if (!strcmp(stack.str, "=end"))
-		// 			{
-		// 				state = INIT;
-		// 			}
-		// 			else
-		// 			{
-		// 				state = BLOCK_COMMENT;
-		// 			}
-		// 		}
-		// 	}
-		// 	else if (c != '=' && c != EOF)
-		// 	{
-		// 		state = BLOCK_COMMENT;
-		// 	}
-		// 	else if (c == EOF)
-		// 	{
-		// 		tokenChangeType(token, T_EOF);
-		// 		previous = token;
-		// 		return token;
-		// 	}
-		// break;
+				if (c == '=')
+				{
+					
+					strClear(&stack);
+					strAddChar(&stack, c);
+					buff = fgetc(source);
+					if (!islower(buff))
+					{
+						state = BLOCK_COMMENT;
+					}
+					else if (islower(buff))
+					{
+						count = 1;
+						strAddChar(&stack, buff);
+						while (islower(buff))
+						{
+							buff = fgetc(source);
+							count++;
+							if(islower(buff))
+							{
+								strAddChar(&stack, buff);
+							}
+						}
+
+						if (!strcmp(stack.str, "=end"))
+						{
+							while (buff != '\n' && buff != EOF)
+							{
+								buff = fgetc(source);
+							}
+
+							state = INIT;
+						}
+						else
+						{
+							state = BLOCK_COMMENT;
+						}
+					}
+				}
+			}
+			
+		break;
 		}
 	}
-	tokenChangeType(token, T_ERR);
-	return token;
+	error_fatal(ERROR_INTERNAL);
+	return NULL;
 }
