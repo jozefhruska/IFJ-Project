@@ -30,22 +30,22 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 	}
 }
 
-void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
-	/* Initialize stack at first attempt to create an instruction */
-	if (InstructionStack == NULL) {
-		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
-		else error_fatal(ERROR_INTERNAL);
-	}
-
+void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr *symbols) {
 	InstructionPtr instruction;
 	if ((instruction = malloc(sizeof(struct sInstruction))) != NULL) {
 		instruction->type = type;
-		instruction->symbol[0] = symbols[0];
-		instruction->symbol[1] = symbols[1];
-		instruction->symbol[2] = symbols[2];
+		instruction->symbols = symbols;
 
-		DLInsertLast(InstructionStack, (void *) instruction);
+		DLInsertLast(instructionStack, (void *) instruction);
 	} else error_fatal(ERROR_INTERNAL);
 }
 
-resolveIntruction();
+bool resolveInstruction(tDLList *instructionStack) {
+	tDLElemPtr firstElem = DLPopFirst(instructionStack);
+	InstructionPtr instruction = (InstructionPtr) DLPopFirst(instructionStack)->data;
+
+
+
+	free(firstElem);
+	return false;
+}
