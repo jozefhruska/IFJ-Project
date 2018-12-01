@@ -20,20 +20,20 @@
 #include "scanner.h"
 #include "error_handler.h"
 
-static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};
-static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};
-static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   // single operator
-static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; // final operator
+static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};	// every keyword included
+static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};													// brackets or comma
+static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   		// single operator
+static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; 	// final operator (may consist more than one char)
 
-/*================= DML EDIT ==================*/
-
-
+// global variable to store tokens that parser can send back
 TokenBuffer *stored_tokens = NULL;
 
+// initialise new buffer to store tokens
 void BufferInit(TokenBuffer **buffer){
 	(*buffer)->first_element = NULL;
 }
 
+// push new token to the end of buffer
 void BufferPush(TokenBuffer *buffer, sToken *token){
 	if(buffer->first_element == NULL){
 		TokenBufferElement *newElement = (TokenBufferElement*)malloc(sizeof(TokenBufferElement));
@@ -50,6 +50,7 @@ void BufferPush(TokenBuffer *buffer, sToken *token){
 	}
 }
 
+// copy and delete first token from buffer
 sToken *BufferPop(TokenBuffer *buffer){
 	TokenBufferElement *elem = buffer->first_element;
 	buffer->first_element = elem->next;
@@ -58,6 +59,7 @@ sToken *BufferPop(TokenBuffer *buffer){
 	return retValue;
 }
 
+// simple function to either store and possibly initialise buffer
 void store_token(sToken *token){
 	if(stored_tokens == NULL){
 		stored_tokens = malloc(sizeof(TokenBuffer));
@@ -67,9 +69,6 @@ void store_token(sToken *token){
 		BufferPush(stored_tokens, token);
 	}
 }
-
-
-/*================= END OFDML EDIT ==================*/
 
 // check if loaded char is delimiter
 bool isDelimiter(char input)
@@ -97,12 +96,12 @@ bool isOperator(char input)
 	return false;
 }
 
-// check if loaded string is from keywords
-bool isFromKeywords(char *input)
+// check if loaded string is from operators
+bool isFromOperators(char *input)
 {
-	for (int i = 0; i < KEYWORDS_LENGTH; i++)
+	for (int i = 0; i < OPERATORS_LENGTH; i++)
 	{
-		if (strcmp(input, keywords[i]) == 0)
+		if (strcmp(input, operators[i]) == 0)
 		{
 			return true;
 		}
@@ -110,12 +109,12 @@ bool isFromKeywords(char *input)
 	return false;
 }
 
-// check if loaded string is from operators
-bool isFromOperators(char *input)
+// check if loaded string is from keywords
+bool isFromKeywords(char *input)
 {
-	for (int i = 0; i < OPERATORS_LENGTH; i++)
+	for (int i = 0; i < KEYWORDS_LENGTH; i++)
 	{
-		if (strcmp(input, operators[i]) == 0)
+		if (strcmp(input, keywords[i]) == 0)
 		{
 			return true;
 		}
@@ -160,33 +159,6 @@ int hexadecimalToDecimal(string *hexValue)
     } 
       
     return dec_val; 
-}
-
-// convert integer to string
-char *itoa(int i, char *b)
-{
-    char const digit[] = "0123456789";
-    char* p = b;
-
-    if (i < 0)
-	{
-        *p++ = '-';
-        i *= -1;
-    }
-    int shifter = i;
-    do
-	{ //Move to where representation ends
-        ++p;
-    	shifter = shifter/10;
-    } while (shifter);
-    *p = '\0';
-    do
-	{ //Move back, inserting digits as u go
-        *--p = digit[i%10];
-        i = i/10;
-    } while (i);
-
-    return b;
 }
 
 // variable to save input file
@@ -325,16 +297,7 @@ sToken *getNextToken()
 						}
 						else 
 						{
-							for (int i = count-1; i>=1; i--)
-							{
-								ungetc(stack.str[i], source);
-							}
-							strClear(&stack);
-							strAddChar(&output, '=');
-							tokenChangeBoth(token, &output, T_OPERATOR);
-							if (token == NULL)
-								error_fatal(ERROR_INTERNAL);
-							return token;
+							error_fatal(ERROR_LEXICAL);
 						}
 					}
 					else
@@ -622,6 +585,23 @@ sToken *getNextToken()
 				StorePrevious(token);
 				return token;
 			}
+			else if (c >= 0 && c<= 32)
+			{
+				char loader[2];
+				sprintf(loader, "%d", c);
+
+				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, loader[0]);
+				strAddChar(&output, loader[1]);
+			}
+			else if (c == 35)
+			{
+				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, '3');
+				strAddChar(&output, '5');
+			}
 			else if (c == '\\') // escape sequence
 			{
 				state = STRING_ESCAPE;
@@ -648,23 +628,34 @@ sToken *getNextToken()
 			else if (c == '"')
 			{
 				strAddChar(&output, '"');
-
 			}
 			else if (c == 'n')
 			{
-				strAddChar(&output, '\n');
+				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, '1');
+				strAddChar(&output, '0');
 			}
 			else if (c == 't')
 			{
-				strAddChar(&output, '\t');
+				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, '0');
+				strAddChar(&output, '9');
 			}
 			else if (c == 's')
 			{
-				strAddChar(&output, ' ');
+				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, '3');
+				strAddChar(&output, '2');
 			}
 			else if (c == '\\')
 			{
 				strAddChar(&output, '\\');
+				strAddChar(&output, '0');
+				strAddChar(&output, '9');
+				strAddChar(&output, '2');
 			}
 			else
 			{
