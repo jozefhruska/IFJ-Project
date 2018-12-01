@@ -1,4 +1,5 @@
-//jednoducha knihovna pro praci s nekonecne dlouhymi retezci
+// Simple library to work with tokens and string
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -6,33 +7,34 @@
 #include "token.h"
 
 #define LEN_INC 8
-// konstanta STR_LEN_INC udava, na kolik bytu provedeme pocatecni alokaci pameti
-// pokud nacitame retezec znak po znaku, pamet se postupne bude alkokovat na
-// nasobky tohoto cisla 
 
 #define ERROR 1
 #define SUCCESS 0
 
 // --- TOKEN functions
 
+// clear content of included token
 void tokenClear(sToken *t)
 {
     t->data = NULL;
     t->type = 0;
 }
 
+// only change data of token
 bool tokenChangeData(sToken *t, string *s)
 {
     t->data = s->str;
     return true;
 }
 
+// only change type of token
 bool tokenChangeType(sToken *t, int state)
 {
     t->type = state;
     return true;
 }
 
+// change both data and type of token
 bool tokenChangeBoth(sToken *t, string *s, int state)
 {
     t->data = s->str;
@@ -42,8 +44,8 @@ bool tokenChangeBoth(sToken *t, string *s, int state)
 
 // --- STRING functions
 
+// function creates new string
 int strInit(string *s)
-// funkce vytvori novy retezec
 {
    if ((s->str = (char*) malloc(LEN_INC)) == NULL)
       return ERROR;
@@ -53,21 +55,21 @@ int strInit(string *s)
    return SUCCESS;
 }
 
+// function frees string from cache
 void strFree(string *s)
-// funkce uvolni retezec z pameti
 {
    free(s->str);
 }
 
+// function clears content of string
 void strClear(string *s)
-// funkce vymaze obsah retezce
 {
    s->str[0] = '\0';
    s->length = 0;
 }
 
+// attach to end of string one char
 int strAddChar(string *s1, char c)
-// prida na konec retezce jeden znak
 {
    if (s1->length + 1 >= s1->allocSize)
    {
@@ -81,43 +83,3 @@ int strAddChar(string *s1, char c)
    s1->str[s1->length] = '\0';
    return SUCCESS;
 }
-
-// int strCopyString(string *s1, string *s2)
-// // prekopiruje retezec s2 do s1
-// {
-//    int newLength = s2->length;
-//    if (newLength >= s1->allocSize)
-//    {
-//       // pamet nestaci, je potreba provest realokaci
-//       if ((s1->str = (char*) realloc(s1->str, newLength + 1)) == NULL)
-//          return ERROR;
-//       s1->allocSize = newLength + 1;
-//    }
-//    strcpy(s1->str, s2->str);
-//    s1->length = newLength;
-//    return SUCCESS;
-// }
-
-// int strCmpString(string *s1, string *s2)
-// // porovna oba retezce a vrati vysledek
-// {
-//    return strcmp(s1->str, s2->str);
-// }
-
-// int strCmpConstStr(string *s1, char* s2)
-// // porovna nas retezec s konstantnim retezcem
-// {
-//    return strcmp(s1->str, s2);
-// }
-
-// char *strGetStr(string *s)
-// // vrati textovou cast retezce
-// {
-//    return s->str;
-// }
-
-// int strGetLength(string *s)
-// // vrati delku daneho retezce
-// {
-//    return s->length;
-// }
