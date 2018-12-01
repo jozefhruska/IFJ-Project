@@ -74,22 +74,6 @@ char *concateSymbol(SymbolPtr symbol) {
 	}
 }
 
-// same preparation for every generating of function
-void functionStart() {
-	// LABEL $foo
-	// PUSHFRAME
-
-	
-}
-
-// same ending for every generating of function
-void functionEnd() {
-	// POPFRAME
-	// RETURN
-
-
-}
-
 void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
 	/* Initialize stack at first attempt to create an instruction */
 	if (InstructionStack == NULL) {
