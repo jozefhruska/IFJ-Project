@@ -197,7 +197,15 @@ int parser_parse_assign(){
         Pokud se v expression vyskytne nějaká funkce, tak je to error!
     */
     
-    parser_parse_expression();
+    sToken *upcomming = getNextToken();
+    if(semantika(upcomming) == "funkce"){
+        store_token(upcomming);
+        parser_parse_func_call();
+    } else {
+        store_token(upcomming);
+        parser_parse_expression();
+    }
+
 
     /* <assign> -> id = <func_call> */
     //parser_parse_func_call();

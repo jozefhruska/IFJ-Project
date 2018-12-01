@@ -148,7 +148,10 @@ int ResolveExpression(sPA_Stack *inputStack){
         current_item = PAPop(stack);
         if(current_item != NULL) error_fatal(ERROR_SYNTACTIC);
     } else if(current_item->token_type == _PREC_L_BRACKET){
-        
+        current_item = PAPop(stack);
+        if(current_item->type == _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
+        current_item = PAPop(stack);
+        if(!(current_item->token_type == _PREC_R_BRACKET)) error_fatal(ERROR_SYNTACTIC);
     } else if(current_item->type == _NONTERMINAL){
         current_item = PAPop(stack);
         if(!(current_item->type == _TERMINAL && current_item->token_type == _PREC_PLUS_MINUS) &&
