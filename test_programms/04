@@ -1,5 +1,5 @@
-if (vyraz) then
-    if (neco_dalsiho == blbost) then
+if variable < b then
+    if neco_dalsiho == blbost then
 =begin
     end
 =end

@@ -16,6 +16,8 @@
 #define GENERATOR_HEADER
 
 #include <string.h>
+#include <stdbool.h>
+
 #include "list.h"
 #include "error_handler.h"
 #include "generator_str.h"
@@ -123,12 +125,12 @@ typedef struct sSymbol {
 
 typedef struct sInstruction {
 	InstructionType type;
-	SymbolPtr symbol[3];
+	SymbolPtr *symbols;
 } *InstructionPtr;
 
-
 SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
-void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[2]);
+void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr *symbols);
+bool resolveInstruction(tDLList *instructionStack);
 
 char *concateSymbol(SymbolPtr symbol);
 void functionStart();

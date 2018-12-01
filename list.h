@@ -56,6 +56,8 @@ void DLActualize (tDLList *, void *);
 void DLSucc (tDLList *);
 void DLPred (tDLList *);
 int DLActive (tDLList *);
+tDLElemPtr DLPopFirst(tDLList *L);
+bool DLSearchString(tDLList *List, char *string);
 
 /**
  * @brief Searchs for the string in the list, if finds, returns true and active is the found one. Otherwise returns false.
