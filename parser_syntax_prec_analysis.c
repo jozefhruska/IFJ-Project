@@ -222,7 +222,8 @@ sPA_Stack_Item *ConvertTokenToStackItem(sToken *token){
             ret->token_type = _PREC_L_BRACKET;
         break;
         case T_KEYWORD:
-            if(cmp_token(token, T_KEYWORD, "then")){
+            if(cmp_token(token, T_KEYWORD, "then") ||
+               cmp_token(token, T_KEYWORD, "do")){
                 ret->token_type = _PREC_DOLAR;
                 store_token(token);
             } else {
