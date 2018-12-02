@@ -86,7 +86,7 @@ void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPt
 		instruction->type = type;
 		instruction->symbols = symbols;
 
-		DLInsertLast(instructionStack, (void *) instruction);
+		DLInsertLast(InstructionStack, (void *) instruction);
 	} else error_fatal(ERROR_INTERNAL);
 }
 
