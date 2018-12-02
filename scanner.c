@@ -443,7 +443,7 @@ sToken *getNextToken()
 				ungetc(c, source);
 				state = DOUBLE;
 			}
-			else if (isOperator(c))
+			else if (isOperator(c) || isDelimiter(c))
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
@@ -529,6 +529,7 @@ sToken *getNextToken()
 			}
 			else
 			{
+				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_DOUBLE);
 				double convert;
 				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
@@ -556,7 +557,7 @@ sToken *getNextToken()
 					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 					token->data = (void *)&convert;
 				}
-				else if (isOperator(c))
+				else if (isOperator(c) || isDelimiter(c))
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
 					double convert;
