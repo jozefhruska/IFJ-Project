@@ -85,6 +85,7 @@ void DLInsertLast(tDLList *L, void *data) {
 	if (L->Last != NULL) L->Last->rptr = created;
 	else L->First = created;
 
+	if (L->First == NULL) L->First = created;
 	L->Last = created;
 }
 
@@ -257,4 +258,31 @@ void DLPred(tDLList *L) {
 
 int DLActive(tDLList *L) {
 	return (L->Act) ? 1 : 0;
+}
+
+tDLElemPtr DLPopFirst(tDLList *L) {
+	tDLElemPtr tempElem;
+	if ((tempElem = malloc(sizeof(struct tDLElem))) != NULL) {
+		*tempElem = *(L->First);
+		DLDeleteFirst(L);
+		return tempElem;
+	} else return NULL;
+}
+
+bool DLSearchString(tDLList *List, char *string) {
+    // go to the first item
+    DLFirst(List);
+
+    // for each item in the list
+    while ((List->Act != List->Last && List->Act != NULL) || (List->Act == List->Last && List->Act != NULL) ) {
+        // if the active node is the wanted one
+        if (strcmp((char *) List->Act->data, string) == 0) {
+            return true;
+        }
+
+        // move to the next item
+        DLSucc(List);
+    }
+
+    return false;
 }

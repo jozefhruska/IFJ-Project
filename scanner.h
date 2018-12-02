@@ -1,40 +1,22 @@
 #ifndef __scanner
 #define __scanner
-//hlavicka pro lexikalni analyzator
+
 #include "token.h"
 #include "list.h"
 #include <stdio.h>
-#include "list.h"
 
-//lengths
+/**
+ * @brief  Lengths of arrays.
+ */
 #define KEYWORDS_LENGTH 9
 #define DELIMITER_LENGTH 3
-#define OPERATOR_LENGTH 7
-#define OPERATORS_LENGTH 10
+#define OPERATOR_LENGTH 8
+#define OPERATORS_LENGTH 11
 #define ESCAPE_LENGTH 5
 
-//klicova slova
-#define SETZERO 10
-#define READ    11
-#define WRITE   12
-#define WHILE   13
-
-//operatory inkrementace a dekrementace
-#define INC     20
-#define DEC     21
-
-//jednotlive znaky
-#define LEFT_VINCULUM  30 // '{'
-#define RIGHT_VINCULUM 31 // '}'
-#define SEMICOLON      32 // ';'
-
-//specialni znaky
-#define END_OF_FILE    40
-
-//chybove hlasky
-#define LEX_ERROR    -1
-
-//type of state
+/**
+ * @brief  Enumaration of possibilities in final state automaton.
+ */
 typedef enum {
     INIT,
     ID,
@@ -47,10 +29,13 @@ typedef enum {
     DOUBLE_EXP,
     DOUBLE_DOT,
     OPERATOR,
+    BLOCK_COMMENT,
     LINE_COMMENT
 } Tstate;
 
-//type of token
+/**
+ * @brief  Enumeration of token types.
+ */
 typedef enum {
     //scanner end and error handling
     T_EOF,
@@ -70,38 +55,112 @@ typedef enum {
     T_LEFT_BRACKET,
     T_RIGHT_BRACKET,
     T_COMMA,
-    T_EOL
+    T_EOL,
+    T_SPACE
 
 } Ttoken;
 
+/**
+ * @brief  Structure representing a single element in buffer.
+ */
 typedef struct _buffer_element {
     struct _buffer_element *next;
     sToken *data;
 } TokenBufferElement;
 
+/**
+ * @brief  Structure representing a whole buffer.
+ */
 typedef struct _buffer {
     TokenBufferElement *first_element;
 } TokenBuffer;
 
-//hlavicka funkce simulujici lexikalni analyzator
-
+/**
+ * @brief  Search function for delimiter.
+ * @param  input: single char
+ * @retval Boolean if char matches with char from array.
+ */
 bool isDelimiter(char input);
+
+/**
+ * @brief  Search function for operator.
+ * @param  input: single char
+ * @retval Boolean if char matches with char from array.
+ */
 bool isOperator(char input);
-bool isFromKeywords(char *input);
+
+/**
+ * @brief  Search function for operator.
+ * @param  *input: string with potentional operator
+ * @retval Boolean if string matches with string from array.
+ */
 bool isFromOperators(char *input);
 
-int hexadecimalToDecimal(string *hexValue);
-char *itoa(int i, char b[]);
+/**
+ * @brief  Search function for keyword.
+ * @param  *input: string with potentional keyword
+ * @retval Boolean if string matches with string from array.
+ */
+bool isFromKeywords(char *input);
 
+/**
+ * @brief  Convert hexadecimal number to decimal number.
+ * @note   Input number is in string form.
+ * @param  *hexValue: string with number
+ * @retval Decimal number.
+ */
+int hexadecimalToDecimal(string *hexValue);
+
+/**
+ * @brief  Initialise file with source code.
+ * @param  *f: type of FILE
+ * @retval None
+ */
 void setSourceFile(FILE *f);
 
+/**
+ * @brief  Main function of scanner to submit next token from source file.
+ * @note   Function is made via deterministic finite automaton.
+ * @retval Token with both data and type
+ */
 sToken *getNextToken();
+
+/**
+ * @brief  Function that uses parser to temporary store unused tokens.
+ * @param  *token: type of sToken
+ * @retval None
+ */
 void store_token(sToken *token);
 
+/**
+ * @brief  Initializes a token buffer.
+ * @note   Sets initial node to NULL.
+ * @param  TokenBuffer**: Initial buffer
+ * @retval None
+ */
 void BufferInit(TokenBuffer**);
+
+/**
+ * @brief  Push token to last position in Buffer.
+ * @param  TokenBuffer*: Buffer with tokens
+ * @param  sToken*: Token to store in buffer
+ * @retval None
+ */
 void BufferPush(TokenBuffer*, sToken*);
+
+/**
+ * @brief  Copy and delete first token from buffer.
+ * @param  TokenBuffer*: Buffer with tokens
+ * @retval Token with data and type
+ */
 sToken *BufferPop(TokenBuffer*);
 
+/**
+ * @brief  Function to help scanner identify previous token.
+ * @note   Copy last token to variable previous.
+ * @param  sToken*: Last token with data and type
+ * @retval None
+ */
 void StorePrevious(sToken*);
 
 #endif

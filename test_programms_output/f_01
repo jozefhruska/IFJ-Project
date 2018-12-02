@@ -1,0 +1,28 @@
+====
+token value: if
+state: 7
+====
+token value: vyraz
+state: 2
+====
+token value: then
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+ending state: 0

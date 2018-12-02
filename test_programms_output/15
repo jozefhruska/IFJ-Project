@@ -1,0 +1,14 @@
+====
+token value: prom
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 10
+state: 4
+====
+token value: 
+
+state: 13
+ending state: 0

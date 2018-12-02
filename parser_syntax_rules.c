@@ -262,6 +262,7 @@ int parser_parse_assign(){
     }
 
     /* <assign> -> id = <func_call> */
+    //parser_parse_func_call();
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
     return 0;

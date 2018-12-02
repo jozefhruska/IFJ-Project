@@ -1,0 +1,39 @@
+====
+token value: def
+state: 7
+====
+token value: nova_funkce
+state: 2
+====
+token value: (
+state: 10
+====
+token value: param1
+state: 2
+====
+token value: ,
+state: 12
+====
+token value: param2
+state: 2
+====
+token value: ,
+state: 12
+====
+token value: param3
+state: 2
+====
+token value: )
+state: 11
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+ending state: 0

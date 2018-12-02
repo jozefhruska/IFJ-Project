@@ -14,6 +14,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<stdbool.h>
 
 #define FALSE 0
 #define TRUE 1
@@ -55,5 +56,7 @@ void DLActualize (tDLList *, void *);
 void DLSucc (tDLList *);
 void DLPred (tDLList *);
 int DLActive (tDLList *);
+tDLElemPtr DLPopFirst(tDLList *L);
+bool DLSearchString(tDLList *List, char *string);
 
 #endif

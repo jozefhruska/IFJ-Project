@@ -1,0 +1,33 @@
+====
+token value: while
+state: 7
+====
+token value: (
+state: 10
+====
+token value: some
+state: 2
+====
+token value: expression
+state: 2
+====
+token value: params
+state: 2
+====
+token value: )
+state: 11
+====
+token value: do
+state: 7
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+ending state: 0
