@@ -1,2 +1,2 @@
-while (a > b) do
+while (10 > 5) do
 end

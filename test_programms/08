@@ -1,3 +1,5 @@
+a = 10
+b = 20
 while a < b do
     if a + 5 then
     end

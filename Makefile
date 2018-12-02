@@ -5,7 +5,7 @@ make:
 	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c pokusne_odevzdani.c semantic.c symtable.c list.c -o compilator
 
 demel: main.c
-	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c -o demel
+	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c semantic.c symtable.c list.c -o demel
 
 hruska: list.c list.h symtable.c symtable.h error_handler.c error_handler.h main.c
 	$(CC) $(CFLAGS) symtable.c list.c error_handler.c main.c -o hruska

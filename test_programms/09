@@ -1,5 +1,5 @@
-if (some fucking expression) then
-    if (one more expression) then
+if ((10 + 20) > 30) then
+    if (10) then
     else
     end
 else
