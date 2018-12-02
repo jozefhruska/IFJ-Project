@@ -10,8 +10,6 @@
 
 #include "semantic.h"
 
-int parametersRemaining = 0; // number of params that are remaining for function call
-
 int parser_parse_prog(){
     // TODO: init global symbol table once in main, remove untill // TODO: end remove
     static bool globalSymTableInit = false;
@@ -145,6 +143,15 @@ int parser_parse_body(){
             store_token(token);
             store_token(next_token);
             parser_parse_assign();
+
+            // add new variable to sym table
+            if (currentFunctoin == NULL) {
+                // in global scope
+                addVar((char *) token->data);
+            } else {
+                // function's local variable
+                addParam((char *) token->data, false);
+            }
         } else {
             /* 
                 TODO: Zeptat se sémantiky, jestli je další identifikátor funkce. Pokud ano,
@@ -252,7 +259,7 @@ int parser_parse_assign(){
 
     sToken *upcoming = getNextToken();
 
-    if (isFunctionDeclared((char *) upcoming->data)) {
+    if (cmp_token_type(upcoming, T_ID) && isFunctionDeclared((char *) upcoming->data)) {
         // if the token is function, then call the function
         store_token(upcoming);
         parser_parse_func_call();
@@ -272,6 +279,7 @@ int parser_parse_func_call(){
     sToken *token = getNextToken();
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
 
+    currentFunctoin = (char *) token->data;
     parametersRemaining = getParamCount((char *) token->data);
 
     token = getNextToken();
@@ -290,6 +298,8 @@ int parser_parse_func_call(){
         error_fatal(ERROR_SEMANTIC_PARAM);
         return 0;
     }
+
+    currentFunctoin = NULL;
 
     return 0;
 }

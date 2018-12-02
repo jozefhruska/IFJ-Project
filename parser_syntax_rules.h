@@ -1,3 +1,9 @@
+#ifndef PARSER_SYNTAX_RULES
+#define PARSER_SYNTAX_RULES
+
+int parametersRemaining; // number of params that are remaining for function call
+char *currentFunctoin; // name of current function
+
 int parser_parse_prog();
 int parser_parse_func();
 
@@ -16,3 +22,5 @@ int parser_parse_cond_else_block();
 int parser_parse_loop();
 int parser_parse_assign();
 int parser_parse_func_call();
+
+#endif

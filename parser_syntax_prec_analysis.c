@@ -3,6 +3,8 @@
 #include "parser.h"
 #include "error_handler.h"
 #include "string.h"
+#include "parser_syntax_rules.h"
+#include "semantic.h"
 
 
 char __GLOBAL_PREC_TABLE[7][7] = {
@@ -145,6 +147,26 @@ int ResolveExpression(sPA_Stack *inputStack){
     sPA_Stack_Item *current_item = PAPop(stack);
 
     if(current_item->token_type == _PREC_ID){
+        // if in a function, try to find ID in private variables or globals
+        if (currentFunctoin != NULL) {
+            if (
+                current_item->lex_token_type == T_ID
+                && isVarDeclared((char *) current_item->token_attr) == false
+                && isParamDeclared(currentFunctoin, (char *) current_item->token_attr) == false
+            ) {
+                error_fatal(ERROR_SEMANTIC_DEF);
+                return 0;
+            }
+        } else {
+            // if in global, try to find ID only in global variables
+            if (
+                current_item->lex_token_type == T_ID
+                && isVarDeclared((char *) current_item->token_attr) == false
+            ) {
+                error_fatal(ERROR_SEMANTIC_DEF);
+                return 0;
+            }
+        }
         current_item = PAPop(stack);
         if(current_item != NULL) error_fatal(ERROR_SYNTACTIC);
     } else if(current_item->token_type == _PREC_L_BRACKET){
