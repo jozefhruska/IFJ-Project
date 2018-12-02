@@ -74,6 +74,14 @@ char *concateSymbol(SymbolPtr symbol) {
 	}
 }
 
+void generateInit() {
+	fprintf(stdout, ".IFJcode18\nJUMP &&main\n"); // TODO neprintovat, pushnout do stacku
+}
+
+void generateMain() {
+	fprintf(stdout, "LABEL &&main\nCREATEFRAME\nPUSHFRAME\n"); // TODO neprintovat, pushnout do stacku
+}
+
 void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
 	/* Initialize stack at first attempt to create an instruction */
 	if (InstructionStack == NULL) {
