@@ -10,6 +10,8 @@
 
 #include "semantic.h"
 
+int parametersRemaining = 0; // number of params that are remaining for function call
+
 int parser_parse_prog(){
     // TODO: init global symbol table once in main, remove untill // TODO: end remove
     static bool globalSymTableInit = false;
@@ -53,7 +55,7 @@ int parser_parse_func(){
         error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token_type(token, T_LEFT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
-    parser_parse_params();
+    parser_parse_params(true);
 
     token = getNextToken();
     if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
@@ -63,18 +65,30 @@ int parser_parse_func(){
     parser_parse_body();
 
     token = getNextToken();
-    if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
+    if(cmp_token(token, T_KEYWORD, "end"))
+        endFunction();
+    else
+        error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
 
     return 0;
 }
 
-int parser_parse_params(){
+int parser_parse_params(bool declaration) {
     sToken *token = getNextToken();
-    if(cmp_token_type(token, T_ID)){
+    if (cmp_token_type(token, T_ID)) {
         /* <params> -> id <params_next> */
-        parser_parse_params_next();
+
+        if (declaration) {
+            // if parsing function declaration, save the parameter
+            addParam((char *) token->data, true);
+        } else {
+            // if in function call
+            parametersRemaining--;
+        }
+
+        parser_parse_params_next(declaration);
     } else {
         /* <params> -> e */
         store_token(token);
@@ -83,13 +97,26 @@ int parser_parse_params(){
     return 0;
 }
 
-int parser_parse_params_next(){
+int parser_parse_params_next(bool declaration) {
     sToken *token = getNextToken();
+
     if(cmp_token_type(token, T_COMMA)){
         /* <params_next> -> , id <params_next> */
         token = getNextToken();
-        if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
-        return parser_parse_params_next();
+
+        if(cmp_token_type(token, T_ID)) {
+            if (declaration) {
+                // if parsing function declaration, save the parameter
+                addParam((char *) token->data, true);
+            } else {
+                // if in function call
+                parametersRemaining--;
+            }
+        } else {
+            error_fatal(ERROR_SYNTACTIC);
+        }
+
+        return parser_parse_params_next(declaration);
     } else {
         /* <params_next> -> e */
         store_token(token);
@@ -124,9 +151,18 @@ int parser_parse_body(){
                 tak zavolám parsování funcion_call. Pokud ne, tak parsuju expression.
                 Pokud se v expression vyskytne nějaká funkce, tak je to error!
             */
-            store_token(token);
-            store_token(next_token);
-            parser_parse_func_call();
+
+            if (isFunctionDeclared((char *) next_token->data)) {
+                // if the token is function, then call the function
+                store_token(token);
+                store_token(next_token);
+                parser_parse_func_call();
+            } else {
+                store_token(token);
+                store_token(next_token);
+                parser_parse_expression();
+            }
+
             token = getNextToken();
             if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
         }
@@ -203,15 +239,29 @@ int parser_parse_assign(){
     sToken *token = getNextToken();
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
-    if(!cmp_token(token, T_OPERATOR, "=")) error_fatal(ERROR_SYNTACTIC);
-    /* 
+    if(cmp_token(token, T_OPERATOR, "=") == false) {
+        error_fatal(ERROR_SYNTACTIC);
+        return 0;
+    }
+
+    /*
         TODO: Zeptat se sémantiky, jestli je další identifikátor funkce. Pokud ano,
         tak zavolám parsování funcion_call. Pokud ne, tak parsuju expression.
         Pokud se v expression vyskytne nějaká funkce, tak je to error!
     */
 
+    sToken *upcoming = getNextToken();
+
+    if (isFunctionDeclared((char *) upcoming->data)) {
+        // if the token is function, then call the function
+        store_token(upcoming);
+        parser_parse_func_call();
+    } else {
+        store_token(upcoming);
+        parser_parse_expression();
+    }
+
     /* <assign> -> id = <func_call> */
-    parser_parse_func_call();
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
     return 0;
@@ -220,16 +270,24 @@ int parser_parse_assign(){
 int parser_parse_func_call(){
     sToken *token = getNextToken();
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
+
+    parametersRemaining = getParamCount((char *) token->data);
+
     token = getNextToken();
     if(cmp_token_type(token, T_LEFT_BRACKET)){
         /* <func_call> -> id (<params>) */
-        parser_parse_params();
+        parser_parse_params(false);
         token = getNextToken();
         if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
     } else {
         /* <func_call> -> id <params> */
         store_token(token);
-        parser_parse_params();
+        parser_parse_params(false);
+    }
+
+    if (parametersRemaining != 0) {
+        error_fatal(ERROR_SEMANTIC_PARAM);
+        return 0;
     }
 
     return 0;
