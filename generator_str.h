@@ -20,13 +20,11 @@
 #include "error_handler.h"
 
 /*
- * @brief Concatenate two strings with possible between string
- * 
- * @param s1 First string
- * @param s2 Second string
- * @param between String to include in between of s1 & s2
- * 
- * @return 
+ * @brief  Concatenate two strings with possible between string.
+ * @param  s1: First string
+ * @param  s2: Second string
+ * @param  between: String to include in between of s1 & s2
+ * @retval Array of chars.
 */
 char *stringConcate(char *s1, char *s2, char *between);
 

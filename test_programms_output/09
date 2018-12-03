@@ -5,14 +5,26 @@ state: 7
 token value: (
 state: 10
 ====
-token value: some
-state: 2
+token value: (
+state: 10
 ====
-token value: fucking
-state: 2
+token value: 10
+state: 4
 ====
-token value: expression
-state: 2
+token value: +
+state: 8
+====
+token value: 20
+state: 4
+====
+token value: )
+state: 11
+====
+token value: >
+state: 8
+====
+token value: 30
+state: 4
 ====
 token value: )
 state: 11
@@ -30,14 +42,8 @@ state: 7
 token value: (
 state: 10
 ====
-token value: one
-state: 2
-====
-token value: more
-state: 2
-====
-token value: expression
-state: 2
+token value: 10
+state: 4
 ====
 token value: )
 state: 11

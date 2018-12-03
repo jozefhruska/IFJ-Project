@@ -1,15 +1,67 @@
 ====
+token value: variable
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 10
+state: 4
+====
+token value: 
+
+state: 13
+====
+token value: b
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 20
+state: 4
+====
+token value: 
+
+state: 13
+====
+token value: neco_dalsiho
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 20
+state: 4
+====
+token value: 
+
+state: 13
+====
+token value: blbost
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 30
+state: 4
+====
+token value: 
+
+state: 13
+====
 token value: if
 state: 7
 ====
-token value: (
-state: 10
-====
-token value: vyraz
+token value: variable
 state: 2
 ====
-token value: )
-state: 11
+token value: <
+state: 8
+====
+token value: b
+state: 2
 ====
 token value: then
 state: 7
@@ -21,9 +73,6 @@ state: 13
 token value: if
 state: 7
 ====
-token value: (
-state: 10
-====
 token value: neco_dalsiho
 state: 2
 ====
@@ -32,9 +81,6 @@ state: 8
 ====
 token value: blbost
 state: 2
-====
-token value: )
-state: 11
 ====
 token value: then
 state: 7

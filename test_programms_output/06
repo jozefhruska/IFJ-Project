@@ -1,15 +1,28 @@
 ====
+token value: a
+state: 2
+====
+token value: =
+state: 8
+====
+token value: 10
+state: 4
+====
+token value: 
+
+state: 13
+====
 token value: while
 state: 7
 ====
-token value: here
+token value: a
 state: 2
 ====
-token value: goes
-state: 2
+token value: >=
+state: 8
 ====
-token value: expression
-state: 2
+token value: 20
+state: 4
 ====
 token value: do
 state: 7
