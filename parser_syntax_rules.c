@@ -87,20 +87,21 @@ int parser_parse_params(bool declaration) {
             addParam((char *) token->data, true);
         } else {
             // if in function call
+            isVariableVisibleOrError(token);
             parametersRemaining--;
         }
 
         parser_parse_params_next(declaration);
     } else {
         if (
-                declaration == false
-                && (
-                        cmp_token_type(token, T_INT)
-                        || cmp_token_type(token, T_DOUBLE)
-                        || cmp_token_type(token, T_STRING)
-                        // TODO: or nil
-                )
-                ) {
+            declaration == false
+            && (
+                cmp_token_type(token, T_INT)
+                || cmp_token_type(token, T_DOUBLE)
+                || cmp_token_type(token, T_STRING)
+                // TODO: or nil
+            )
+        ) {
             // literals in function call
             parametersRemaining--;
             return parser_parse_params_next(declaration);
@@ -125,18 +126,19 @@ int parser_parse_params_next(bool declaration) {
                 addParam((char *) token->data, true);
             } else {
                 // if in function call
+                isVariableVisibleOrError(token);
                 parametersRemaining--;
             }
         } else {
             if (
-                    declaration == false
-                    && (
-                            cmp_token_type(token, T_INT)
-                            || cmp_token_type(token, T_DOUBLE)
-                            || cmp_token_type(token, T_STRING)
-                            // TODO: or nil
-                    )
-                    ) {
+                declaration == false
+                && (
+                    cmp_token_type(token, T_INT)
+                    || cmp_token_type(token, T_DOUBLE)
+                    || cmp_token_type(token, T_STRING)
+                    // TODO: or nil
+                )
+            ) {
                 // literals in function call
                 parametersRemaining--;
                 return parser_parse_params_next(declaration);

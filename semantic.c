@@ -20,6 +20,8 @@
 #include "error_handler.h"
 #include "symtable.h"
 #include "list.h"
+#include "token.h"
+#include "parser_syntax_rules.h"
 
 
 BTNodePtr currentFunction; // item from the global symbol table, currently created function
@@ -393,4 +395,19 @@ unsigned getParamCount(char *functionName) {
     }
 
     return count;
+}
+
+void isVariableVisibleOrError(const sToken *token) {
+    if (
+            currentFunctoin != NULL
+            && isVarDeclared((char *) token->data) == false
+            && isParamDeclared(currentFunctoin, (char *) token->data) == false
+            ) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+    } else if (
+            currentFunctoin == NULL
+            && isVarDeclared((char *) token->data) == false
+            ) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+    }
 }

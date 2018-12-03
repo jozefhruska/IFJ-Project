@@ -17,6 +17,7 @@
 
 #include <stdbool.h>
 #include "symtable.h"
+#include "token.h"
 
 /*
  *
@@ -145,5 +146,13 @@ bool isVarDeclared(char *name);
  * @return bool Found
  */
 bool DLSearchParam(tDLList *List, char *string);
+
+/**
+ * @brief Does nothing if the variable is declared.
+ * Variable must be global in global scope.
+ * In a function it can be global or private.
+ * @param token Token with id
+ */
+void isVariableVisibleOrError(const sToken *token);
 
 #endif //IFJ_PROJECT_SEMANTIC_H
