@@ -248,6 +248,9 @@ sToken *getNextToken()
 			// not classified number
 			else if (isdigit(c))
 			{
+				if (c == '0') {
+					error_fatal(ERROR_LEXICAL);
+				}
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
