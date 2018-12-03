@@ -32,3 +32,13 @@ char *stringConcate(char *s1, char *s2, char *between) {
 
 	return output;
 }
+
+void addInstruction(tDLList *InstructionStack, char *string) {
+	/* Initialize stack at first attempt to create an instruction */
+	if (InstructionStack == NULL) {
+		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
+		else error_fatal(ERROR_INTERNAL);
+	}
+
+	DLInsertLast(InstructionStack, (void *)string);
+}

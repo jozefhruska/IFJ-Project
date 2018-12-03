@@ -18,10 +18,18 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 	SymbolPtr symbol;
 
 	if ((symbol = malloc(sizeof(struct sSymbol))) != NULL) {
-		symbol->type = type;
-		symbol->location = location;
-		symbol->key = key;
-		symbol->value = value;
+		if (type) {
+			symbol->type = type;
+		}
+		if (location) {
+			symbol->location = location;
+		}
+		if (key) {
+			symbol->key = key;
+		}
+		if (value) {
+			symbol->value = value;
+		}
 
 		//return concateSymbol(symbol); // GETTING READY FOR STRING CONVERSION (example -> "int@42")
 		return symbol;
@@ -74,14 +82,6 @@ char *concateSymbol(SymbolPtr symbol) {
 	}
 }
 
-void generateInit() {
-	fprintf(stdout, ".IFJcode18\nJUMP &&main\n"); // TODO neprintovat, pushnout do stacku
-}
-
-void generateMain() {
-	fprintf(stdout, "LABEL &&main\nCREATEFRAME\nPUSHFRAME\n"); // TODO neprintovat, pushnout do stacku
-}
-
 void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
 	/* Initialize stack at first attempt to create an instruction */
 	if (InstructionStack == NULL) {
@@ -106,4 +106,119 @@ bool resolveInstruction(tDLList *instructionStack) {
 
 	free(firstElem);
 	return false;
+}
+
+/*
+ * Built-in functions 
+*/
+
+void generateInputs(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// "\n# Built-in function INPUTS"
+	// "\nLABEL $inputs"
+	// "\nPUSHFRAME"
+	// "\nDEFVAR LF@retval"
+	// "\nMOVE LF@retval string@"
+	// "\n"
+}
+
+void generateInputi(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function INPUTI
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval int@
+	// \n
+}
+
+void generateInputf(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function INPUTF
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval floats@
+	// \n
+}
+
+void generatePrint(tDLList *InstructionStack) {
+
+}
+
+void generateLength(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function LENGTH
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
+}
+
+void generateSubstr(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function SUBSTR
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
+}
+
+void generateOrd(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function ORD
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
+}
+
+void generateChr(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function CHR
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
+}
+
+/*
+ * Preparing functions
+*/
+void generateInit(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n.IFJcode18
+	// \n\nJUMP &&main
+	
+}
+
+void generateMain(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nLABEL &&main
+	// \nCREATEFRAME
+	// \nPUSHFRAME
+	
+}
+
+void generateFunctionStart(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nLABEL && FUNCNAME
+	// \nCREATEFRAME
+	// \nPUSHFRAME
+	
+}
+
+void generateFunctionEnd(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nPOPFRAME
+	// \nRETURN
+	
 }
