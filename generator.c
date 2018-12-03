@@ -74,8 +74,8 @@ char *concateSymbol(SymbolPtr symbol) {
 		}
 	}
 
-	if (symbol->value != NULL) {
-		return stringConcate(location, (char *)symbol->value, "@");
+	if (symbol->key != NULL) {
+		return stringConcate(location, (char *)symbol->key, "@");
 	} else {
 		error_fatal(ERROR_INTERNAL);
 		return NULL;
