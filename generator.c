@@ -18,10 +18,18 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 	SymbolPtr symbol;
 
 	if ((symbol = malloc(sizeof(struct sSymbol))) != NULL) {
-		symbol->type = type;
-		symbol->location = location;
-		symbol->key = key;
-		symbol->value = value;
+		if (type) {
+			symbol->type = type;
+		}
+		if (location) {
+			symbol->location = location;
+		}
+		if (key) {
+			symbol->key = key;
+		}
+		if (value) {
+			symbol->value = value;
+		}
 
 		//return concateSymbol(symbol); // GETTING READY FOR STRING CONVERSION (example -> "int@42")
 		return symbol;
