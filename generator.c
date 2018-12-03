@@ -100,7 +100,7 @@ void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPt
 
 bool resolveInstruction(tDLList *instructionStack) {
 	tDLElemPtr firstElem = DLPopFirst(instructionStack);
-	InstructionPtr instruction = (InstructionPtr) DLPopFirst(instructionStack)->data;
+	InstructionPtr instruction = (InstructionPtr) firstElem->data;
 
 
 
@@ -109,7 +109,7 @@ bool resolveInstruction(tDLList *instructionStack) {
 }
 
 /*
- * Built-in functions 
+ * Built-in functions
 */
 
 void generateInputs(tDLList *InstructionStack) {
