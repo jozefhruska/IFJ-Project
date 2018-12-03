@@ -92,6 +92,19 @@ int parser_parse_params(bool declaration) {
 
         parser_parse_params_next(declaration);
     } else {
+        if (
+                declaration == false
+                && (
+                        cmp_token_type(token, T_INT)
+                        || cmp_token_type(token, T_DOUBLE)
+                        || cmp_token_type(token, T_STRING)
+                        // TODO: or nil
+                )
+                ) {
+            // literals in function call
+            parametersRemaining--;
+            return parser_parse_params_next(declaration);
+        }
         /* <params> -> e */
         store_token(token);
     }
@@ -115,6 +128,20 @@ int parser_parse_params_next(bool declaration) {
                 parametersRemaining--;
             }
         } else {
+            if (
+                    declaration == false
+                    && (
+                            cmp_token_type(token, T_INT)
+                            || cmp_token_type(token, T_DOUBLE)
+                            || cmp_token_type(token, T_STRING)
+                            // TODO: or nil
+                    )
+                    ) {
+                // literals in function call
+                parametersRemaining--;
+                return parser_parse_params_next(declaration);
+            }
+
             error_fatal(ERROR_SYNTACTIC);
         }
 
