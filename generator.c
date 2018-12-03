@@ -103,53 +103,114 @@ bool resolveInstruction(tDLList *instructionStack) {
 /*
  * Built-in functions 
 */
-void generateInputs() {
+
+void generateInputs(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// "\n# Built-in function INPUTS"
+	// "\nLABEL $inputs"
+	// "\nPUSHFRAME"
+	// "\nDEFVAR LF@retval"
+	// "\nMOVE LF@retval string@"
+	// "\n"
+}
+
+void generateInputi(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function INPUTI
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval int@
+	// \n
+}
+
+void generateInputf(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function INPUTF
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval floats@
+	// \n
+}
+
+void generatePrint(tDLList *InstructionStack) {
 
 }
 
-void generateInputi() {
-
+void generateLength(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function LENGTH
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
 }
 
-void generateInputf() {
-
+void generateSubstr(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function SUBSTR
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
 }
 
-void generatePrint() {
-
+void generateOrd(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function ORD
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
+	
 }
 
-void generateLength() {
-
-}
-
-void generateSubstr() {
-
-}
-
-void generateOrd() {
-
-}
-
-void generateChr() {
+void generateChr(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n# Built-in function CHR
+	// \nLABEL $inputs
+	// \nPUSHFRAME
+	// \nDEFVAR LF@retval
+	// \nMOVE LF@retval string@
+	// \n
 	
 }
 
 /*
  * Preparing functions
 */
-void generateInit() {
-	fprintf(stdout, ".IFJcode18\nJUMP &&main\n"); // TODO neprintovat, pushnout do stacku
+void generateInit(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \n.IFJcode18
+	// \n\nJUMP &&main
+	
 }
 
-void generateMain() {
-	fprintf(stdout, "LABEL &&main\nCREATEFRAME\nPUSHFRAME\n"); // TODO neprintovat, pushnout do stacku
+void generateMain(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nLABEL &&main
+	// \nCREATEFRAME
+	// \nPUSHFRAME
+	
 }
 
-void generateFunctionStart() {
-
+void generateFunctionStart(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nLABEL && FUNCNAME
+	// \nCREATEFRAME
+	// \nPUSHFRAME
+	
 }
 
-void generateFunctionEnd() {
+void generateFunctionEnd(tDLList *InstructionStack) {
+	addInstruction(InstructionStack, "");
+	// \nPOPFRAME
+	// \nRETURN
 	
 }

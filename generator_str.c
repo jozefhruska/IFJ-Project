@@ -23,7 +23,6 @@ char *stringConcate(char *s1, char *s2, char *between) {
 	}
 	
 	char *output = malloc(sizeof(char)*(strlen(s1)+strlen(s2)+sizeOfBetween));
-    // TODO destroy after use (make stringDestroy function)
 
 	strcpy(output, s1);
 	if (between != NULL){
@@ -32,4 +31,14 @@ char *stringConcate(char *s1, char *s2, char *between) {
 	strcat(output, s2);
 
 	return output;
+}
+
+void addInstruction(tDLList *InstructionStack, char *string) {
+	/* Initialize stack at first attempt to create an instruction */
+	if (InstructionStack == NULL) {
+		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
+		else error_fatal(ERROR_INTERNAL);
+	}
+
+	DLInsertLast(InstructionStack, (void *)string);
 }
