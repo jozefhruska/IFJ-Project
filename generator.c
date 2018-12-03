@@ -82,10 +82,10 @@ char *concateSymbol(SymbolPtr symbol) {
 	}
 }
 
-void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
+void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr symbols[3]) {
 	/* Initialize stack at first attempt to create an instruction */
-	if (InstructionStack == NULL) {
-		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
+	if (instructionStack == NULL) {
+		if ((instructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(instructionStack);
 		else error_fatal(ERROR_INTERNAL);
 	}
 
@@ -94,7 +94,7 @@ void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPt
 		instruction->type = type;
 		instruction->symbols = symbols;
 
-		DLInsertLast(InstructionStack, (void *) instruction);
+		DLInsertLast(instructionStack, (void *) instruction);
 	} else error_fatal(ERROR_INTERNAL);
 }
 
@@ -112,8 +112,8 @@ bool resolveInstruction(tDLList *instructionStack) {
  * Built-in functions
 */
 
-void generateInputs(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateInputs(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// "\n# Built-in function INPUTS"
 	// "\nLABEL $inputs"
 	// "\nPUSHFRAME"
@@ -122,8 +122,8 @@ void generateInputs(tDLList *InstructionStack) {
 	// "\n"
 }
 
-void generateInputi(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateInputi(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function INPUTI
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -132,8 +132,8 @@ void generateInputi(tDLList *InstructionStack) {
 	// \n
 }
 
-void generateInputf(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateInputf(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function INPUTF
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -142,12 +142,12 @@ void generateInputf(tDLList *InstructionStack) {
 	// \n
 }
 
-void generatePrint(tDLList *InstructionStack) {
+void generatePrint(tDLList *instructionStack) {
 
 }
 
-void generateLength(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateLength(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function LENGTH
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -157,8 +157,8 @@ void generateLength(tDLList *InstructionStack) {
 	
 }
 
-void generateSubstr(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateSubstr(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function SUBSTR
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -168,8 +168,8 @@ void generateSubstr(tDLList *InstructionStack) {
 	
 }
 
-void generateOrd(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateOrd(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function ORD
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -179,8 +179,8 @@ void generateOrd(tDLList *InstructionStack) {
 	
 }
 
-void generateChr(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateChr(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n# Built-in function CHR
 	// \nLABEL $inputs
 	// \nPUSHFRAME
@@ -193,31 +193,31 @@ void generateChr(tDLList *InstructionStack) {
 /*
  * Preparing functions
 */
-void generateInit(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateInit(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \n.IFJcode18
 	// \n\nJUMP &&main
 	
 }
 
-void generateMain(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateMain(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \nLABEL &&main
 	// \nCREATEFRAME
 	// \nPUSHFRAME
 	
 }
 
-void generateFunctionStart(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateFunctionStart(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \nLABEL && FUNCNAME
 	// \nCREATEFRAME
 	// \nPUSHFRAME
 	
 }
 
-void generateFunctionEnd(tDLList *InstructionStack) {
-	addInstruction(InstructionStack, "");
+void generateFunctionEnd(tDLList *instructionStack) {
+	addInstruction(instructionStack, "");
 	// \nPOPFRAME
 	// \nRETURN
 	
