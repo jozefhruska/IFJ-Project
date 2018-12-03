@@ -105,12 +105,14 @@ typedef enum {
 } InstructionType;
 
 typedef enum {
+	ST_UNDEFINED,
 	ST_INTEGER,
 	ST_FLOAT,
 	ST_STRING
 } SymbolType;
 
 typedef enum {
+	SL_UNDEFINED,
 	SL_GF,
 	SL_LF,
 	SL_TF

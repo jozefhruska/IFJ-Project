@@ -21,11 +21,19 @@
 
 /*
  * @brief  Concatenate two strings with possible between string.
- * @param  s1: First string
- * @param  s2: Second string
- * @param  between: String to include in between of s1 & s2
- * @retval Array of chars.
+ * @param  *s1: First string
+ * @param  *s2: Second string
+ * @param  *between: Array of chars to include in between of s1 & s2
+ * @retval Concatenated array of chars.
 */
 char *stringConcate(char *s1, char *s2, char *between);
+
+/*
+ * @brief  Push array of chars to the end of stack.
+ * @param  *InstructionStack: buffer of instructions
+ * @param  *string: array of chars
+ * @retval None
+ */
+void addInstruction(tDLList *InstructionStack, char *string);
 
 #endif
