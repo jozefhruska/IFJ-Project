@@ -23,6 +23,7 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 		symbol->key = key;
 		symbol->value = value;
 
+		//return concateSymbol(symbol); // GETTING READY FOR STRING CONVERSION (example -> "int@42")
 		return symbol;
 	} else {
 		error_fatal(ERROR_INTERNAL);
@@ -30,13 +31,70 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 	}
 }
 
-void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr *symbols) {
+// concatenate into one string variables/constants and their values
+char *concateSymbol(SymbolPtr symbol) {
+	// variables
+	char *location;
+
+	if (symbol->location == SL_GF) {
+		location = "GF";
+	} else if (symbol->location == SL_LF) {
+		location = "LF";
+	} else if (symbol->location == SL_TF) {
+		location = "TF";
+	} 
+	// constants
+	else {
+		char *type;
+
+		if (symbol->type == ST_INTEGER) {
+			type = "int";
+		} else if (symbol->type == ST_FLOAT) {
+			type = "float";
+		} else if (symbol->type == ST_STRING) {
+			type = "string";
+		} else {
+			error_fatal(ERROR_INTERNAL);
+			return NULL;
+		}
+
+		if (symbol->value != NULL) {
+			return stringConcate(type, (char *)symbol->value, "@");
+		} else {
+			error_fatal(ERROR_INTERNAL);
+			return NULL;
+		}
+	}
+
+	if (symbol->value != NULL) {
+		return stringConcate(location, (char *)symbol->value, "@");
+	} else {
+		error_fatal(ERROR_INTERNAL);
+		return NULL;
+	}
+}
+
+void generateInit() {
+	fprintf(stdout, ".IFJcode18\nJUMP &&main\n"); // TODO neprintovat, pushnout do stacku
+}
+
+void generateMain() {
+	fprintf(stdout, "LABEL &&main\nCREATEFRAME\nPUSHFRAME\n"); // TODO neprintovat, pushnout do stacku
+}
+
+void createInstruction(tDLList *InstructionStack, InstructionType type, SymbolPtr symbols[3]) {
+	/* Initialize stack at first attempt to create an instruction */
+	if (InstructionStack == NULL) {
+		if ((InstructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(InstructionStack);
+		else error_fatal(ERROR_INTERNAL);
+	}
+
 	InstructionPtr instruction;
 	if ((instruction = malloc(sizeof(struct sInstruction))) != NULL) {
 		instruction->type = type;
 		instruction->symbols = symbols;
 
-		DLInsertLast(instructionStack, (void *) instruction);
+		DLInsertLast(InstructionStack, (void *) instruction);
 	} else error_fatal(ERROR_INTERNAL);
 }
 

@@ -1,2 +1,4 @@
-while () do
+a = 10
+b = 20
+while (a < b) do
 end

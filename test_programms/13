@@ -1,10 +1,9 @@
-def secti (a, b)
-    a = b
-    if(a == b) then
+def secti (c, d)
+    c = d
+    if (c == d) then
     end
 end
-if(a > b) then
-    while(true) do
-        a = secti(a, b)
-    end
+a = 10
+b = 20
+if (a > b) then
 end

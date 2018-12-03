@@ -1,4 +1,27 @@
 ====
+token value: def
+state: 7
+====
+token value: volam_funkci
+state: 2
+====
+token value: (
+state: 10
+====
+token value: )
+state: 11
+====
+token value: 
+
+state: 13
+====
+token value: end
+state: 7
+====
+token value: 
+
+state: 13
+====
 token value: prom_a
 state: 2
 ====

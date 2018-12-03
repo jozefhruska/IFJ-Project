@@ -1,1 +1,3 @@
+def volam_funkci (a, b)
+end
 prom_a = volam_funkci (param_1, param_2)
