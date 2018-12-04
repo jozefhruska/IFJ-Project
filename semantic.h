@@ -19,6 +19,9 @@
 #include "symtable.h"
 #include "token.h"
 
+
+BTNodePtr currentFunction; // item from the global symbol table, currently created function
+
 /*
  *
  * Symbol table
@@ -53,6 +56,13 @@ void addFunction(char *name);
  * @param isParam true if is a parameter, false if is a local variable
  */
 void addParam(char *name, bool isParam);
+
+/**
+ * @brief Creates new function that must be defined in future.
+ * This is used when a function, that isn't defined yet is called.
+ * @param name Name of the function
+ */
+void addFuncionDefinedLater(char *name);
 
 /**
  * @brief Sets the function defined to true
