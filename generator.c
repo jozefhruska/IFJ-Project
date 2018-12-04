@@ -92,6 +92,8 @@ char *concateSymbol(SymbolPtr symbol) {
 			type = "float";
 		} else if (symbol->type == ST_STRING) {
 			type = "string";
+		} else if (symbol->type == ST_NIL) {
+			type = "nil";
 		} else {
 			error_fatal(ERROR_INTERNAL);
 			return NULL;
@@ -277,6 +279,26 @@ void generateFuncStart(char *id_name) {
 	createInstruction(
 		INSTR_PUSHFRAME,
 		NULL
+	);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(ST_UNDEFINED, SL_LF, "retval", NULL),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(ST_UNDEFINED, SL_LF, "retval", NULL),
+			createSymbol(ST_NIL, SL_UNDEFINED, NULL, (void *)("nil")),
+			NULL,
+			1
+		)
 	);
 }
 

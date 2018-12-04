@@ -109,6 +109,7 @@ typedef enum {
 
 typedef enum {
 	ST_UNDEFINED,
+	ST_NIL,
 	ST_INTEGER,
 	ST_FLOAT,
 	ST_STRING,
