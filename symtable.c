@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "symtable.h"
+#include "semantic.h"
 
 void BTInit(BTNodePtr *node) {
 	(* node) = NULL;
@@ -98,6 +99,9 @@ void BTDispose(BTNodePtr *node) {
 
 void STableInit(STable *table) {
 	BTInit(&(table->root));
+
+	// add NIL value
+	addVar("nil");
 
 	BTFunctionData *functionData;
 
