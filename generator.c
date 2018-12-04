@@ -58,7 +58,7 @@ char *concateSymbol(SymbolPtr symbol) {
 		location = "LF";
 	} else if (symbol->location == SL_TF) {
 		location = "TF";
-	} 
+	}
 	// constants
 	else {
 		char *type;
@@ -90,7 +90,7 @@ char *concateSymbol(SymbolPtr symbol) {
 	}
 }
 
-void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr symbols[3]) {
+void createInstruction(tDLList *instructionStack, InstructionType type, SymbolWrapperPtr symbols[3]) {
 	/* Initialize stack at first attempt to create an instruction */
 	if (instructionStack == NULL) {
 		if ((instructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(instructionStack);
@@ -106,14 +106,114 @@ void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPt
 	} else error_fatal(ERROR_INTERNAL);
 }
 
+char *getInstructionHandle(InstructionType type) {
+	switch (type) {
+
+		/* Frame manipulation & function call instructions */
+		case INSTR_MOVE: return "MOVE";
+		case INSTR_CREATEFRAME: return "CREATEFRAME";
+		case INSTR_PUSHFRAME: return "PUSHFRAME";
+		case INSTR_POPFRAME: return "POPFRAME";
+		case INSTR_DEFVAR: return "DEFVAR";
+		case INSTR_CALL: return "CALL";
+		case INSTR_RETURN: return "RETURN";
+
+		case INSTR_PUSHS: return "PUSHS";
+		case INSTR_POPS: return "POPS";
+		case INSTR_CLEARS: return "CLEARS";
+
+		/* Arithmetic instructions */
+		case INSTR_ADD: return "ADD";
+		case INSTR_SUB: return "SUB";
+		case INSTR_MUL: return "MUL";
+		case INSTR_DIV: return "DIV";
+		case INSTR_IDIV: return "IDIV";
+
+		case INSTR_ADDS: return "ADDS";
+		case INSTR_SUBS: return "SUBS";
+		case INSTR_MULS: return "MULS";
+		case INSTR_DIVS: return "DIVS";
+		case INSTR_IDIVS: return "IDIVS";
+
+		/* Comparation(boolean) instructions */
+		case INSTR_LT: return "LT";
+		case INSTR_GT: return "GT";
+		case INSTR_EQ: return "EQ";
+
+		case INSTR_LTS: return "LTS";
+		case INSTR_GTS: return "GTS";
+		case INSTR_EQS: return "EQS";
+
+		case INSTR_AND: return "AND";
+		case INSTR_OR: return "OR";
+		case INSTR_NOT: return "NOT";
+
+		case INSTR_ANDS: return "ANDS";
+		case INSTR_ORS: return "ORS";
+		case INSTR_NOTS: return "NOTS";
+
+		/* Conversion instructions */
+		case INSTR_INT2FLOAT: return "INT2FLOAT";
+		case INSTR_FLOAT2INT: return "FLOAT2INT";
+		case INSTR_INT2CHAR: return "INT2CHAR";
+		case INSTR_STRI2INT: return "STRI2INT";
+
+		case INSTR_INT2FLOATS: return "INT2FLOATS";
+		case INSTR_FLOAT2INTS: return "FLOAT2INTS";
+		case INSTR_INT2CHARS: return "INT2CHARS";
+		case INSTR_STRI2INTS: return "STRI2INNTS";
+
+		/* I&O instructions */
+		case INSTR_READ: return "READ";
+		case INSTR_WRITE: return "WRITE";
+
+		/* String instructions */
+		case INSTR_CONCAT: return "CONCAT";
+		case INSTR_STRLEN: return "STRLEN";
+		case INSTR_GETCHAR: return "GETCHAR";
+		case INSTR_SETCHAR: return "SETCHAR";
+
+		/* Type instruction */
+		case INSTR_TYPE: return "TYPE";
+
+		/* Program flow instructions */
+		case INSTR_LABEL: return "LABEL";
+		case INSTR_JUMP: return "JUMP";
+		case INSTR_JUMPIFEQ: return "JUMPIFEQ";
+		case INSTR_JUMPIFNEQ: return "JUMPIFNEQ";
+		case INSTR_JUMPIFEQS: return "JUMPIFEQS";
+		case INSTR_JUMPIFNEQS: return "JUMPIFNEQS";
+		case INSTR_EXIT: return "EXIT";
+
+		/* Debugging instructions */
+		case INSTR_BREAK: return "BREAK";
+		case INSTR_DPRINT: return "DPRINT";
+	}
+}
+
 bool resolveInstruction(tDLList *instructionStack) {
 	tDLElemPtr firstElem = DLPopFirst(instructionStack);
 	InstructionPtr instruction = (InstructionPtr) firstElem->data;
 
-
+	switch (instruction->symbols->size) {
+		case 0:
+			printf("%s\n", getInstructionHandle(instruction->type));
+			break;
+		case 1:
+			printf("%s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1));
+			break;
+		case 2:
+			printf("%s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2));
+			break;
+		case 3:
+			printf("%s %s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2), concateSymbol(instruction->symbols->symbol3));
+			break;
+		default:
+			error_fatal(ERROR_INTERNAL);
+	}
 
 	free(firstElem);
-	return false;
+	return true;
 }
 
 /*
@@ -162,7 +262,7 @@ void generateLength(tDLList *instructionStack) {
 	// \nDEFVAR LF@retval
 	// \nMOVE LF@retval string@
 	// \n
-	
+
 }
 
 void generateSubstr(tDLList *instructionStack) {
@@ -173,7 +273,7 @@ void generateSubstr(tDLList *instructionStack) {
 	// \nDEFVAR LF@retval
 	// \nMOVE LF@retval string@
 	// \n
-	
+
 }
 
 void generateOrd(tDLList *instructionStack) {
@@ -184,7 +284,7 @@ void generateOrd(tDLList *instructionStack) {
 	// \nDEFVAR LF@retval
 	// \nMOVE LF@retval string@
 	// \n
-	
+
 }
 
 void generateChr(tDLList *instructionStack) {
@@ -195,7 +295,7 @@ void generateChr(tDLList *instructionStack) {
 	// \nDEFVAR LF@retval
 	// \nMOVE LF@retval string@
 	// \n
-	
+
 }
 
 /*
@@ -205,7 +305,7 @@ void generateInit(tDLList *instructionStack) {
 	addInstruction(instructionStack, "");
 	// \n.IFJcode18
 	// \n\nJUMP &&main
-	
+
 }
 
 void generateMain(tDLList *instructionStack) {
@@ -213,7 +313,7 @@ void generateMain(tDLList *instructionStack) {
 	// \nLABEL &&main
 	// \nCREATEFRAME
 	// \nPUSHFRAME
-	
+
 }
 
 void generateFunctionStart(tDLList *instructionStack) {
@@ -221,12 +321,12 @@ void generateFunctionStart(tDLList *instructionStack) {
 	// \nLABEL && FUNCNAME
 	// \nCREATEFRAME
 	// \nPUSHFRAME
-	
+
 }
 
 void generateFunctionEnd(tDLList *instructionStack) {
 	addInstruction(instructionStack, "");
 	// \nPOPFRAME
 	// \nRETURN
-	
+
 }
