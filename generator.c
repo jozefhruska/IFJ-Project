@@ -39,6 +39,22 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 	}
 }
 
+SymbolWrapperPtr createSymbolWrapper(SymbolPtr symbol1, SymbolPtr symbol2, SymbolPtr symbol3, int size) {
+	SymbolWrapperPtr wrapper;
+
+	if ((wrapper = malloc(sizeof(struct sSymbolWrapper))) != NULL) {
+		wrapper->symbol1 = symbol1;
+		wrapper->symbol2 = symbol2;
+		wrapper->symbol3 = symbol3;
+		wrapper->size = size;
+
+		return wrapper;
+	} else {
+		error_fatal(ERROR_INTERNAL);
+		return NULL;
+	}
+}
+
 // concatenate into one string variables/constants and their values
 char *concateSymbol(SymbolPtr symbol) {
 
