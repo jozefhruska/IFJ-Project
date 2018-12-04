@@ -58,7 +58,7 @@ int parser_parse_func(){
         addFunction((char *) token->data);
         currentFunctionName = (char *) token->data;
         /* generator */
-        generateFuncStart((char *)token->data);
+        _Function_start((char *)token->data);
     }
     else
         error_fatal(ERROR_SYNTACTIC);
@@ -85,6 +85,8 @@ int parser_parse_func(){
     if(cmp_token(token, T_KEYWORD, "end")) {
         endFunction();
         currentFunctionName = NULL;
+        /* Generator */
+        // _Function_end(token);
     }
     else
         error_fatal(ERROR_SYNTACTIC);
@@ -103,6 +105,9 @@ int parser_parse_params(bool declaration, bool declared) {
             // if parsing function declaration, save the parameter
             parametersRemaining--;
             addParam((char *) token->data, true);
+            /* Generator */
+            _Function_param((char *)token->data);
+
         } else {
             // if in function call
             if (declared) {

@@ -11,7 +11,7 @@ int parse(FILE *source){
 
 	setSourceFile(source);
 	
-    generateStart();
+    _Init();
 	int result = parser_parse_prog();
 
 	if (false == eachFunctionDefined()) {
