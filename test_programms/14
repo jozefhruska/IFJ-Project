@@ -1,11 +1,15 @@
 def secti (a, b)
     a = b
     if(a == b) then
-        volam_nejakou_funkci
+        b
     end
 end
+
+a = 10
+b = 5
+
 if(a > b) then
-    while(true) do
+    while(1) do
         a = secti(a, b)
     end
 end

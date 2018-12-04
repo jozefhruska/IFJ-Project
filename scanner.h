@@ -8,7 +8,7 @@
 /**
  * @brief  Lengths of arrays.
  */
-#define KEYWORDS_LENGTH 9
+#define KEYWORDS_LENGTH 8
 #define DELIMITER_LENGTH 3
 #define OPERATOR_LENGTH 8
 #define OPERATORS_LENGTH 11

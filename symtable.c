@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "symtable.h"
+#include "semantic.h"
 
 void BTInit(BTNodePtr *node) {
 	(* node) = NULL;
@@ -99,6 +100,9 @@ void BTDispose(BTNodePtr *node) {
 void STableInit(STable *table) {
 	BTInit(&(table->root));
 
+	// add NIL value
+	addVar("nil");
+
 	BTFunctionData *functionData;
 
 	/* Built-in function - inputs() */
@@ -135,6 +139,7 @@ void STableInit(STable *table) {
 	if (functionData != NULL) {
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
+		functionData->parametersUnlimited = TRUE;
 	}
 
 	/* Built-in function - length(s) */
@@ -201,6 +206,7 @@ void STableInsert(STable *table, char *key, BTNodeType type) {
 				functionData->params = params;
 				functionData->defined = false;
 				functionData->declared = false;
+				functionData->parametersUnlimited = false;
 
 				BTInsert(&(table->root), key, type, functionData);
 			} else {

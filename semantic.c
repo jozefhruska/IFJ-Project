@@ -397,6 +397,19 @@ unsigned getParamCount(char *functionName) {
     return count;
 }
 
+bool isFunctionParamsUnlimited(char *functionName) {
+    // search for the function
+    BTNodePtr fct = BTSearch(globalSymTable->root, functionName);
+
+    if (fct == NULL || fct->type != TYPE_FUNCTION) {
+        // function not found or not a function
+        error_fatal(ERROR_SEMANTIC_DEF);
+        return 0;
+    }
+
+    return fct->data->parametersUnlimited;
+}
+
 void isVariableVisibleOrError(const sToken *token) {
     if (
             currentFunctoin != NULL

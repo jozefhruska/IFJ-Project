@@ -20,7 +20,7 @@
 #include "scanner.h"
 #include "error_handler.h"
 
-static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};	// every keyword included
+static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "then", "while"};	// every keyword included
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};													// brackets or comma
 static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   		// single operator
 static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; 	// final operator (may consist more than one char)
@@ -248,9 +248,9 @@ sToken *getNextToken()
 			// not classified number
 			else if (isdigit(c))
 			{
-				if (c == '0') {
-					error_fatal(ERROR_LEXICAL);
-				}
+				// if (c == '0') {
+				// 	error_fatal(ERROR_LEXICAL);
+				// }
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
@@ -450,7 +450,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = (void *)strtol((char *)token->data, NULL, 10);
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -465,7 +467,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
-				token->data = (void *)strtol((char *)token->data, NULL, 10);
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -487,10 +491,23 @@ sToken *getNextToken()
 				if (c == '+' || c == '-')
 				{
 					strAddChar(&output, c);
+					buff = fgetc(source);
+					if (isdigit(buff))
+					{
+						ungetc(buff, source);
+					}
+					else
+					{
+						error_fatal(ERROR_LEXICAL);
+					}
+				}
+				else if (isdigit(c)) 
+				{
+					strAddChar(&output, c);
 				}
 				else
 				{
-					ungetc(c, source);
+					error_fatal(ERROR_LEXICAL);
 				}
 				state = DOUBLE_EXP;
 			}
@@ -534,9 +551,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_DOUBLE);
-				double convert;
-				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-				token->data = (void *)&convert;
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -556,16 +573,16 @@ sToken *getNextToken()
 				if (isspace(c) || c == EOF)
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
-					double convert;
-					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-					token->data = (void *)&convert;
+					if (output.str[0] == '0' && output.length > 1) {
+						error_fatal(ERROR_LEXICAL);
+					}
 				}
 				else if (isOperator(c) || isDelimiter(c))
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
-					double convert;
-					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-					token->data = (void *)&convert;
+					if (output.str[0] == '0' && output.length > 1) {
+						error_fatal(ERROR_LEXICAL);
+					}
 				}
 				else
 				{

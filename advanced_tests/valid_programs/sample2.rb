@@ -9,12 +9,12 @@ def factorial (n)
     result
 end # function factorial
 # Hlavni telo programu
-print "Zadejte␣cislo␣pro␣vypocet␣faktorialu:␣"
+print "Zadejte cislo pro vypocet faktorialu: "
 a = inputi
 if a < 0 then
-    print "\nFaktorial␣nelze␣spocitat\n"
+    print "\nFaktorial nelze spocitat\n"
 else
     vysl = factorial a
-    print("\nVysledek␣je:", vysl, "\n")
+    print("\nVysledek je:", vysl, "\n")
 end
 

@@ -114,7 +114,7 @@ int parser_parse_expression(){
                     PAPush(subexpression, item->type, item->token_type, item->lex_token_type, item->token_attr);
                     item = item->next;
                 }
-
+                
                 if(item == NULL) error_fatal(ERROR_SYNTACTIC);
 
                 ResolveExpression(subexpression);

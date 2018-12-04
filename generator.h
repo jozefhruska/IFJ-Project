@@ -15,10 +15,12 @@
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
 
-#include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
+#include <string.h>
 
 #include "list.h"
+#include "token.h"
 #include "error_handler.h"
 #include "generator_str.h"
 
@@ -107,50 +109,31 @@ typedef enum {
 	INSTR_DPRINT
 } InstructionType;
 
-typedef enum {
-	ST_UNDEFINED,
-	ST_NIL,
-	ST_INTEGER,
-	ST_FLOAT,
-	ST_STRING,
-	ST_LABEL,
-	ST_START
-} SymbolType;
-
-typedef enum {
-	SL_UNDEFINED,
-	SL_GF,
-	SL_LF,
-	SL_TF
-} SymbolLocation;
-
-typedef struct sSymbol {
-	SymbolType type;
-	SymbolLocation location;
-	char *key;
-	void *value;
-} *SymbolPtr;
-
 typedef struct sSymbolWrapper {
-	SymbolPtr symbol1;
-	SymbolPtr symbol2;
-	SymbolPtr symbol3;
+	char *symbol1;
+	char *symbol2;
+	char *symbol3;
 	int size;
 } *SymbolWrapperPtr;
 
 typedef struct sInstruction {
 	InstructionType type;
 	SymbolWrapperPtr symbols;
-} * InstructionPtr;
+} *InstructionPtr;
 
-SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
-void createInstruction(InstructionType type, SymbolWrapperPtr *symbols);
+typedef struct sLocalContext {
+	char *key;
+	int count;
+} *LocalContextPtr;
+
+char *createSymbol(int count, ...);
+void createInstruction(InstructionType type, SymbolWrapperPtr symbols);
 bool resolveInstruction();
 void resolveAllInstructions();
 
-char *concateSymbol(SymbolPtr symbol);
 void generateStart();
 void generateFuncStart(char *id_name);
+void generateFuncParam(char *id_name);
 void generateFuncEnd();
 
 #endif

@@ -5,7 +5,6 @@
 project
 main.c
 main1.c
-*.sh
 *.dSYM
 sedlacek
 sedlacek_gen
