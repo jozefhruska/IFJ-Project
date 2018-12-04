@@ -99,6 +99,9 @@ typedef enum {
 	INSTR_JUMPIFNEQS,
 	INSTR_EXIT,
 
+	/* Starting print .IFJcode18 */
+	INSTR_IFJ,
+
 	/* Debugging instructions */
 	INSTR_BREAK,
 	INSTR_DPRINT
@@ -109,7 +112,8 @@ typedef enum {
 	ST_INTEGER,
 	ST_FLOAT,
 	ST_STRING,
-	ST_LABEL
+	ST_LABEL,
+	ST_START
 } SymbolType;
 
 typedef enum {
@@ -139,7 +143,7 @@ typedef struct sInstruction {
 } * InstructionPtr;
 
 SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
-void createInstruction(tDLList *instructionStack, InstructionType type, SymbolWrapperPtr *symbols);
+void createInstruction(InstructionType type, SymbolWrapperPtr *symbols);
 bool resolveInstruction(tDLList *instructionStack);
 
 char *concateSymbol(SymbolPtr symbol);
