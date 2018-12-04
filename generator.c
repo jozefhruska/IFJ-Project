@@ -41,6 +41,14 @@ SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void
 
 // concatenate into one string variables/constants and their values
 char *concateSymbol(SymbolPtr symbol) {
+
+	// labels
+	if (symbol->type == ST_LABEL) {
+		if (symbol->value != NULL) {
+			return stringConcate("", symbol->value, "$");
+		}
+	}
+
 	// variables
 	char *location;
 
