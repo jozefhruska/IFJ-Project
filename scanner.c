@@ -20,7 +20,7 @@
 #include "scanner.h"
 #include "error_handler.h"
 
-static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while"};	// every keyword included
+static char *keywords[KEYWORDS_LENGTH] = {"def", "do", "else", "end", "if", "not", "then", "while"};	// every keyword included
 static char delimiter[DELIMITER_LENGTH] = {'(', ')', ','};													// brackets or comma
 static char operator[OPERATOR_LENGTH] = {'+', '-', '*', '/', '<', '>', '=', '!'};					   		// single operator
 static char *operators[OPERATORS_LENGTH] = {"+", "-", "*", "/", "=", "<", ">", "<=", ">=", "==", "!="}; 	// final operator (may consist more than one char)
@@ -248,9 +248,9 @@ sToken *getNextToken()
 			// not classified number
 			else if (isdigit(c))
 			{
-				if (c == '0') {
-					error_fatal(ERROR_LEXICAL);
-				}
+				// if (c == '0') {
+				// 	error_fatal(ERROR_LEXICAL);
+				// }
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
@@ -450,6 +450,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
@@ -465,6 +468,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_INT);
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
@@ -534,6 +540,9 @@ sToken *getNextToken()
 			{
 				ungetc(c, source);
 				tokenChangeBoth(token, &output, T_DOUBLE);
+				if (output.str[0] == '0' && output.length > 1) {
+					error_fatal(ERROR_LEXICAL);
+				}
 				double convert;
 				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 				token->data = (void *)&convert;
@@ -556,6 +565,9 @@ sToken *getNextToken()
 				if (isspace(c) || c == EOF)
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
+					if (output.str[0] == '0' && output.length > 1) {
+						error_fatal(ERROR_LEXICAL);
+					}
 					double convert;
 					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 					token->data = (void *)&convert;
@@ -563,6 +575,9 @@ sToken *getNextToken()
 				else if (isOperator(c) || isDelimiter(c))
 				{
 					tokenChangeBoth(token, &output, T_DOUBLE);
+					if (output.str[0] == '0' && output.length > 1) {
+						error_fatal(ERROR_LEXICAL);
+					}
 					double convert;
 					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
 					token->data = (void *)&convert;
