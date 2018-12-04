@@ -1,3 +1,7 @@
 def volam_funkci (a, b)
 end
+
+param_1 = 10
+param_2 = 20
+
 prom_a = volam_funkci (param_1, param_2)

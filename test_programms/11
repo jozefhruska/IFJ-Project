@@ -1,3 +1,7 @@
 def volam_funkci (a, b)
 end
+
+param_a = "tohle je honzuv string"
+param_b = "tohle je alesuv string"
+
 prom_b = volam_funkci param_a, param_b

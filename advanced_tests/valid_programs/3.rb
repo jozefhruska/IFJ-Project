@@ -1,5 +1,6 @@
-a = a
+a = "a"
 a
+
 def abc(a,b,c)
 	if a then
 		if b then
@@ -16,3 +17,4 @@ end
 a = a
 a
 
+abc (10, 20, "nejaky_dobry_string")

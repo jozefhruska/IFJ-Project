@@ -30,7 +30,11 @@ int parser_parse_prog(){
         return PARSE_SUCCESS;
     } else if(cmp_token(token, T_KEYWORD, "if") ||
               cmp_token(token, T_KEYWORD, "while") ||
-              cmp_token_type(token, T_ID)){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
+              cmp_token_type(token, T_ID) ||
+              cmp_token_type(token, T_INT) ||
+              cmp_token_type(token, T_DOUBLE) ||
+              cmp_token_type(token, T_STRING) ||
+              cmp_token_type(token, T_EOL)){ // TODO: Tady příjdou vypsat všechny možnosti, do kterých může <body> zderivovat
         /* <prog> -> <body><prog> */
         store_token(token);
         parser_parse_body();
@@ -158,7 +162,9 @@ int parser_parse_params_next(bool declaration) {
 int parser_parse_body(){
     sToken *token = getNextToken();
 
-    if(cmp_token(token, T_KEYWORD, "if")){
+    if(cmp_token_type(token, T_EOL)){
+        return parser_parse_body();
+    } else if(cmp_token(token, T_KEYWORD, "if")){
         /* <body> -> <cond><body> */
         store_token(token);
         parser_parse_cond();
@@ -168,6 +174,11 @@ int parser_parse_body(){
         store_token(token);
         parser_parse_loop();
         return parser_parse_body();
+    } else if(cmp_token_type(token, T_INT) ||
+              cmp_token_type(token, T_DOUBLE ||
+              cmp_token_type(token, T_STRING))){
+        store_token(token);
+        parser_parse_expression();
     } else if(cmp_token_type(token, T_ID)){
 
         sToken *next_token = getNextToken();
@@ -196,12 +207,20 @@ int parser_parse_body(){
                 Pokud se v expression vyskytne nějaká funkce, tak je to error!
             */
 
-            if (isFunctionDeclared((char *) next_token->data)) {
+            if (isFunctionDeclared((char *) token->data)) {
                 // if the token is function, then call the function
                 store_token(token);
                 store_token(next_token);
                 parser_parse_func_call();
             } else {
+                /* 
+                    We will compare next token to left bracket, 
+                    if result is true, than we will throw SEMANTIC error
+                    In this case programmer might me trying to 
+                    call undeclared function -> REALLY HARD TO RECOGNIZE
+                */
+                if(cmp_token_type(next_token, T_LEFT_BRACKET) || cmp_token_type(next_token, T_ID)) error_fatal(ERROR_SEMANTIC_DEF);
+
                 store_token(token);
                 store_token(next_token);
                 parser_parse_expression();
@@ -285,7 +304,7 @@ int parser_parse_assign(){
     token = getNextToken();
     if(cmp_token(token, T_OPERATOR, "=") == false) {
         error_fatal(ERROR_SYNTACTIC);
-        return 0;
+        return 0; //Fix: Tohle se nikdy nestane
     }
 
     /*

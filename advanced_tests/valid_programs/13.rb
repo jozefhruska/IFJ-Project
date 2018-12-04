@@ -1,6 +1,7 @@
 n = 1
 if n < 2 then
-aaa = 2 =begin aha zas nejde scanner
+aaa = 2 
+=begin aha zas nejde scanner
        result = 1
 =end
 else
