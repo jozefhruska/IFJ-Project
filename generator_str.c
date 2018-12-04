@@ -15,13 +15,13 @@
 #include "generator_str.h"
 
 char *stringConcate(char *s1, char *s2, char *between) {
-	
+
 	int sizeOfBetween = 1;
 
 	if (between != NULL){
 		sizeOfBetween += strlen(between);
 	}
-	
+
 	char *output = malloc(sizeof(char)*(strlen(s1)+strlen(s2)+sizeOfBetween));
 
 	strcpy(output, s1);
