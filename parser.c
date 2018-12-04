@@ -5,6 +5,7 @@
 #include "parser_syntax_prec_analysis.h"
 #include "error_handler.h"
 #include "generator.h"
+#include "semantic.h"
 
 int parse(FILE *source){
 
@@ -12,6 +13,11 @@ int parse(FILE *source){
 	
     generateStart();
 	int result = parser_parse_prog();
+
+	if (false == eachFunctionDefined()) {
+	    error_fatal(ERROR_SEMANTIC_DEF);
+	}
+
     return result;
 }
 

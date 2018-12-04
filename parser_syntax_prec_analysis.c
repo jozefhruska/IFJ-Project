@@ -148,11 +148,11 @@ int ResolveExpression(sPA_Stack *inputStack){
 
     if(current_item->token_type == _PREC_ID){
         // if in a function, try to find ID in private variables or globals
-        if (currentFunctoin != NULL) {
+        if (currentFunctionName != NULL) {
             if (
                 current_item->lex_token_type == T_ID
                 && isVarDeclared((char *) current_item->token_attr) == false
-                && isParamDeclared(currentFunctoin, (char *) current_item->token_attr) == false
+                && isParamDeclared(currentFunctionName, (char *) current_item->token_attr) == false
             ) {
                 error_fatal(ERROR_SEMANTIC_DEF);
                 return 0;
