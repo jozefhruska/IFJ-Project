@@ -108,7 +108,8 @@ typedef enum {
 	ST_UNDEFINED,
 	ST_INTEGER,
 	ST_FLOAT,
-	ST_STRING
+	ST_STRING,
+	ST_LABEL
 } SymbolType;
 
 typedef enum {
