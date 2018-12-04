@@ -11,7 +11,7 @@ then
     echo "============================================================================================="
     echo "---------------------------------------------------------------------------------------------"
 
-    ./sedlacek advanced_tests/valid_programs/sample1.rb
+    ./sedlacek test
     # ./sedlacek test_programms/07
     # diff <(./sedlacek ./test_programms/14) ./test_programms_output/14
 

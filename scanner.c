@@ -491,10 +491,23 @@ sToken *getNextToken()
 				if (c == '+' || c == '-')
 				{
 					strAddChar(&output, c);
+					buff = fgetc(source);
+					if (isdigit(buff))
+					{
+						ungetc(buff, source);
+					}
+					else
+					{
+						error_fatal(ERROR_LEXICAL);
+					}
+				}
+				else if (isdigit(c)) 
+				{
+					strAddChar(&output, c);
 				}
 				else
 				{
-					ungetc(c, source);
+					error_fatal(ERROR_LEXICAL);
 				}
 				state = DOUBLE_EXP;
 			}
