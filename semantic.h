@@ -155,4 +155,12 @@ bool DLSearchParam(tDLList *List, char *string);
  */
 void isVariableVisibleOrError(const sToken *token);
 
+/**
+ * @brief Returns true if the function can have unlimited count of parameters, e.g. function print.
+ * False otherwise.
+ * @param functionName Name of the function
+ * @return bool Unlimited parameters count
+ */
+bool isFunctionParamsUnlimited(char *functionName);
+
 #endif //IFJ_PROJECT_SEMANTIC_H

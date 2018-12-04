@@ -43,6 +43,7 @@ typedef struct sBTFunctionData {
 	tDLList *params; // BTFunctionParam* []
 	bool defined;
 	bool declared;
+	bool parametersUnlimited; // false - default, true - function can have unlimited parameters (e.g. print), at least one
 } BTFunctionData;
 
 /**

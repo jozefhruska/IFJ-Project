@@ -321,6 +321,11 @@ int parser_parse_func_call(){
 
     parametersRemaining = getParamCount((char *) token->data);
 
+    // if unlimited parameters count - e.g. print function - require at least one parameter
+    if (isFunctionParamsUnlimited((char *) token->data)) {
+        parametersRemaining = 1; // at least 1 param
+    }
+
     token = getNextToken();
     if(cmp_token_type(token, T_LEFT_BRACKET)){
         /* <func_call> -> id (<params>) */
@@ -333,7 +338,7 @@ int parser_parse_func_call(){
         parser_parse_params(false);
     }
 
-    if (parametersRemaining != 0) {
+    if (parametersRemaining > 0) { // in normal function 0 is ok, in print function there can be negative value
         error_fatal(ERROR_SEMANTIC_PARAM);
         return 0;
     }

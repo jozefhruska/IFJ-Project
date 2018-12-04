@@ -135,6 +135,7 @@ void STableInit(STable *table) {
 	if (functionData != NULL) {
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
+		functionData->parametersUnlimited = TRUE;
 	}
 
 	/* Built-in function - length(s) */
@@ -201,6 +202,7 @@ void STableInsert(STable *table, char *key, BTNodeType type) {
 				functionData->params = params;
 				functionData->defined = false;
 				functionData->declared = false;
+				functionData->parametersUnlimited = false;
 
 				BTInsert(&(table->root), key, type, functionData);
 			} else {
