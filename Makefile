@@ -7,8 +7,8 @@ make:
 demel: main.c
 	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c semantic.c symtable.c list.c -o demel
 
-hruska: list.c list.h symtable.c symtable.h error_handler.c error_handler.h main.c
-	$(CC) $(CFLAGS) symtable.c list.c error_handler.c main.c -o hruska
+hruska: list.c list.h generator.h generator.c generator_str.h generator_str.c error_handler.c error_handler.h main.c
+	$(CC) $(CFLAGS) list.c generator.c generator_str.c error_handler.c main.c -o hruska
 
 sedlacek: main.c
 	$(CC) $(CFLAGS) scanner.c token.c list.c main.c error_handler.c -o sedlacek
