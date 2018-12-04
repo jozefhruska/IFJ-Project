@@ -22,6 +22,7 @@
 #include "list.h"
 #include "token.h"
 #include "error_handler.h"
+#include "scanner.h"
 #include "generator_str.h"
 
 typedef enum {
@@ -131,9 +132,11 @@ void createInstruction(InstructionType type, SymbolWrapperPtr symbols);
 bool resolveInstruction();
 void resolveAllInstructions();
 
-void generateStart();
-void generateFuncStart(char *id_name);
-void generateFuncParam(char *id_name);
-void generateFuncEnd();
+void _Init();
+void _Function_start(char *id_name);
+void _Function_param(char *id_name);
+void _Function_end(sToken *token);
+void _Function_call_start(char *id_name);
+void _Function_call_param(sToken *token);
 
 #endif
