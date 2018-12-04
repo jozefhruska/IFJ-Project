@@ -160,6 +160,11 @@ void addParam(char *name, bool isParam) {
         return;
     }
 
+    // make sure function with the name doesn't exist
+    if (isFunctionDeclared(name)) {
+        error_fatal(ERROR_SEMANTIC_DEF);
+    }
+
     // add new parameter to the list
     BTFunctionParam *param = malloc(sizeof(BTFunctionParam));
     if (param == NULL) {
@@ -183,6 +188,11 @@ void addVar(char *name) {
     if (currentFunction != NULL) {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
+    }
+
+    // make sure there isn't function with the same name
+    if (isFunctionDeclared(name)) {
+        error_fatal(ERROR_SEMANTIC_DEF);
     }
 
     // in global

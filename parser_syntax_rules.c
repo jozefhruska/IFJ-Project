@@ -395,6 +395,12 @@ int parser_parse_func_call(bool declared){
             error_fatal(ERROR_SEMANTIC_PARAM);
             return 0;
         }
+
+        if (parametersRemaining < 0 && false == isFunctionParamsUnlimited((functionTokenData))) {
+            // is there was given more parameters
+            error_fatal(ERROR_SEMANTIC_PARAM);
+            return 0;
+        }
     } else {
         // if calling a function that wasn't declared yet, add parameters
         char *currentFunctionNameTmp = currentFunctionName;
