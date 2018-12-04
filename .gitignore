@@ -8,6 +8,7 @@ main1.c
 *.sh
 *.dSYM
 sedlacek
+sedlacek_gen
 hruska
 demel
 buchta
