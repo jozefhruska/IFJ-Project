@@ -297,7 +297,39 @@ void generateFuncParam(char *id_name) {
 	);
 }
 
-void generateFuncEnd(sToken token) {
+void generateFuncEnd(sToken *token) {
+	char *type;
+	char *value;
+
+	if (token == NULL) {
+		type = "nil";
+		value = "nil";
+	} else {
+		type = token->type;
+		if (type == T_ID) {
+			type = "LF";
+		} else if (type == T_INT) {
+			type = "int";
+		} else if (type == T_DOUBLE) {
+			type = "float";
+		} else if (type == T_STRING) {
+			type = "string";
+		} else {
+			error_fatal(ERROR_INTERNAL);
+		}
+		value = (char *)token->data;
+	}
+	
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(4, "LF", "@", "%", "retval"),
+			createSymbol(3, type, "@", value),
+			NULL,
+			2
+		)
+	);
+
 	createInstruction(
 		INSTR_POPFRAME,
 		NULL
