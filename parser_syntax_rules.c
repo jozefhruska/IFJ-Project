@@ -178,8 +178,8 @@ int parser_parse_body(){
         parser_parse_loop();
         return parser_parse_body();
     } else if(cmp_token_type(token, T_INT) ||
-              cmp_token_type(token, T_DOUBLE ||
-              cmp_token_type(token, T_STRING))){
+              cmp_token_type(token, T_DOUBLE) ||
+              cmp_token_type(token, T_STRING)){
         store_token(token);
         parser_parse_expression();
     } else if(cmp_token_type(token, T_ID)){
