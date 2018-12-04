@@ -144,10 +144,12 @@ typedef struct sInstruction {
 
 SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
 void createInstruction(InstructionType type, SymbolWrapperPtr *symbols);
-bool resolveInstruction(tDLList *instructionStack);
+bool resolveInstruction();
+void resolveAllInstructions();
 
 char *concateSymbol(SymbolPtr symbol);
-void functionStart();
-void functionEnd();
+void generateStart();
+void generateFuncStart(char *id_name);
+void generateFuncEnd();
 
 #endif

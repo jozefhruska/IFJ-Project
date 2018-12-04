@@ -208,49 +208,86 @@ char *getInstructionHandle(InstructionType type) {
 		case INSTR_JUMPIFNEQS: return "JUMPIFNEQS";
 		case INSTR_EXIT: return "EXIT";
 
+		case INSTR_IFJ: return ".IFJcode18";
+
 		/* Debugging instructions */
 		case INSTR_BREAK: return "BREAK";
 		case INSTR_DPRINT: return "DPRINT";
 	}
 }
 
-bool resolveInstruction(tDLList *instructionStack) {
+bool resolveInstruction() {
 	tDLElemPtr firstElem = DLPopFirst(instructionStack);
 	InstructionPtr instruction = (InstructionPtr) firstElem->data;
 
-	switch (instruction->symbols->size) {
-		case 0:
-			printf("%s\n", getInstructionHandle(instruction->type));
-			break;
-		case 1:
-			printf("%s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1));
-			break;
-		case 2:
-			printf("%s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2));
-			break;
-		case 3:
-			printf("%s %s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2), concateSymbol(instruction->symbols->symbol3));
-			break;
-		default:
-			error_fatal(ERROR_INTERNAL);
-	}
+	if (instruction->symbols != NULL) {
+		switch (instruction->symbols->size) {
+			case 1:
+				printf("%s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1));
+				break;
+			case 2:
+				printf("%s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2));
+				break;
+			case 3:
+				printf("%s %s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2), concateSymbol(instruction->symbols->symbol3));
+				break;
+			default:
+				error_fatal(ERROR_INTERNAL);
+		}
+	} else printf("%s\n", getInstructionHandle(instruction->type));
 
 	free(firstElem);
 	return true;
 }
 
+void resolveAllInstructions() {
+	while(instructionStack->First != NULL) resolveInstruction();
+}
+
 // static .IFJcode18 and first instruction
 void generateStart() {
-	createInstruction(INSTR_IFJ, (SymbolPtr *)createSymbol(ST_START, SL_UNDEFINED, NULL, (void *)(".IFJcode18")));
-	createInstruction(INSTR_JUMP, (SymbolPtr *)createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)("$main")));
+
+	createInstruction(
+		INSTR_IFJ,
+		NULL
+	);
+
+	createInstruction(
+		INSTR_JUMP,
+		createSymbolWrapper(
+			createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)("$main")),
+			NULL,
+			NULL,
+			1
+		)
+	);
 }
 
 void generateFuncStart(char *id_name) {
-	createInstruction(INSTR_LABEL, (SymbolPtr *)createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)(id_name)));
-	createInstruction(INSTR_PUSHFRAME, NULL);
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)(id_name)),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_PUSHFRAME,
+		NULL
+	);
 }
 
 void generateFuncEnd() {
-	createInstruction(INSTR_POPFRAME, NULL);
-	createInstruction(INSTR_RETURN, NULL);
+	createInstruction(
+		INSTR_POPFRAME,
+		NULL
+	);
+
+	createInstruction(
+		INSTR_RETURN,
+		NULL
+	);
 }
