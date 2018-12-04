@@ -136,5 +136,7 @@ void _Init();
 void _Function_start(char *id_name);
 void _Function_param(char *id_name);
 void _Function_end(sToken *token);
+void _Function_call_start(char *id_name);
+void _Function_call_param(sToken *token);
 
 #endif

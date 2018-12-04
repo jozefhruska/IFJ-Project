@@ -336,3 +336,65 @@ void _Function_end(sToken *token) {
 		NULL
 	);
 }
+
+void _Function_call_start(char *id_name) {
+	if (localContext == NULL) {
+		if ((localContext = malloc(sizeof(struct sLocalContext))) != NULL) {
+			localContext->key = id_name;
+			localContext->count = 0;
+		}
+	} else {
+		localContext->key = id_name;
+		localContext->count = 0;
+	}
+
+	createInstruction(
+		INSTR_CREATEFRAME,
+		NULL
+	);
+}
+
+void _Function_call_param(sToken *token) {
+	localContext->count++;
+
+	char localParam[10];
+	sprintf(localParam, "%d", localContext->count);
+
+	char *type = "nil";
+	char *value = "nil";
+
+	if (token != NULL) {
+		if (token->type == T_ID) {
+			type = "LF";
+		} else if (token->type == T_INT) {
+			type = "int";
+		} else if (token->type == T_DOUBLE) {
+			type = "float";
+		} else if (token->type == T_STRING) {
+			type = "string";
+		} else {
+			error_fatal(ERROR_INTERNAL);
+		}
+		value = (char *)token->data;
+	}
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(6, "TF", "@", "%", localContext->key, "$", localParam),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(6, "TF", "@", "%", localContext->key, "$", localParam),
+			createSymbol(3, type, "@", value),
+			NULL,
+			2
+		)
+	);
+}
