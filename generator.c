@@ -297,7 +297,7 @@ void generateFuncStart(char *id_name) {
 			createSymbol(ST_UNDEFINED, SL_LF, "retval", NULL),
 			createSymbol(ST_NIL, SL_UNDEFINED, NULL, (void *)("nil")),
 			NULL,
-			1
+			2
 		)
 	);
 }

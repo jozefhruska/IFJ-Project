@@ -71,6 +71,8 @@ int parser_parse_func(){
     if(cmp_token(token, T_KEYWORD, "end")) {
         endFunction();
         currentFunctoin = NULL;
+        /* generator */
+        generateFuncEnd();
     }
     else
         error_fatal(ERROR_SYNTACTIC);
