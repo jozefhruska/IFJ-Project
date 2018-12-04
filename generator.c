@@ -15,33 +15,28 @@
 #include "generator.h"
 
 tDLList *instructionStack = NULL;
+LocalContextPtr localContext;
 
-SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value) {
-	SymbolPtr symbol;
+char *createSymbol(int count, ...) {
+	va_list valist;
+	char *result = NULL;
+	size_t size = 0;
 
-	if ((symbol = malloc(sizeof(struct sSymbol))) != NULL) {
-		if (type) {
-			symbol->type = type;
-		}
-		if (location) {
-			symbol->location = location;
-		}
-		if (key) {
-			symbol->key = key;
-		}
-		if (value) {
-			symbol->value = value;
-		}
+	va_start(valist, count);
+	for (int i = 0; i < count; i++) size += sizeof(va_arg(valist, char *));
+	va_end(valist);
 
-		//return concateSymbol(symbol); // GETTING READY FOR STRING CONVERSION (example -> "int@42")
-		return symbol;
-	} else {
-		error_fatal(ERROR_INTERNAL);
-		return NULL;
-	}
+	result = malloc(size);
+
+	va_start(valist, count);
+	strcpy(result, va_arg(valist, char *));
+	for (int i = 1; i < count; i++) strcat(result, va_arg(valist, char *));
+	va_end(valist);
+
+	return result;
 }
 
-SymbolWrapperPtr createSymbolWrapper(SymbolPtr symbol1, SymbolPtr symbol2, SymbolPtr symbol3, int size) {
+SymbolWrapperPtr createSymbolWrapper(char *symbol1, char *symbol2, char *symbol3, int size) {
 	SymbolWrapperPtr wrapper;
 
 	if ((wrapper = malloc(sizeof(struct sSymbolWrapper))) != NULL) {
@@ -57,65 +52,7 @@ SymbolWrapperPtr createSymbolWrapper(SymbolPtr symbol1, SymbolPtr symbol2, Symbo
 	}
 }
 
-// concatenate into one string variables/constants and their values
-char *concateSymbol(SymbolPtr symbol) {
-
-	// .IFJcode18
-	if (symbol->type == ST_START) {
-		return stringConcate("", symbol->value, "");
-	}
-
-	// labels
-	if (symbol->type == ST_LABEL) {
-		if (symbol->value != NULL) {
-			return stringConcate("", symbol->value, "$");
-		}
-	}
-
-	// variables
-	char *location;
-
-	if (symbol->location == SL_GF) {
-		location = "GF";
-	} else if (symbol->location == SL_LF) {
-		location = "LF";
-	} else if (symbol->location == SL_TF) {
-		location = "TF";
-	}
-	// constants
-	else {
-		char *type;
-
-		if (symbol->type == ST_INTEGER) {
-			type = "int";
-		} else if (symbol->type == ST_FLOAT) {
-			type = "float";
-		} else if (symbol->type == ST_STRING) {
-			type = "string";
-		} else if (symbol->type == ST_NIL) {
-			type = "nil";
-		} else {
-			error_fatal(ERROR_INTERNAL);
-			return NULL;
-		}
-
-		if (symbol->value != NULL) {
-			return stringConcate(type, (char *)symbol->value, "@");
-		} else {
-			error_fatal(ERROR_INTERNAL);
-			return NULL;
-		}
-	}
-
-	if (symbol->key != NULL) {
-		return stringConcate(location, (char *)symbol->key, "@");
-	} else {
-		error_fatal(ERROR_INTERNAL);
-		return NULL;
-	}
-}
-
-void createInstruction(InstructionType type, SymbolWrapperPtr symbols[3]) {
+void createInstruction(InstructionType type, SymbolWrapperPtr symbols) {
 	/* Initialize stack at first attempt to create an instruction */
 	if (instructionStack == NULL) {
 		if ((instructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(instructionStack);
@@ -218,6 +155,17 @@ char *getInstructionHandle(InstructionType type) {
 	}
 }
 
+void freeInstruction(InstructionPtr instruction) {
+	if (instruction->symbols != NULL) {
+		if (instruction->symbols->symbol1 != NULL) free(instruction->symbols->symbol1);
+		if (instruction->symbols->symbol2 != NULL) free(instruction->symbols->symbol2);
+		if (instruction->symbols->symbol3 != NULL) free(instruction->symbols->symbol3);
+	}
+
+	free(instruction->symbols);
+	free(instruction);
+}
+
 bool resolveInstruction() {
 	tDLElemPtr firstElem = DLPopFirst(instructionStack);
 	InstructionPtr instruction = (InstructionPtr) firstElem->data;
@@ -225,19 +173,20 @@ bool resolveInstruction() {
 	if (instruction->symbols != NULL) {
 		switch (instruction->symbols->size) {
 			case 1:
-				printf("%s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1));
+				printf("%s %s\n", getInstructionHandle(instruction->type), instruction->symbols->symbol1);
 				break;
 			case 2:
-				printf("%s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2));
+				printf("%s %s %s\n", getInstructionHandle(instruction->type), instruction->symbols->symbol1, instruction->symbols->symbol2);
 				break;
 			case 3:
-				printf("%s %s %s %s\n", getInstructionHandle(instruction->type), concateSymbol(instruction->symbols->symbol1), concateSymbol(instruction->symbols->symbol2), concateSymbol(instruction->symbols->symbol3));
+				printf("%s %s %s %s\n", getInstructionHandle(instruction->type), instruction->symbols->symbol1, instruction->symbols->symbol2, instruction->symbols->symbol3);
 				break;
 			default:
 				error_fatal(ERROR_INTERNAL);
 		}
 	} else printf("%s\n", getInstructionHandle(instruction->type));
 
+	freeInstruction(instruction);
 	free(firstElem);
 	return true;
 }
@@ -248,7 +197,6 @@ void resolveAllInstructions() {
 
 // static .IFJcode18 and first instruction
 void generateStart() {
-
 	createInstruction(
 		INSTR_IFJ,
 		NULL
@@ -257,7 +205,7 @@ void generateStart() {
 	createInstruction(
 		INSTR_JUMP,
 		createSymbolWrapper(
-			createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)("$main")),
+			createSymbol(1, "$$main"),
 			NULL,
 			NULL,
 			1
@@ -266,10 +214,30 @@ void generateStart() {
 }
 
 void generateFuncStart(char *id_name) {
+	if (localContext == NULL) {
+		if ((localContext = malloc(sizeof(struct sLocalContext))) != NULL) {
+			localContext->key = id_name;
+			localContext->count = 0;
+		}
+	} else {
+		localContext->key = id_name;
+		localContext->count = 0;
+	}
+
+	createInstruction(
+		INSTR_JUMP,
+		createSymbolWrapper(
+			createSymbol(3, "$", id_name, "$end"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
 	createInstruction(
 		INSTR_LABEL,
 		createSymbolWrapper(
-			createSymbol(ST_LABEL, SL_UNDEFINED, NULL, (void *)(id_name)),
+			createSymbol(2, "$", id_name),
 			NULL,
 			NULL,
 			1
@@ -284,7 +252,7 @@ void generateFuncStart(char *id_name) {
 	createInstruction(
 		INSTR_DEFVAR,
 		createSymbolWrapper(
-			createSymbol(ST_UNDEFINED, SL_LF, "retval", NULL),
+			createSymbol(4, "LF", "@", "%", "retval"),
 			NULL,
 			NULL,
 			1
@@ -294,15 +262,42 @@ void generateFuncStart(char *id_name) {
 	createInstruction(
 		INSTR_MOVE,
 		createSymbolWrapper(
-			createSymbol(ST_UNDEFINED, SL_LF, "retval", NULL),
-			createSymbol(ST_NIL, SL_UNDEFINED, NULL, (void *)("nil")),
+			createSymbol(4, "LF", "@", "%", "retval"),
+			createSymbol(3, "nil", "@", "nil"),
 			NULL,
-			1
+			2
 		)
 	);
 }
 
-void generateFuncEnd() {
+void generateFuncParam(char *id_name) {
+	localContext->count++;
+
+	char localParam[10];
+	sprintf(localParam, "%d", localContext->count);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(3, "LF", "@", id_name),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(3, "LF", "@", id_name),
+			createSymbol(6, "LF", "@", "%", localContext->key, "$", localParam),
+			NULL,
+			2
+		)
+	);
+}
+
+void generateFuncEnd(sToken token) {
 	createInstruction(
 		INSTR_POPFRAME,
 		NULL
