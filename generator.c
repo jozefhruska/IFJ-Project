@@ -208,6 +208,8 @@ char *getInstructionHandle(InstructionType type) {
 		case INSTR_JUMPIFNEQS: return "JUMPIFNEQS";
 		case INSTR_EXIT: return "EXIT";
 
+		case INSTR_IFJ: return ".IFJcode18";
+
 		/* Debugging instructions */
 		case INSTR_BREAK: return "BREAK";
 		case INSTR_DPRINT: return "DPRINT";
@@ -247,12 +249,7 @@ void generateStart() {
 
 	createInstruction(
 		INSTR_IFJ,
-		createSymbolWrapper(
-			createSymbol(ST_START, SL_UNDEFINED, NULL, (void *)(".IFJcode18")),
-			NULL,
-			NULL,
-			1
-		)
+		NULL
 	);
 
 	createInstruction(
