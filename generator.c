@@ -282,7 +282,7 @@ void _Function_param(char *id_name) {
 			createSymbol(3, "LF", "@", id_name),
 			NULL,
 			NULL,
-			2
+			1
 		)
 	);
 
