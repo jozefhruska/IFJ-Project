@@ -1,0 +1,1 @@
+print("este", "jeden", "print")
