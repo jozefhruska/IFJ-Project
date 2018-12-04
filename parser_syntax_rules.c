@@ -66,7 +66,13 @@ int parser_parse_func(){
     if(!cmp_token_type(token, T_LEFT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
 
     parametersRemaining = getParamCount(currentFunctionName);
+    int defaultParametersCount = parametersRemaining;
     parser_parse_params(true, false);
+
+    if (false == isFunctionParamsUnlimited(currentFunctionName) && defaultParametersCount > 0 && 0 != parametersRemaining) {
+        // if parameters count in first call and the definition isn't equal
+        error_fatal(ERROR_SEMANTIC_PARAM);
+    }
 
     token = getNextToken();
     if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);

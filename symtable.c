@@ -17,6 +17,25 @@
 #include "symtable.h"
 #include "semantic.h"
 
+/**
+ * @brief Makes new parameter
+ * For built-in functions
+ * @param name
+ * @return
+ */
+BTFunctionParam *generateParameter(char *name) {
+	BTFunctionParam *param = malloc(sizeof(BTFunctionParam));
+	if (NULL == param) {
+		error_fatal(ERROR_INTERNAL);
+		return NULL;
+	}
+
+	param->name = name;
+	param->isParameter = true;
+
+	return param;
+}
+
 void BTInit(BTNodePtr *node) {
 	(* node) = NULL;
 }
@@ -147,7 +166,7 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "length")->data;
 
 	if (functionData != NULL) {
-		DLInsertLast(functionData->params, "s");
+		DLInsertLast(functionData->params, generateParameter("s"));
 
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
@@ -158,9 +177,9 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "substr")->data;
 
 	if (functionData != NULL) {
-		DLInsertLast(functionData->params, "s");
-		DLInsertLast(functionData->params, "i");
-		DLInsertLast(functionData->params, "n");
+		DLInsertLast(functionData->params, generateParameter("s"));
+		DLInsertLast(functionData->params, generateParameter("i"));
+		DLInsertLast(functionData->params, generateParameter("n"));
 
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
@@ -171,8 +190,8 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "ord")->data;
 
 	if (functionData != NULL) {
-		DLInsertLast(functionData->params, "s");
-		DLInsertLast(functionData->params, "i");
+		DLInsertLast(functionData->params, generateParameter("s"));
+		DLInsertLast(functionData->params, generateParameter("i"));
 
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
@@ -183,7 +202,7 @@ void STableInit(STable *table) {
 	functionData = (BTFunctionData *) STableSearch(table, "chr")->data;
 
 	if (functionData != NULL) {
-		DLInsertLast(functionData->params, "i");
+		DLInsertLast(functionData->params, generateParameter("i"));
 
 		functionData->defined = TRUE;
 		functionData->declared = TRUE;
