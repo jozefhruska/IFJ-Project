@@ -126,13 +126,20 @@ typedef struct sSymbol {
 	void *value;
 } *SymbolPtr;
 
+typedef struct sSymbolWrapper {
+	SymbolPtr symbol1;
+	SymbolPtr symbol2;
+	SymbolPtr symbol3;
+	int size;
+} *SymbolWrapperPtr;
+
 typedef struct sInstruction {
 	InstructionType type;
-	SymbolPtr *symbols;
-} *InstructionPtr;
+	SymbolWrapperPtr symbols;
+} * InstructionPtr;
 
 SymbolPtr createSymbol(SymbolType type, SymbolLocation location, char *key, void *value);
-void createInstruction(tDLList *instructionStack, InstructionType type, SymbolPtr *symbols);
+void createInstruction(tDLList *instructionStack, InstructionType type, SymbolWrapperPtr *symbols);
 bool resolveInstruction(tDLList *instructionStack);
 
 char *concateSymbol(SymbolPtr symbol);

@@ -1,0 +1,19 @@
+a = 20.0e+10
+id? = idnm!
+if neni ifj
+# ahoj ahoj # rozesralo co?
+a = 20.0 + e
+text = "texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext"
+druhy_test123 = 'chyba?'
+
+"ahoj, \x64ohle funguje?"
+substr # neni keyword
+=begin
+             ahoj # neco neco ?:: a=5
+=end
+
+dalsi_identifikator_s_trochuVetsi_Delkou == & <= @ => exit
+
+neco;
+";"
+no_dame_strednik_nakonec;
