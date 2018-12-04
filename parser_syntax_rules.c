@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "parser.h"
 #include "parser_syntax_rules.h"
@@ -7,6 +8,7 @@
 
 #include "error_handler.h"
 #include "scanner.h"
+#include "symtable.h"
 
 #include "semantic.h"
 #include "generator.h"
@@ -54,7 +56,7 @@ int parser_parse_func(){
     token = getNextToken();
     if(cmp_token_type(token, T_ID)) { // function name
         addFunction((char *) token->data);
-        currentFunctoin = (char *) token->data;
+        currentFunctionName = (char *) token->data;
         /* generator */
         generateFuncStart((char *)token->data);
     }
@@ -62,7 +64,9 @@ int parser_parse_func(){
         error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
     if(!cmp_token_type(token, T_LEFT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
-    parser_parse_params(true);
+
+    parametersRemaining = getParamCount(currentFunctionName);
+    parser_parse_params(true, false);
 
     token = getNextToken();
     if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
@@ -74,7 +78,7 @@ int parser_parse_func(){
     token = getNextToken();
     if(cmp_token(token, T_KEYWORD, "end")) {
         endFunction();
-        currentFunctoin = NULL;
+        currentFunctionName = NULL;
     }
     else
         error_fatal(ERROR_SYNTACTIC);
@@ -83,22 +87,27 @@ int parser_parse_func(){
 
     return 0;
 }
-
-int parser_parse_params(bool declaration) {
+////////////////////////////// true /////////// false
+int parser_parse_params(bool declaration, bool declared) {
     sToken *token = getNextToken();
     if (cmp_token_type(token, T_ID)) {
         /* <params> -> id <params_next> */
 
         if (declaration) {
             // if parsing function declaration, save the parameter
+            parametersRemaining--;
             addParam((char *) token->data, true);
         } else {
             // if in function call
-            isVariableVisibleOrError(token);
-            parametersRemaining--;
+            if (declared) {
+                isVariableVisibleOrError(token);
+                parametersRemaining--;
+            } else {
+                parametersRemaining++;
+            }
         }
 
-        parser_parse_params_next(declaration);
+        parser_parse_params_next(declaration, declared);
     } else {
         if (
             declaration == false
@@ -106,12 +115,16 @@ int parser_parse_params(bool declaration) {
                 cmp_token_type(token, T_INT)
                 || cmp_token_type(token, T_DOUBLE)
                 || cmp_token_type(token, T_STRING)
-                // TODO: or nil
             )
         ) {
             // literals in function call
-            parametersRemaining--;
-            return parser_parse_params_next(declaration);
+            if (declared) {
+                parametersRemaining--;
+            } else {
+                parametersRemaining++;
+            }
+
+            return parser_parse_params_next(declaration, declared);
         }
         /* <params> -> e */
         store_token(token);
@@ -120,7 +133,7 @@ int parser_parse_params(bool declaration) {
     return 0;
 }
 
-int parser_parse_params_next(bool declaration) {
+int parser_parse_params_next(bool declaration, bool declared) {
     sToken *token = getNextToken();
 
     if(cmp_token_type(token, T_COMMA)){
@@ -130,11 +143,16 @@ int parser_parse_params_next(bool declaration) {
         if(cmp_token_type(token, T_ID)) {
             if (declaration) {
                 // if parsing function declaration, save the parameter
+                parametersRemaining--;
                 addParam((char *) token->data, true);
             } else {
                 // if in function call
-                isVariableVisibleOrError(token);
-                parametersRemaining--;
+                if (declared) {
+                    isVariableVisibleOrError(token);
+                    parametersRemaining--;
+                } else {
+                    parametersRemaining++;
+                }
             }
         } else {
             if (
@@ -143,18 +161,21 @@ int parser_parse_params_next(bool declaration) {
                     cmp_token_type(token, T_INT)
                     || cmp_token_type(token, T_DOUBLE)
                     || cmp_token_type(token, T_STRING)
-                    // TODO: or nil
                 )
             ) {
                 // literals in function call
-                parametersRemaining--;
-                return parser_parse_params_next(declaration);
+                if (declared) {
+                    parametersRemaining--;
+                } else {
+                    parametersRemaining++;
+                }
+                return parser_parse_params_next(declaration, declared);
             }
 
             error_fatal(ERROR_SYNTACTIC);
         }
 
-        return parser_parse_params_next(declaration);
+        return parser_parse_params_next(declaration, declared);
     } else {
         /* <params_next> -> e */
         store_token(token);
@@ -192,14 +213,14 @@ int parser_parse_body(){
             parser_parse_assign();
 
             // add new variable to sym table
-            if (currentFunctoin == NULL) {
+            if (currentFunctionName == NULL) {
                 // in global scope
                 if (isVarDeclared((char *) token->data) == false) {
                     addVar((char *) token->data);
                 }
             } else {
                 // function's local variable
-                if (isParamDeclared(currentFunctoin, (char *) token->data) == false) {
+                if (isParamDeclared(currentFunctionName, (char *) token->data) == false) {
                     addParam((char *) token->data, false);
                 }
             }
@@ -214,7 +235,7 @@ int parser_parse_body(){
                 // if the token is function, then call the function
                 store_token(token);
                 store_token(next_token);
-                parser_parse_func_call();
+                parser_parse_func_call(true);
             } else {
                 /* 
                     We will compare next token to left bracket, 
@@ -222,11 +243,21 @@ int parser_parse_body(){
                     In this case programmer might me trying to 
                     call undeclared function -> REALLY HARD TO RECOGNIZE
                 */
-                if(cmp_token_type(next_token, T_LEFT_BRACKET) || cmp_token_type(next_token, T_ID)) error_fatal(ERROR_SEMANTIC_DEF);
-
-                store_token(token);
-                store_token(next_token);
-                parser_parse_expression();
+                if(cmp_token_type(next_token, T_LEFT_BRACKET) || cmp_token_type(next_token, T_ID))
+                {
+                    // tried to call function, that wasn't declared yet
+                    // add a function to symtable with defined = false
+                    // in the end of the compilation must be check if each function is defined
+                    addFuncionDefinedLater((char *) token->data);
+                    store_token(token);
+                    store_token(next_token);
+                    parser_parse_func_call(false);
+//                    error_fatal(ERROR_SEMANTIC_DEF_FUN);
+                } else {
+                    store_token(token);
+                    store_token(next_token);
+                    parser_parse_expression();
+                }
             }
 
             token = getNextToken();
@@ -321,7 +352,7 @@ int parser_parse_assign(){
     if (cmp_token_type(upcoming, T_ID) && isFunctionDeclared((char *) upcoming->data)) {
         // if the token is function, then call the function
         store_token(upcoming);
-        parser_parse_func_call();
+        parser_parse_func_call(true);
     } else {
         store_token(upcoming);
         parser_parse_expression();
@@ -334,11 +365,13 @@ int parser_parse_assign(){
     return 0;
 }
 
-int parser_parse_func_call(){
+int parser_parse_func_call(bool declared){
     sToken *token = getNextToken();
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
 
+    // if called function isn't declared, parametersRemaining will be 0 and will increment for each used param
     parametersRemaining = getParamCount((char *) token->data);
+    char *functionTokenData = token->data;
 
     // if unlimited parameters count - e.g. print function - require at least one parameter
     if (isFunctionParamsUnlimited((char *) token->data)) {
@@ -348,19 +381,44 @@ int parser_parse_func_call(){
     token = getNextToken();
     if(cmp_token_type(token, T_LEFT_BRACKET)){
         /* <func_call> -> id (<params>) */
-        parser_parse_params(false);
+        parser_parse_params(false, declared);
         token = getNextToken();
         if(!cmp_token_type(token, T_RIGHT_BRACKET)) error_fatal(ERROR_SYNTACTIC);
     } else {
         /* <func_call> -> id <params> */
         store_token(token);
-        parser_parse_params(false);
+        parser_parse_params(false, declared);
     }
 
-    if (parametersRemaining > 0) { // in normal function 0 is ok, in print function there can be negative value
-        error_fatal(ERROR_SEMANTIC_PARAM);
-        return 0;
+    if (declared) {
+        if (parametersRemaining > 0) { // in normal function 0 is ok, in print function there can be negative value
+            error_fatal(ERROR_SEMANTIC_PARAM);
+            return 0;
+        }
+    } else {
+        // if calling a function that wasn't declared yet, add parameters
+        char *currentFunctionNameTmp = currentFunctionName;
+        BTNodePtr currentFunctionTmp = currentFunction;
+        currentFunctionName = functionTokenData;
+        currentFunction = STableSearch(globalSymTable, currentFunctionName);
+
+        for (int i = 0; i < parametersRemaining; i++) {
+            char *paramName = malloc(30);
+            if (paramName == NULL) {
+                error_fatal(ERROR_INTERNAL);
+            }
+
+            sprintf(paramName, "param%d", i);
+
+            addParam(paramName, true);
+        }
+
+        currentFunctionName = currentFunctionNameTmp;
+        currentFunction = currentFunctionTmp;
+
+        parametersRemaining = 0;
     }
+
 
     return 0;
 }

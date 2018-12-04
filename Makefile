@@ -2,7 +2,7 @@ CFLAGS=-std=c99 -Wall -pedantic -g
 CC=gcc
 
 make:
-	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c pokusne_odevzdani.c semantic.c symtable.c list.c -o compilator
+	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c generator.c generator_str.c parser_syntax_prec_analysis.c parser.c token.c scanner.c pokusne_odevzdani.c semantic.c symtable.c list.c -o compilator
 
 demel: main.c
 	$(CC) $(CFLAGS) error_handler.c generator.c generator_str.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c semantic.c symtable.c list.c -o demel

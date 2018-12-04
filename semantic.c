@@ -24,7 +24,6 @@
 #include "parser_syntax_rules.h"
 
 
-BTNodePtr currentFunction; // item from the global symbol table, currently created function
 
 
 void initGlobalSymTable() {
@@ -33,6 +32,51 @@ void initGlobalSymTable() {
     // init global symbol table
     globalSymTable = malloc(sizeof(STable));
     STableInit(globalSymTable);
+}
+
+void addFuncionDefinedLater(char *name) {
+    if (globalSymTable == NULL) {
+        error_fatal(ERROR_INTERNAL);
+        return;
+    }
+
+    BTNodePtr func = STableSearch(globalSymTable, name);
+
+    // is the function in the global sym table?
+    if (func != NULL) {
+        // the symbol is declared, but not a function
+        if (func->type != TYPE_FUNCTION) {
+            error_fatal(ERROR_SEMANTIC_RUN);
+            return;
+        }
+
+        return;
+    } else {
+        // add function into global table
+        STableInsert(globalSymTable, name, TYPE_FUNCTION);
+
+        // create list empty list of parameters
+        tDLList *paramList = malloc(sizeof(tDLList));
+        if (paramList == NULL) {
+            error_fatal(ERROR_INTERNAL);
+            return;
+        }
+
+        DLInitList(paramList);
+
+        // add params and default values
+        func = STableSearch(globalSymTable, name);
+
+        // can't insert into global sym table
+        if (func == NULL) {
+            error_fatal(ERROR_INTERNAL);
+            return;
+        }
+
+        func->data->params = paramList;
+        func->data->defined = false;
+        func->data->declared = false;
+    }
 }
 
 void addFunction(char *name) {
@@ -156,6 +200,9 @@ void endFunction() {
         error_fatal(ERROR_SEMANTIC_OTHER);
         return;
     }
+
+    currentFunction->data->declared = true;
+    currentFunction->data->defined = true;
 
     // all good, exit the function
     currentFunction = NULL;
@@ -412,13 +459,13 @@ bool isFunctionParamsUnlimited(char *functionName) {
 
 void isVariableVisibleOrError(const sToken *token) {
     if (
-            currentFunctoin != NULL
+            currentFunctionName != NULL
             && isVarDeclared((char *) token->data) == false
-            && isParamDeclared(currentFunctoin, (char *) token->data) == false
+            && isParamDeclared(currentFunctionName, (char *) token->data) == false
             ) {
         error_fatal(ERROR_SEMANTIC_DEF);
     } else if (
-            currentFunctoin == NULL
+            currentFunctionName == NULL
             && isVarDeclared((char *) token->data) == false
             ) {
         error_fatal(ERROR_SEMANTIC_DEF);
