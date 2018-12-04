@@ -196,7 +196,7 @@ void resolveAllInstructions() {
 }
 
 // static .IFJcode18 and first instruction
-void generateStart() {
+void _Init() {
 	createInstruction(
 		INSTR_IFJ,
 		NULL
@@ -213,7 +213,7 @@ void generateStart() {
 	);
 }
 
-void generateFuncStart(char *id_name) {
+void _Function_start(char *id_name) {
 	if (localContext == NULL) {
 		if ((localContext = malloc(sizeof(struct sLocalContext))) != NULL) {
 			localContext->key = id_name;
@@ -270,7 +270,7 @@ void generateFuncStart(char *id_name) {
 	);
 }
 
-void generateFuncParam(char *id_name) {
+void _Function_param(char *id_name) {
 	localContext->count++;
 
 	char localParam[10];
@@ -297,29 +297,25 @@ void generateFuncParam(char *id_name) {
 	);
 }
 
-void generateFuncEnd(sToken *token) {
-	char *type;
-	char *value;
+void _Function_end(sToken *token) {
+	char *type = "nil";
+	char *value = "nil";
 
-	if (token == NULL) {
-		type = "nil";
-		value = "nil";
-	} else {
-		type = token->type;
-		if (type == T_ID) {
+	if (token != NULL) {
+		if (token->type == T_ID) {
 			type = "LF";
-		} else if (type == T_INT) {
+		} else if (token->type == T_INT) {
 			type = "int";
-		} else if (type == T_DOUBLE) {
+		} else if (token->type == T_DOUBLE) {
 			type = "float";
-		} else if (type == T_STRING) {
+		} else if (token->type == T_STRING) {
 			type = "string";
 		} else {
 			error_fatal(ERROR_INTERNAL);
 		}
 		value = (char *)token->data;
 	}
-	
+
 	createInstruction(
 		INSTR_MOVE,
 		createSymbolWrapper(
