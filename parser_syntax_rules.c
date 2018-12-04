@@ -76,7 +76,7 @@ int parser_parse_func(){
         endFunction();
         currentFunctoin = NULL;
         /* generator */
-        generateFuncEnd();
+        generateFuncEnd(token);
     }
     else
         error_fatal(ERROR_SYNTACTIC);
