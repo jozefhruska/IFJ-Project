@@ -9,6 +9,7 @@
 #include "scanner.h"
 
 #include "semantic.h"
+#include "generator.h"
 
 int parser_parse_prog(){
     // TODO: init global symbol table once in main, remove untill // TODO: end remove
@@ -50,6 +51,8 @@ int parser_parse_func(){
     if(cmp_token_type(token, T_ID)) { // function name
         addFunction((char *) token->data);
         currentFunctoin = (char *) token->data;
+        /* generator */
+        generateFuncStart((char *)token->data);
     }
     else
         error_fatal(ERROR_SYNTACTIC);

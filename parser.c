@@ -4,11 +4,13 @@
 #include "parser_syntax_rules.h"
 #include "parser_syntax_prec_analysis.h"
 #include "error_handler.h"
+#include "generator.h"
 
 int parse(FILE *source){
 
 	setSourceFile(source);
 	
+    generateStart();
 	int result = parser_parse_prog();
     return result;
 }
