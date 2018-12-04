@@ -453,7 +453,6 @@ sToken *getNextToken()
 				if (output.str[0] == '0' && output.length > 1) {
 					error_fatal(ERROR_LEXICAL);
 				}
-				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -471,7 +470,6 @@ sToken *getNextToken()
 				if (output.str[0] == '0' && output.length > 1) {
 					error_fatal(ERROR_LEXICAL);
 				}
-				token->data = (void *)strtol((char *)token->data, NULL, 10);
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -543,9 +541,6 @@ sToken *getNextToken()
 				if (output.str[0] == '0' && output.length > 1) {
 					error_fatal(ERROR_LEXICAL);
 				}
-				double convert;
-				convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-				token->data = (void *)&convert;
 				if (token == NULL)
 					error_fatal(ERROR_INTERNAL);
 				StorePrevious(token);
@@ -568,9 +563,6 @@ sToken *getNextToken()
 					if (output.str[0] == '0' && output.length > 1) {
 						error_fatal(ERROR_LEXICAL);
 					}
-					double convert;
-					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-					token->data = (void *)&convert;
 				}
 				else if (isOperator(c) || isDelimiter(c))
 				{
@@ -578,9 +570,6 @@ sToken *getNextToken()
 					if (output.str[0] == '0' && output.length > 1) {
 						error_fatal(ERROR_LEXICAL);
 					}
-					double convert;
-					convert = strtod(output.str, NULL); // GETTING READY FOR CONVERSION TO DOUBLE
-					token->data = (void *)&convert;
 				}
 				else
 				{
