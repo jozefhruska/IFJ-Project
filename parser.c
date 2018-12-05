@@ -40,10 +40,6 @@ void debug_print_PAStack(sPA_Stack *stack){
     while(current != NULL){
         if(current->type == _NONTERMINAL){
             printf("E (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", current->token_attr, current->type, current->token_type, current->lex_token_type);
-        } else if(current->lex_token_type == T_INT){
-            printf("%ld (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (long*)current->token_attr, current->type, current->token_type, current->lex_token_type);
-        } else if(current->lex_token_type == T_DOUBLE){
-            printf("%f (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (double*)current->token_attr, current->type, current->token_type, current->lex_token_type);
         } else {
             printf("%s (TYPE = %d, PREC_TAB_ID = %d, LEX_TOKEN_TYPE = %d)\n", (char*)current->token_attr, current->type, current->token_type, current->lex_token_type);
         }
