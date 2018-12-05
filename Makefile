@@ -1,23 +1,21 @@
 CFLAGS=-std=c99 -Wall -pedantic -g
 CC=gcc
 
-make:
-	$(CC) $(CFLAGS) error_handler.c parser_syntax_rules.c generator.c generator_str.c parser_syntax_prec_analysis.c parser.c token.c scanner.c pokusne_odevzdani.c semantic.c symtable.c list.c -o compilator
+TARGET=compilator
+TARGET_DEBUG=compilator_debug
 
-demel: main.c
-	$(CC) $(CFLAGS) error_handler.c memory_manager.c generator.c generator_str.c parser_syntax_rules.c parser_syntax_prec_analysis.c parser.c token.c scanner.c main.c semantic.c symtable.c list.c -o demel
+SOURCES=$(filter-out main_debug.c, $(wildcard *.c))
+SOURCES_DEBUG=$(filter-out main.c, $(wildcard *.c))
+OBJECTS=$(SOURCES:.c=.o)
 
-hruska: list.c list.h generator.h generator.c generator_str.h generator_str.c error_handler.c error_handler.h main.c
-	$(CC) $(CFLAGS) list.c generator.c generator_str.c error_handler.c main.c -o hruska
 
-sedlacek: main.c
-	$(CC) $(CFLAGS) scanner.c token.c list.c main.c error_handler.c -o sedlacek
+all: $(TARGET)
 
-sedlacek_gen: main.c
-	$(CC) $(CFLAGS) scanner.c parser.c parser_syntax_rules.c parser_syntax_prec_analysis.c semantic.c symtable.c token.c list.c generator.c generator_str.c error_handler.c main.c -o sedlacek_gen
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
 
-buchta: semantic.c error_handler.c list.c symtable.c tests/semantic.c
-	$(CC) $(CFLAGS) tests/semantic.c semantic.c error_handler.c list.c symtable.c -o buchta -DERROR_NOT_EXIT
+debug: $(OBJECTS)
+	$(CC) $(CFLAGS) $(SOURCES_DEBUG) -o $(TARGET_DEBUG)
 
 clean:
-	rm demel sedlacek hruska compilator sedlacek_gen
+	rm -r *.o $(TARGET) $(TARGET_DEBUG)
