@@ -221,16 +221,6 @@ void _Init() {
 		INSTR_IFJ,
 		NULL
 	);
-
-	createInstruction(
-		INSTR_JUMP,
-		createSymbolWrapper(
-			createSymbol(1, "$$main"),
-			NULL,
-			NULL,
-			1
-		)
-	);
 }
 
 void _Function_start(char *id_name) {
@@ -439,9 +429,6 @@ void _Expression_assign(sToken *token) {
 }
 
 void _Expression(sToken *token) {
-	char *data = (char *) token->data;
-	int type = token->type;
-
 	/* Assign expression result */
 	if (token == NULL) {
 		if (expressionContext->key != NULL) {
@@ -458,7 +445,11 @@ void _Expression(sToken *token) {
 
 		expressionContext->key = NULL;
 		expressionContext->count = 0;
+		return;
 	}
+
+	char *data = (char *) token->data;
+	int type = token->type;
 
 	switch (type) {
 		case T_ID:
