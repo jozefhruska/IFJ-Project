@@ -4,5 +4,6 @@
 #include "scanner.h"
 
 void free_token(sToken *token){
-	
+	free(token->data);
+	free(token);
 }
