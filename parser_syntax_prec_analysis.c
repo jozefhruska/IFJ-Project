@@ -181,6 +181,9 @@ int ResolveExpression(sPA_Stack *inputStack){
             !(current_item->type == _TERMINAL && current_item->token_type == _PREC_RELATION)) error_fatal(ERROR_SYNTACTIC);
         current_item = PAPop(stack);
         if(current_item->type != _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
+    } else if(current_item->type == _TERMINAL && current_item->token_type == _PREC_RELATION){
+        // Some nonsence in expression. Just to make sure... We will exit the compilator :D
+        error_fatal(ERROR_SYNTACTIC);
     }
 
     return 0;

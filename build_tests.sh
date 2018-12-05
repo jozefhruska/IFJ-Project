@@ -39,6 +39,7 @@ then
     ./demel test_programms/25
     ./demel test_programms/26
     ./demel test_programms/27
+    ./demel test_programms/28
     ./demel advanced_tests/valid_programs/1.rb
     ./demel advanced_tests/valid_programs/2.rb
     ./demel advanced_tests/valid_programs/3.rb
