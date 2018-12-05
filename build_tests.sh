@@ -121,4 +121,18 @@ then
     ./compilator_debug advanced_tests/return_value_5/3.rb
     ./compilator_debug advanced_tests/return_value_5/4.rb
     ./compilator_debug advanced_tests/return_value_5/5.rb
+
+		echo
+    echo "=================================== GENERATOR ======================================"
+    echo
+		./ic18int <(./compilator_debug test_programms/01)
+		./ic18int <(./compilator_debug test_programms/02)
+		./ic18int <(./compilator_debug test_programms/03)
+		./ic18int <(./compilator_debug test_programms/04)
+		./ic18int <(./compilator_debug test_programms/05)
+		./ic18int <(./compilator_debug test_programms/06)
+		./ic18int <(./compilator_debug test_programms/07)
+		./ic18int <(./compilator_debug test_programms/08)
+		./ic18int <(./compilator_debug test_programms/09)
+		./ic18int <(./compilator_debug test_programms/10)
 fi
