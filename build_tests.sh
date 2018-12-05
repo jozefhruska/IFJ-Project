@@ -81,6 +81,14 @@ then
     ./demel advanced_tests/return_value_2/1.rb
     ./demel advanced_tests/return_value_2/2.rb
     ./demel advanced_tests/return_value_2/3.rb
+    ./demel advanced_tests/return_value_2/4.rb
+    ./demel advanced_tests/return_value_2/5.rb
+    ./demel advanced_tests/return_value_2/6.rb
+    ./demel advanced_tests/return_value_2/7.rb
+    ./demel advanced_tests/return_value_2/8.rb
+    ./demel advanced_tests/return_value_2/9.rb
+    ./demel advanced_tests/return_value_2/10.rb
+    ./demel advanced_tests/return_value_2/11.rb
     ./demel advanced_tests/return_value_2/identifs.rb
 
     echo
