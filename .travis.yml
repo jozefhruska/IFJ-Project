@@ -1,4 +1,6 @@
 language: c
+sources:
+  - ubuntu-toolchain-r-test
 compiler:
   - gcc
 branches:
