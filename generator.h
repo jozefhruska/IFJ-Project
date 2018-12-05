@@ -149,6 +149,10 @@ void _Function_call_start(char *id_name);
 void _Function_call_param(sToken *token);
 void _Expression_assign(sToken *token);
 void _Expression(sToken *token);
-void _Condition_if();
+void _Condition_start();
+void _Condition_else();
+void _Condition_end();
+void _While_start();
+void _While_end();
 
 #endif

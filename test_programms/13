@@ -1,9 +1,11 @@
 def secti (c, d)
     c = d
     if (c == d) then
+    else
     end
 end
 a = 10
 b = 20
 if (a > b) then
+else
 end

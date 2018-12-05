@@ -288,7 +288,216 @@ void _Init() {
 			1
 		)
 	);
-	
+
+	createInstruction(
+		INSTR_JUMP,
+		createSymbolWrapper(
+			createSymbol(1, "$$main"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	char *key = contextPush("$$compare");
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(1, key),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_PUSHFRAME,
+		NULL
+	);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "retval"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "retval"),
+			createSymbol(1, "nil@nil"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "value"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "value"),
+			createSymbol(4, "LF", "@", "%", "1"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "typeCheck"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_TYPE,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "typeCheck"),
+			createSymbol(5, "LF", "@", key, "%", "value"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_JUMPIFEQ,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "false"),
+			createSymbol(5, "LF", "@", key, "%", "typeCheck"),
+			createSymbol(3, "string", "@", "nil"),
+			3
+		)
+	);
+
+	createInstruction(
+		INSTR_JUMPIFNEQ,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "true"),
+			createSymbol(5, "LF", "@", key, "%", "typeCheck"),
+			createSymbol(3, "string", "@", "bool"),
+			3
+		)
+	);
+
+	createInstruction(
+		INSTR_JUMPIFEQ,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "true"),
+			createSymbol(5, "LF", "@", key, "%", "value"),
+			createSymbol(3, "bool", "@", "true"),
+			3
+		)
+	);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "false"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "retval"),
+			createSymbol(3, "bool", "@", "false"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_JUMP,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "end"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "true"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(5, "LF", "@", key, "%", "retval"),
+			createSymbol(3, "bool", "@", "true"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(3, key, "$", "end"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
+	createInstruction(
+		INSTR_MOVE,
+		createSymbolWrapper(
+			createSymbol(4, "GF", "@", "%", "retval"),
+			createSymbol(5, "LF", "@", key, "%", "retval"),
+			NULL,
+			2
+		)
+	);
+
+	createInstruction(
+		INSTR_POPFRAME,
+		NULL
+	);
+
+	createInstruction(
+		INSTR_RETURN,
+		NULL
+	);
+
+	contextFree(contextPop);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(1, "$$main"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
 	createInstruction(
 		INSTR_CREATEFRAME,
 		NULL
@@ -336,25 +545,25 @@ void _Function_start(char *id_name) {
 		NULL
 	);
 
-	createInstruction(
-		INSTR_DEFVAR,
-		createSymbolWrapper(
-			createSymbol(4, "LF", "@", "%", "retval"),
-			NULL,
-			NULL,
-			1
-		)
-	);
+	// createInstruction(
+	// 	INSTR_DEFVAR,
+	// 	createSymbolWrapper(
+	// 		createSymbol(4, "LF", "@", "%", "retval"),
+	// 		NULL,
+	// 		NULL,
+	// 		1
+	// 	)
+	// );
 
-	createInstruction(
-		INSTR_MOVE,
-		createSymbolWrapper(
-			createSymbol(4, "LF", "@", "%", "retval"),
-			createSymbol(3, "nil", "@", "nil"),
-			NULL,
-			2
-		)
-	);
+	// createInstruction(
+	// 	INSTR_MOVE,
+	// 	createSymbolWrapper(
+	// 		createSymbol(4, "LF", "@", "%", "retval"),
+	// 		createSymbol(3, "nil", "@", "nil"),
+	// 		NULL,
+	// 		2
+	// 	)
+	// );
 }
 
 void _Function_param(char *id_name) {
@@ -420,6 +629,16 @@ void _Function_end(sToken *token) {
 	createInstruction(
 		INSTR_RETURN,
 		NULL
+	);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(3, "$", localContext->key, "$end"),
+			NULL,
+			NULL,
+			1
+		)
 	);
 }
 
@@ -893,10 +1112,85 @@ void _Expression(sToken *token) {
 	}
 }
 
-void _Condition_if() {
+void _Condition_start() {
 	char *key = contextPush("$if");
 
 	if (key != NULL) {
+		createInstruction(
+			INSTR_DEFVAR,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_POPS,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_CREATEFRAME,
+			NULL
+		);
+
+		createInstruction(
+			INSTR_DEFVAR,
+			createSymbolWrapper(
+				createSymbol(4, "TF", "@", "%", "1"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_MOVE,
+			createSymbolWrapper(
+				createSymbol(4, "TF", "@", "%", "1"),
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_CALL,
+			createSymbolWrapper(
+				createSymbol(1, "$$compare$0"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(4, "GF", "@", "%", "retval"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
 		createInstruction(
 			INSTR_PUSHS,
 			createSymbolWrapper(
@@ -951,6 +1245,145 @@ void _Condition_end() {
 	char *key = contextStack->top->key;
 
 	if (key != NULL) {
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+
+	contextFree(contextPop());
+}
+
+void _While_start() {
+	char *key = contextPush("$while");
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_DEFVAR,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_POPS,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_CREATEFRAME,
+			NULL
+		);
+
+		createInstruction(
+			INSTR_DEFVAR,
+			createSymbolWrapper(
+				createSymbol(4, "TF", "@", "%", "1"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_MOVE,
+			createSymbolWrapper(
+				createSymbol(4, "TF", "@", "%", "1"),
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(5, "LF", "@", key, "%", "value"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_CALL,
+			createSymbolWrapper(
+				createSymbol(1, "$$compare$0"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(4, "GF", "@", "%", "retval"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(3, "bool", "@", "true"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "start"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_JUMPIFNEQS,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+}
+
+void _While_end() {
+	char *key = contextStack->top->key;
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_JUMP,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "start"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
 		createInstruction(
 			INSTR_LABEL,
 			createSymbolWrapper(

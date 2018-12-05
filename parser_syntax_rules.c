@@ -302,15 +302,24 @@ int parser_parse_cond(){
 
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "then")) error_fatal(ERROR_SYNTACTIC);
+
+    _Condition_start();
+
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
 
     parser_parse_body();
+
+    _Condition_else();
+
     parser_parse_cond_else_block();
 
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
     token = getNextToken();
+
+    _Condition_end();
+
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
     return 0;
 }
@@ -325,7 +334,9 @@ int parser_parse_cond_else_block(){
         parser_parse_body();
     } else {
         /* <cond_else_block> -> e */
-        store_token(token);
+        /* This was deleted because IT IS NOT IN BASIC ZADANI */
+        error_fatal(ERROR_SYNTACTIC);
+        //store_token(token);
     }
     return 0;
 }
@@ -343,7 +354,9 @@ int parser_parse_loop(){
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
 
+    _While_start();
     parser_parse_body();
+    _While_end();
 
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
