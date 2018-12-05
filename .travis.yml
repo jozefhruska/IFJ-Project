@@ -1,14 +1,12 @@
 language: c
+sources:
+  - ubuntu-toolchain-r-test
 compiler:
   - gcc
 branches:
   only:
   - master
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test 
-  - sudo apt-get update
-  - sudo apt-get upgrade
-  - sudo apt-get dist-upgrade
   - sudo apt-get update
   - sudo apt-get install libstdc++6
 script: ./build_tests.sh
