@@ -122,10 +122,10 @@ typedef struct sInstruction {
 	SymbolWrapperPtr symbols;
 } *InstructionPtr;
 
-typedef struct sLocalContext {
+typedef struct sContext {
 	char *key;
 	int count;
-} *LocalContextPtr;
+} *ContextPtr;
 
 char *createSymbol(int count, ...);
 void createInstruction(InstructionType type, SymbolWrapperPtr symbols);
@@ -138,5 +138,7 @@ void _Function_param(char *id_name);
 void _Function_end(sToken *token);
 void _Function_call_start(char *id_name);
 void _Function_call_param(sToken *token);
+void _Expression_assign(sToken *token);
+void _Expression(sToken *token);
 
 #endif
