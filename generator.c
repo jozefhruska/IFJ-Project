@@ -426,11 +426,39 @@ void _Expression_assign(sToken *token) {
 			expressionContext->key = data;
 		} else error_fatal(ERROR_INTERNAL);
 	} else error_fatal(ERROR_INTERNAL);
+
+	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(3, "LF", "@", data),
+			NULL,
+			NULL,
+			1
+		)
+	);
 }
 
 void _Expression(sToken *token) {
 	char *data = (char *) token->data;
 	int type = token->type;
+
+	/* Assign expression result */
+	if (token == NULL) {
+		if (expressionContext->key != NULL) {
+			createInstruction(
+				INSTR_POPS,
+				createSymbolWrapper(
+					createSymbol(3, "LF", "@", expressionContext->key),
+					NULL,
+					NULL,
+					1
+				)
+			);
+		}
+
+		expressionContext->key = NULL;
+		expressionContext->count = 0;
+	}
 
 	switch (type) {
 		case T_ID:
