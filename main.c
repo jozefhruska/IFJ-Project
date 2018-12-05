@@ -5,6 +5,6 @@
 
 int main(int argc, char *argv[]){
     int result = parse(stdin);
-    resolveAllInstructions();    
+    resolveAllInstructions();
     return 0;
 }
