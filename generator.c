@@ -502,7 +502,7 @@ void _Init() {
 		NULL
 	);
 
-	contextFree(contextPop);
+	//contextFree(contextPop);
 
 	createInstruction(
 		INSTR_LABEL,
@@ -741,7 +741,7 @@ void _Expression_assign(sToken *token) {
 				DLFindInstruction(instructionStack, key);
 
 				if (instructionStack->Act != NULL) {
-					createInstruction(
+					createInstructionAfter(
 						INSTR_DEFVAR,
 						createSymbolWrapper(
 							createSymbol(3, "TF", "@", data),
@@ -759,7 +759,7 @@ void _Expression_assign(sToken *token) {
 				DLSucc(instructionStack);
 
 				if (instructionStack->Act != NULL) {
-					createInstruction(
+					createInstructionAfter(
 						INSTR_DEFVAR,
 						createSymbolWrapper(
 							createSymbol(3, "TF", "@", data),
@@ -770,10 +770,6 @@ void _Expression_assign(sToken *token) {
 					);
 				}
 		}
-	}
-
-	if(!isVarDeclared(data)) {
-
 	}
 }
 
@@ -1169,15 +1165,41 @@ void _Condition_start() {
 	char *key = contextPush("$if");
 
 	if (key != NULL) {
-		createInstruction(
-			INSTR_DEFVAR,
-			createSymbolWrapper(
-				createSymbol(5, "LF", "@", key, "%", "value"),
-				NULL,
-				NULL,
-				1
-			)
-		);
+		if (localContext != NULL && localContext->key != NULL) {
+			char *key;
+
+			if ((key = malloc(sizeof(localContext->key) + sizeof(char))) != NULL) {
+				strcpy(key, "$");
+				strcat(key, localContext->key);
+
+				DLFindInstruction(instructionStack, key);
+
+				createInstructionAfter(
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(5, "TF", "@", key, "%", "value"),
+						NULL,
+						NULL,
+						1
+					)
+				);
+			} else error_fatal(ERROR_INTERNAL);
+		} else {
+			DLFindInstruction(instructionStack, "$$main");
+			DLSucc(instructionStack);
+
+			if (instructionStack->Act != NULL) {
+				createInstructionAfter(
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(5, "TF", "@", key, "%", "value"),
+						NULL,
+						NULL,
+						1
+					)
+				);
+			}
+		}
 
 		createInstruction(
 			INSTR_POPS,
@@ -1210,7 +1232,7 @@ void _Condition_start() {
 				createSymbol(4, "TF", "@", "%", "1"),
 				createSymbol(5, "LF", "@", key, "%", "value"),
 				NULL,
-				1
+				2
 			)
 		);
 
@@ -1357,7 +1379,7 @@ void _While_start() {
 				createSymbol(4, "TF", "@", "%", "1"),
 				createSymbol(5, "LF", "@", key, "%", "value"),
 				NULL,
-				1
+				2
 			)
 		);
 
