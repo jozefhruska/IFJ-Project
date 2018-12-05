@@ -296,7 +296,8 @@ void DLFindInstruction(tDLList *List, char *instructionName) {
 	while ((List->Act != List->Last && List->Act != NULL) || (List->Act == List->Last && List->Act != NULL) ) {
 		// if the active node is the wanted one
 		if (
-			((InstructionPtr) List->Act->data)->type == INSTR_LABEL
+			((InstructionPtr) List->Act->data)->symbols != NULL
+			&& ((InstructionPtr) List->Act->data)->type == INSTR_LABEL
 			&& strcmp(((InstructionPtr) List->Act->data)->symbols->symbol1, instructionName) != 0
 		) {
 			// return, the list's active item will be the searched one
