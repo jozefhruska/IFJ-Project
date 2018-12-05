@@ -486,6 +486,8 @@ void _Init() {
 		NULL
 	);
 
+	contextFree(contextPop);
+
 	createInstruction(
 		INSTR_LABEL,
 		createSymbolWrapper(
