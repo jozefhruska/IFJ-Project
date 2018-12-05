@@ -279,25 +279,25 @@ void _Function_start(char *id_name) {
 		NULL
 	);
 
-	createInstruction(
-		INSTR_DEFVAR,
-		createSymbolWrapper(
-			createSymbol(4, "LF", "@", "%", "retval"),
-			NULL,
-			NULL,
-			1
-		)
-	);
+	// createInstruction(
+	// 	INSTR_DEFVAR,
+	// 	createSymbolWrapper(
+	// 		createSymbol(4, "LF", "@", "%", "retval"),
+	// 		NULL,
+	// 		NULL,
+	// 		1
+	// 	)
+	// );
 
-	createInstruction(
-		INSTR_MOVE,
-		createSymbolWrapper(
-			createSymbol(4, "LF", "@", "%", "retval"),
-			createSymbol(3, "nil", "@", "nil"),
-			NULL,
-			2
-		)
-	);
+	// createInstruction(
+	// 	INSTR_MOVE,
+	// 	createSymbolWrapper(
+	// 		createSymbol(4, "LF", "@", "%", "retval"),
+	// 		createSymbol(3, "nil", "@", "nil"),
+	// 		NULL,
+	// 		2
+	// 	)
+	// );
 }
 
 void _Function_param(char *id_name) {
@@ -363,6 +363,16 @@ void _Function_end(sToken *token) {
 	createInstruction(
 		INSTR_RETURN,
 		NULL
+	);
+
+	createInstruction(
+		INSTR_LABEL,
+		createSymbolWrapper(
+			createSymbol(3, "$", localContext->key, "$end"),
+			NULL,
+			NULL,
+			1
+		)
 	);
 }
 
