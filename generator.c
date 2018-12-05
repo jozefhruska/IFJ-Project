@@ -486,7 +486,7 @@ void _Init() {
 		NULL
 	);
 
-	contextFree(contextPop);
+	// contextFree(contextPop);
 
 	createInstruction(
 		INSTR_LABEL,
@@ -1157,7 +1157,7 @@ void _Condition_start() {
 				createSymbol(4, "TF", "@", "%", "1"),
 				createSymbol(5, "LF", "@", key, "%", "value"),
 				NULL,
-				1
+				2
 			)
 		);
 
@@ -1304,7 +1304,7 @@ void _While_start() {
 				createSymbol(4, "TF", "@", "%", "1"),
 				createSymbol(5, "LF", "@", key, "%", "value"),
 				NULL,
-				1
+				2
 			)
 		);
 
