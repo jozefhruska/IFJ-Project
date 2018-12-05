@@ -7,5 +7,7 @@ if variable < b then
 =begin
     end
 =end
+    else
     end
+else
 end

@@ -150,5 +150,7 @@ void _Function_call_param(sToken *token);
 void _Expression_assign(sToken *token);
 void _Expression(sToken *token);
 void _Condition_if();
+void _Condition_else();
+void _Condition_end();
 
 #endif
