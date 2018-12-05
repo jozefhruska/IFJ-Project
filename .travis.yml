@@ -6,6 +6,6 @@ branches:
   - master
 before_install:
   - sudo apt-get update
-script: make || ./build_tests.sh
+script: ./build_tests.sh
 notifications:
   slack: ifj-projectgroup:wgciDeWTSoYEwi38yhSV9rpE
