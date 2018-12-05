@@ -1,4 +1,8 @@
 a = 10
 b = 20
 while (a < b) do
+	if (a) then
+		a = a + 1
+	else
+	end
 end

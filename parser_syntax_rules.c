@@ -354,7 +354,9 @@ int parser_parse_loop(){
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
 
+    _While_start();
     parser_parse_body();
+    _While_end();
 
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "end")) error_fatal(ERROR_SYNTACTIC);
