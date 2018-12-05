@@ -974,3 +974,57 @@ void _Condition_end() {
 
 	contextFree(contextPop());
 }
+
+void _While_start() {
+	char *key = contextPush("$while");
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "start"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_JUMPIFEQS,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+}
+
+void _While_end() {
+	char *key = contextStack->top->key;
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_JUMP,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "start"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+
+	contextFree(contextPop());
+}
