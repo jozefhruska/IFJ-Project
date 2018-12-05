@@ -17,6 +17,63 @@
 tDLList *instructionStack = NULL;
 ContextPtr localContext, globalContext, expressionContext;
 
+ContextStackPtr contextStack = NULL;
+
+char *contextPush(char *key) {
+	if (contextStack == NULL) {
+		if ((contextStack = malloc(sizeof(struct sContextStack))) != NULL) {
+			contextStack->top = NULL;
+			contextStack->depth = 0;
+		} else error_fatal(ERROR_INTERNAL);
+	}
+
+	if (key != NULL) {
+		ContextPtr context;
+		if ((context = malloc(sizeof(struct sContext))) != NULL) {
+			context->key = key;
+			context->count = 0;
+
+			char *depth;
+			if ((depth = malloc(sizeof(char) * 20))) {
+				sprintf(depth, "%d", contextStack->depth);
+				contextStack->depth++;
+			} else error_fatal(ERROR_INTERNAL);
+
+			if ((context->key = malloc(sizeof(char) * 21 + sizeof(key)))){
+				strcpy(context->key, key);
+				strcat(context->key, "$");
+				strcat(context->key, depth);
+				free(depth);
+			} else error_fatal(ERROR_INTERNAL);
+
+			if (contextStack->top != NULL) context->next = contextStack->top;
+			else context->next = NULL;
+
+			contextStack->top = context;
+			return context->key;
+		} else {
+			error_fatal(ERROR_INTERNAL);
+			return NULL;
+		}
+	} else return NULL;
+}
+
+ContextPtr contextPop() {
+	if (contextStack != NULL && contextStack->top != NULL) {
+		ContextPtr context = contextStack->top;
+		contextStack->top = context->next;
+		return context;
+	} else return NULL;
+}
+
+void contextFree(ContextPtr context) {
+	if (context != NULL) {
+		if (context->key != NULL) free(context->key);
+
+		free(context);
+	}
+}
+
 char *createSymbol(int count, ...) {
 	va_list valist;
 	char *result = NULL;
@@ -834,4 +891,76 @@ void _Expression(sToken *token) {
 		default:
 			break;
 	}
+}
+
+void _Condition_if() {
+	char *key = contextPush("$if");
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_PUSHS,
+			createSymbolWrapper(
+				createSymbol(3, "bool", "@", "true"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+
+		createInstruction(
+			INSTR_JUMPIFNEQS,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "else"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+}
+
+void _Condition_else() {
+	char *key = contextStack->top->key;
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_JUMP,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "else"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+}
+
+void _Condition_end() {
+	char *key = contextStack->top->key;
+
+	if (key != NULL) {
+		createInstruction(
+			INSTR_LABEL,
+			createSymbolWrapper(
+				createSymbol(3, key, "$", "end"),
+				NULL,
+				NULL,
+				1
+			)
+		);
+	}
+
+	contextFree(contextPop());
 }
