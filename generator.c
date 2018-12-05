@@ -1004,6 +1004,16 @@ void _While_start() {
 void _While_end() {
 	char *key = contextStack->top->key;
 
+	createInstruction(
+		INSTR_PUSHS,
+		createSymbolWrapper(
+			createSymbol(3, "bool", "@", "true"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
 	if (key != NULL) {
 		createInstruction(
 			INSTR_JUMP,
