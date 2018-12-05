@@ -223,6 +223,16 @@ void _Init() {
 	);
 
 	createInstruction(
+		INSTR_DEFVAR,
+		createSymbolWrapper(
+			createSymbol(4,"GF", "@", "%", "retval"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+	
+	createInstruction(
 		INSTR_CREATEFRAME,
 		NULL
 	);
@@ -338,7 +348,7 @@ void _Function_end(sToken *token) {
 	createInstruction(
 		INSTR_MOVE,
 		createSymbolWrapper(
-			createSymbol(4, "LF", "@", "%", "retval"),
+			createSymbol(4, "GF", "@", "%", "retval"),
 			createSymbol(3, type, "@", value),
 			NULL,
 			2
