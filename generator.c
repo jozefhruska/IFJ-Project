@@ -223,13 +223,13 @@ void _Init() {
 	);
 
 	createInstruction(
-		INSTR_JUMP,
-		createSymbolWrapper(
-			createSymbol(1, "$$main"),
-			NULL,
-			NULL,
-			1
-		)
+		INSTR_CREATEFRAME,
+		NULL
+	);
+
+	createInstruction(
+		INSTR_PUSHFRAME,
+		NULL
 	);
 }
 
@@ -439,9 +439,6 @@ void _Expression_assign(sToken *token) {
 }
 
 void _Expression(sToken *token) {
-	char *data = (char *) token->data;
-	int type = token->type;
-
 	/* Assign expression result */
 	if (token == NULL) {
 		if (expressionContext->key != NULL) {
@@ -458,7 +455,11 @@ void _Expression(sToken *token) {
 
 		expressionContext->key = NULL;
 		expressionContext->count = 0;
+		return;
 	}
+
+	char *data = (char *) token->data;
+	int type = token->type;
 
 	switch (type) {
 		case T_ID:
@@ -510,106 +511,51 @@ void _Expression(sToken *token) {
 			char localParam[10];
 			sprintf(localParam, "%d", expressionContext->count);
 
-			createInstruction(
-				INSTR_DEFVAR,
-				createSymbolWrapper(
-					createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-					NULL,
-					NULL,
-					1
-				)
-			);
-
 			/* TODO: Type check */
 			if (!strcmp("+", data)) { // Operator - Addition
 				createInstruction(
 					INSTR_ADDS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("-", data)) { // Operator - Subtraction
 				createInstruction(
 					INSTR_SUBS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("*", data)) { // Operator - Multiplication
 				createInstruction(
 					INSTR_MULS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("/", data)) { // Operator - Division
 				createInstruction(
 					INSTR_DIVS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("==", data)) { // Operator - Equal
 				createInstruction(
 					INSTR_EQS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("!=", data)) { // Operator - Not equal
 				createInstruction(
 					INSTR_EQS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 
 				createInstruction(
-					INSTR_NOT,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					INSTR_NOTS,
+					NULL
 				);
 			} else if (!strcmp(">", data)) { // Operator - Greater than
 				createInstruction(
 					INSTR_GTS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp("<", data)) { // Operator - Lesser than
 				createInstruction(
 					INSTR_LTS,
-					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-						NULL,
-						NULL,
-						1
-					)
+					NULL
 				);
 			} else if (!strcmp(">=", data)) { // Operator -- Greater or equal than
 				expressionContext->count++;
@@ -620,6 +566,14 @@ void _Expression(sToken *token) {
 				char tempParam2[10];
 				sprintf(tempParam2, "%d", expressionContext->count);
 
+				expressionContext->count++;
+				char tempResultGT[10];
+				sprintf(tempResultGT, "%d", expressionContext->count);
+
+				expressionContext->count++;
+				char tempResultEQ[10];
+				sprintf(tempResultEQ, "%d", expressionContext->count);
+
 				createInstruction(
 					INSTR_DEFVAR,
 					createSymbolWrapper(
@@ -641,7 +595,27 @@ void _Expression(sToken *token) {
 				);
 
 				createInstruction(
-					INSTR_GTS,
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultGT),
+						NULL,
+						NULL,
+						1
+					)
+				);
+
+				createInstruction(
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
+						NULL,
+						NULL,
+						1
+					)
+				);
+
+				createInstruction(
+					INSTR_POPS,
 					createSymbolWrapper(
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
 						NULL,
@@ -651,22 +625,52 @@ void _Expression(sToken *token) {
 				);
 
 				createInstruction(
-					INSTR_EQS,
+					INSTR_POPS,
 					createSymbolWrapper(
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
 						NULL,
 						NULL,
 						1
+					)
+				);
+
+				createInstruction(
+					INSTR_GT,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultGT),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						3
+					)
+				);
+
+				createInstruction(
+					INSTR_EQ,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						3
 					)
 				);
 
 				createInstruction(
 					INSTR_OR,
 					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultGT),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
 						3
+					)
+				);
+
+				createInstruction(
+					INSTR_PUSHS,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						NULL,
+						NULL,
+						1
 					)
 				);
 			} else if (!strcmp("<=", data)) { // Operator -- Lesser or equal than
@@ -678,6 +682,14 @@ void _Expression(sToken *token) {
 				char tempParam2[10];
 				sprintf(tempParam2, "%d", expressionContext->count);
 
+				expressionContext->count++;
+				char tempResultLT[10];
+				sprintf(tempResultLT, "%d", expressionContext->count);
+
+				expressionContext->count++;
+				char tempResultEQ[10];
+				sprintf(tempResultEQ, "%d", expressionContext->count);
+
 				createInstruction(
 					INSTR_DEFVAR,
 					createSymbolWrapper(
@@ -699,7 +711,27 @@ void _Expression(sToken *token) {
 				);
 
 				createInstruction(
-					INSTR_LTS,
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultLT),
+						NULL,
+						NULL,
+						1
+					)
+				);
+
+				createInstruction(
+					INSTR_DEFVAR,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
+						NULL,
+						NULL,
+						1
+					)
+				);
+
+				createInstruction(
+					INSTR_POPS,
 					createSymbolWrapper(
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
 						NULL,
@@ -709,35 +741,55 @@ void _Expression(sToken *token) {
 				);
 
 				createInstruction(
-					INSTR_EQS,
+					INSTR_POPS,
 					createSymbolWrapper(
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
 						NULL,
 						NULL,
 						1
+					)
+				);
+
+				createInstruction(
+					INSTR_LT,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultLT),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						3
+					)
+				);
+
+				createInstruction(
+					INSTR_EQ,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						3
 					)
 				);
 
 				createInstruction(
 					INSTR_OR,
 					createSymbolWrapper(
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
 						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
-						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam2),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultLT),
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempResultEQ),
 						3
 					)
 				);
-			}
 
-			createInstruction(
-				INSTR_PUSHS,
-				createSymbolWrapper(
-					createSymbol(6, "LF", "@", "%", expressionContext->key, "$", localParam),
-					NULL,
-					NULL,
-					1
-				)
-			);
+				createInstruction(
+					INSTR_PUSHS,
+					createSymbolWrapper(
+						createSymbol(6, "LF", "@", "%", expressionContext->key, "$", tempParam1),
+						NULL,
+						NULL,
+						1
+					)
+				);
+			}
 			break;
 		default:
 			break;
