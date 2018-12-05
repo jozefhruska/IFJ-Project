@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "list.h"
+#include "generator.h"
 
 int errflg;
 int solved;
@@ -285,4 +286,24 @@ bool DLSearchString(tDLList *List, char *string) {
     }
 
     return false;
+}
+
+void DLFindInstruction(tDLList *List, char *instructionName) {
+	// go to the first item
+	DLFirst(List);
+
+	// for each item in the list
+	while ((List->Act != List->Last && List->Act != NULL) || (List->Act == List->Last && List->Act != NULL) ) {
+		// if the active node is the wanted one
+		if (
+			((InstructionPtr) List->Act->data)->type == INSTR_LABEL
+			&& strcmp(((InstructionPtr) List->Act->data)->symbols->symbol1, instructionName) != 0
+		) {
+			// return, the list's active item will be the searched one
+			return;
+		}
+
+		// move to the next item
+		DLSucc(List);
+	}
 }
