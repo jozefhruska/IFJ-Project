@@ -59,4 +59,7 @@ int DLActive (tDLList *);
 tDLElemPtr DLPopFirst(tDLList *L);
 bool DLSearchString(tDLList *List, char *string);
 
+// InstructionPtr
+void DLFindInstruction(tDLList *List, char *instructionName);
+
 #endif
