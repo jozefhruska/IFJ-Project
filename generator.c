@@ -68,7 +68,7 @@ ContextPtr contextPop() {
 
 void contextFree(ContextPtr context) {
 	if (context != NULL) {
-		if (context->key != NULL) free(context->key);
+		//if (context->key != NULL) free(context->key);
 
 		free(context);
 	}
@@ -122,6 +122,22 @@ void createInstruction(InstructionType type, SymbolWrapperPtr symbols) {
 		instruction->symbols = symbols;
 
 		DLInsertLast(instructionStack, (void *) instruction);
+	} else error_fatal(ERROR_INTERNAL);
+}
+
+void createInstructionAfter(InstructionType type, SymbolWrapperPtr symbols) {
+	/* Initialize stack at first attempt to create an instruction */
+	if (instructionStack == NULL) {
+		if ((instructionStack = malloc(sizeof(tDLList))) != NULL) DLInitList(instructionStack);
+		else error_fatal(ERROR_INTERNAL);
+	}
+
+	InstructionPtr instruction;
+	if ((instruction = malloc(sizeof(struct sInstruction))) != NULL) {
+		instruction->type = type;
+		instruction->symbols = symbols;
+
+		DLPostInsert(instructionStack, (void *) instruction);
 	} else error_fatal(ERROR_INTERNAL);
 }
 
@@ -713,15 +729,52 @@ void _Expression_assign(sToken *token) {
 		} else error_fatal(ERROR_INTERNAL);
 	} else error_fatal(ERROR_INTERNAL);
 
-	createInstruction(
-		INSTR_DEFVAR,
-		createSymbolWrapper(
-			createSymbol(3, "LF", "@", data),
-			NULL,
-			NULL,
-			1
-		)
-	);
+
+	if (localContext != NULL && localContext->key != NULL) {
+		if (!isParamDeclared(localContext->key, data)) {
+			char *key;
+
+			if ((key = malloc(sizeof(localContext->key) + sizeof(char))) != NULL) {
+				strcpy(key, "$");
+				strcat(key, localContext->key);
+
+				DLFindInstruction(instructionStack, key);
+
+				if (instructionStack->Act != NULL) {
+					createInstruction(
+						INSTR_DEFVAR,
+						createSymbolWrapper(
+							createSymbol(3, "TF", "@", data),
+							NULL,
+							NULL,
+							1
+						)
+					);
+				}
+			} else error_fatal(ERROR_INTERNAL);
+		}
+	} else {
+		if (!isVarDeclared(data)) {
+				DLFindInstruction(instructionStack, "$$main");
+				DLSucc(instructionStack);
+
+				if (instructionStack->Act != NULL) {
+					createInstruction(
+						INSTR_DEFVAR,
+						createSymbolWrapper(
+							createSymbol(3, "TF", "@", data),
+							NULL,
+							NULL,
+							1
+						)
+					);
+				}
+		}
+	}
+
+	if(!isVarDeclared(data)) {
+
+	}
 }
 
 void _Expression(sToken *token) {

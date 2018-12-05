@@ -23,6 +23,7 @@
 #include "token.h"
 #include "error_handler.h"
 #include "scanner.h"
+#include "semantic.h"
 #include "generator_str.h"
 
 typedef enum {
@@ -138,6 +139,7 @@ ContextPtr contextPop();
 
 char *createSymbol(int count, ...);
 void createInstruction(InstructionType type, SymbolWrapperPtr symbols);
+void createInstructionAfter(InstructionType type, SymbolWrapperPtr symbols);
 bool resolveInstruction();
 void resolveAllInstructions();
 
