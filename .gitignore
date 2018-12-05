@@ -8,3 +8,4 @@ cmake-build-debug/*
 test
 compilator
 compilator_debug
+test.out
