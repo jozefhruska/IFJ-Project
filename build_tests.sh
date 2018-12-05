@@ -12,115 +12,114 @@ then
     echo "============================================================================================="
     echo "---------------------------------------------------------------------------------------------"
 
-    ./compilator_debug test_programms/01
-    ./compilator_debug test_programms/02
-    ./compilator_debug test_programms/03
-    ./compilator_debug test_programms/04
-    ./compilator_debug test_programms/05
-    ./compilator_debug test_programms/06
-    ./compilator_debug test_programms/07
-    ./compilator_debug test_programms/08
-    ./compilator_debug test_programms/09
-    ./compilator_debug test_programms/10
-    ./compilator_debug test_programms/11
-    ./compilator_debug test_programms/12
-    ./compilator_debug test_programms/13
-    ./compilator_debug test_programms/14
-    ./compilator_debug test_programms/15
-    ./compilator_debug test_programms/16
-    ./compilator_debug test_programms/17
-    ./compilator_debug test_programms/18
-    ./compilator_debug test_programms/19
-    ./compilator_debug test_programms/20
-    ./compilator_debug test_programms/21
-    ./compilator_debug test_programms/22
-    ./compilator_debug test_programms/23
-    ./compilator_debug test_programms/24
-    ./compilator_debug test_programms/25
-    ./compilator_debug test_programms/26
-    ./compilator_debug test_programms/27
-    ./compilator_debug test_programms/28
-    ./compilator_debug advanced_tests/valid_programs/1.rb
-    ./compilator_debug advanced_tests/valid_programs/2.rb
-    ./compilator_debug advanced_tests/valid_programs/3.rb
-    ./compilator_debug advanced_tests/valid_programs/4.rb
-    ./compilator_debug advanced_tests/valid_programs/5.rb
-    ./compilator_debug advanced_tests/valid_programs/6.rb
-    ./compilator_debug advanced_tests/valid_programs/7.rb
-    ./compilator_debug advanced_tests/valid_programs/8.rb
-    ./compilator_debug advanced_tests/valid_programs/9.rb
-    ./compilator_debug advanced_tests/valid_programs/10.rb
-    ./compilator_debug advanced_tests/valid_programs/11.rb
-    ./compilator_debug advanced_tests/valid_programs/12.rb
-    ./compilator_debug advanced_tests/valid_programs/13.rb
-    ./compilator_debug advanced_tests/valid_programs/14.rb
-    ./compilator_debug advanced_tests/valid_programs/15.rb
-    ./compilator_debug advanced_tests/valid_programs/16.rb
-    ./compilator_debug advanced_tests/valid_programs/17.rb
-    ./compilator_debug advanced_tests/valid_programs/function_call.rb
-    ./compilator_debug advanced_tests/valid_programs/sample1.rb
-    ./compilator_debug advanced_tests/valid_programs/sample2.rb
-    ./compilator_debug advanced_tests/valid_programs/sample3.rb
-    ./compilator_debug advanced_tests/valid_programs/stat1.rb
-    ./compilator_debug advanced_tests/valid_programs/stat2.rb
-    ./compilator_debug advanced_tests/valid_programs/stat3.rb
-    
+    ./compilator_debug test_programms/01 > test.out
+    ./compilator_debug test_programms/02 > test.out
+    ./compilator_debug test_programms/03 > test.out
+    ./compilator_debug test_programms/04 > test.out
+    ./compilator_debug test_programms/05 > test.out
+    ./compilator_debug test_programms/06 > test.out
+    ./compilator_debug test_programms/07 > test.out
+    ./compilator_debug test_programms/08 > test.out
+    ./compilator_debug test_programms/09 > test.out
+    ./compilator_debug test_programms/10 > test.out
+    ./compilator_debug test_programms/11 > test.out
+    ./compilator_debug test_programms/12 > test.out
+    ./compilator_debug test_programms/13 > test.out
+    ./compilator_debug test_programms/14 > test.out
+    ./compilator_debug test_programms/15 > test.out
+    ./compilator_debug test_programms/16 > test.out
+    ./compilator_debug test_programms/17 > test.out
+    ./compilator_debug test_programms/18 > test.out
+    ./compilator_debug test_programms/19 > test.out
+    ./compilator_debug test_programms/20 > test.out
+    ./compilator_debug test_programms/21 > test.out
+    ./compilator_debug test_programms/22 > test.out
+    ./compilator_debug test_programms/23 > test.out
+    ./compilator_debug test_programms/24 > test.out
+    ./compilator_debug test_programms/25 > test.out
+    ./compilator_debug test_programms/26 > test.out
+    ./compilator_debug test_programms/27 > test.out
+    ./compilator_debug test_programms/28 > test.out
+    ./compilator_debug advanced_tests/valid_programs/1.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/2.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/3.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/4.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/5.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/6.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/7.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/8.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/9.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/10.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/11.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/12.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/13.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/14.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/15.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/16.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/17.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/function_call.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/sample1.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/sample2.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/sample3.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/stat1.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/stat2.rb > test.out
+    ./compilator_debug advanced_tests/valid_programs/stat3.rb > test.out
 
     echo
     echo "=================================== SHOULD FAIL (ERRCODE = 1) ======================================"
     echo
-    ./compilator_debug advanced_tests/return_value_1/1.rb
-    ./compilator_debug advanced_tests/return_value_1/2.rb
-    ./compilator_debug advanced_tests/return_value_1/3.rb
-    ./compilator_debug advanced_tests/return_value_1/4.rb
-    ./compilator_debug advanced_tests/return_value_1/5.rb
+    ./compilator_debug advanced_tests/return_value_1/1.rb > test.out
+    ./compilator_debug advanced_tests/return_value_1/2.rb > test.out
+    ./compilator_debug advanced_tests/return_value_1/3.rb > test.out
+    ./compilator_debug advanced_tests/return_value_1/4.rb > test.out
+    ./compilator_debug advanced_tests/return_value_1/5.rb > test.out
 
     echo
     echo "=================================== SHOULD FAIL (ERRCODE = 2) ======================================"
     echo
-    ./compilator_debug advanced_tests/return_value_2/1.rb
-    ./compilator_debug advanced_tests/return_value_2/2.rb
-    ./compilator_debug advanced_tests/return_value_2/3.rb
-    ./compilator_debug advanced_tests/return_value_2/4.rb
-    ./compilator_debug advanced_tests/return_value_2/5.rb
-    ./compilator_debug advanced_tests/return_value_2/6.rb
-    ./compilator_debug advanced_tests/return_value_2/7.rb
-    ./compilator_debug advanced_tests/return_value_2/8.rb
-    ./compilator_debug advanced_tests/return_value_2/9.rb
-    ./compilator_debug advanced_tests/return_value_2/10.rb
-    ./compilator_debug advanced_tests/return_value_2/11.rb
-    ./compilator_debug advanced_tests/return_value_2/identifs.rb
+    ./compilator_debug advanced_tests/return_value_2/1.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/2.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/3.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/4.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/5.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/6.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/7.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/8.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/9.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/10.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/11.rb > test.out
+    ./compilator_debug advanced_tests/return_value_2/identifs.rb > test.out
 
     echo
     echo "=================================== SHOULD FAIL (ERRCODE = 3) ======================================"
     echo
-    ./compilator_debug advanced_tests/return_value_3/1.rb
-    ./compilator_debug advanced_tests/return_value_3/2.rb
-    ./compilator_debug advanced_tests/return_value_3/3.rb
-    ./compilator_debug advanced_tests/return_value_3/4.rb
-    ./compilator_debug advanced_tests/return_value_3/5.rb
-    ./compilator_debug advanced_tests/return_value_3/6.rb
-    ./compilator_debug advanced_tests/return_value_3/7.rb
-    ./compilator_debug advanced_tests/return_value_3/8.rb
-    ./compilator_debug advanced_tests/return_value_3/9.rb
-    ./compilator_debug advanced_tests/return_value_3/10.rb
-    ./compilator_debug advanced_tests/return_value_3/11.rb
-    ./compilator_debug advanced_tests/return_value_3/12.rb
-    ./compilator_debug advanced_tests/return_value_3/13.rb
-    ./compilator_debug advanced_tests/return_value_3/14.rb
-    ./compilator_debug advanced_tests/return_value_3/15.rb
-    ./compilator_debug advanced_tests/return_value_3/16.rb
-    ./compilator_debug advanced_tests/return_value_3/17.rb
-    ./compilator_debug advanced_tests/return_value_3/olok.rb
+    ./compilator_debug advanced_tests/return_value_3/1.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/2.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/3.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/4.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/5.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/6.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/7.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/8.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/9.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/10.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/11.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/12.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/13.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/14.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/15.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/16.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/17.rb > test.out
+    ./compilator_debug advanced_tests/return_value_3/olok.rb > test.out
 
     echo
     echo "=================================== SHOULD FAIL (ERRCODE = 5) ======================================"
     echo
-    ./compilator_debug advanced_tests/return_value_5/1.rb
-    ./compilator_debug advanced_tests/return_value_5/2.rb
-    ./compilator_debug advanced_tests/return_value_5/3.rb
-    ./compilator_debug advanced_tests/return_value_5/4.rb
-    ./compilator_debug advanced_tests/return_value_5/5.rb
+    ./compilator_debug advanced_tests/return_value_5/1.rb > test.out
+    ./compilator_debug advanced_tests/return_value_5/2.rb > test.out
+    ./compilator_debug advanced_tests/return_value_5/3.rb > test.out
+    ./compilator_debug advanced_tests/return_value_5/4.rb > test.out
+    ./compilator_debug advanced_tests/return_value_5/5.rb > test.out
 
 		echo
     echo "=================================== GENERATOR ======================================"
