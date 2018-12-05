@@ -47,6 +47,7 @@ int parser_parse_prog(){
         parser_parse_body();
         return parser_parse_prog();
     } else {
+        free_token(token);
         error_fatal(ERROR_SYNTACTIC);
     }
 
@@ -91,7 +92,7 @@ int parser_parse_func(){
         endFunction();
         currentFunctionName = NULL;
         /* Generator */
-        // _Function_end(token);
+        _Function_end(NULL);
     }
     else
         error_fatal(ERROR_SYNTACTIC);
@@ -161,6 +162,9 @@ int parser_parse_params_next(bool declaration, bool declared) {
                 // if parsing function declaration, save the parameter
                 parametersRemaining--;
                 addParam((char *) token->data, true);
+
+                _Function_param((char *) token->data);
+
             } else {
                 // if in function call
                 if (declared) {
@@ -351,6 +355,9 @@ int parser_parse_loop(){
 int parser_parse_assign(){
     sToken *token = getNextToken();
     if(!cmp_token_type(token, T_ID)) error_fatal(ERROR_SYNTACTIC);
+
+    _Expression_assign(token);
+
     token = getNextToken();
     if(cmp_token(token, T_OPERATOR, "=") == false) {
         error_fatal(ERROR_SYNTACTIC);

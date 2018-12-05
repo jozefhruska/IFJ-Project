@@ -11,7 +11,7 @@ int parse(FILE *source){
 
 	setSourceFile(source);
 	
-    _Init();
+    _Init();//Komentář
 	int result = parser_parse_prog();
 
 	if (false == eachFunctionDefined()) {
