@@ -221,7 +221,7 @@ sToken *getNextToken()
 			else if (c == EOF)
 			{
 				tokenChangeType(token, T_EOF);
-				StorePrevious(token);
+				free(previous);
 				return token;
 			}
 			// end of line
