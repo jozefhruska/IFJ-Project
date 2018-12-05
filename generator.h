@@ -125,7 +125,16 @@ typedef struct sInstruction {
 typedef struct sContext {
 	char *key;
 	int count;
+	struct sContext *next;
 } *ContextPtr;
+
+typedef struct sContextStack {
+	ContextPtr top;
+	int depth;
+} *ContextStackPtr;
+
+char *contextPush(char *key);
+ContextPtr contextPop();
 
 char *createSymbol(int count, ...);
 void createInstruction(InstructionType type, SymbolWrapperPtr symbols);
@@ -140,5 +149,6 @@ void _Function_call_start(char *id_name);
 void _Function_call_param(sToken *token);
 void _Expression_assign(sToken *token);
 void _Expression(sToken *token);
+void _Condition_if();
 
 #endif
