@@ -1,4 +1,6 @@
 language: c
+sources:
+  - ubuntu-toolchain-r-test
 compiler:
   - gcc
 branches:
@@ -6,6 +8,7 @@ branches:
   - master
 before_install:
   - sudo apt-get update
-script: make || ./build_tests.sh
+  - sudo apt-get install libstdc++6
+script: ./build_tests.sh
 notifications:
   slack: ifj-projectgroup:wgciDeWTSoYEwi38yhSV9rpE
