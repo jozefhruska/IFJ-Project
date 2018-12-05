@@ -248,9 +248,6 @@ sToken *getNextToken()
 			// not classified number
 			else if (isdigit(c))
 			{
-				// if (c == '0') {
-				// 	error_fatal(ERROR_LEXICAL);
-				// }
 				strAddChar(&output, c);
 				state = NUMBER;
 			}
@@ -365,7 +362,7 @@ sToken *getNextToken()
 		// ---------------------------------------- ID CASE ----------------------------------------
 		case ID:
 
-			// komentar
+			// approved characters
 			if (isalnum(c) || c == '_')
 			{
 				strAddChar(&output, c);
