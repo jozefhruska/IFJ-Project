@@ -5,6 +5,7 @@
 #include "string.h"
 #include "parser_syntax_rules.h"
 #include "semantic.h"
+#include "generator.h"
 
 
 char __GLOBAL_PREC_TABLE[7][7] = {
@@ -89,8 +90,7 @@ int parser_parse_expression(){
     PAInit(&stack);
     PAPush(stack, _TERMINAL, _PREC_DOLAR, _PREC_NULL, "$");
 
-    sToken *incomming_token = getNextToken();
-    sPA_Stack_Item *incomming = ConvertTokenToStackItem(incomming_token);
+    sPA_Stack_Item *incomming = ConvertTokenToStackItem(getNextToken());
     sPA_Stack_Item *top;
 
     do{
@@ -99,14 +99,12 @@ int parser_parse_expression(){
         switch(__GLOBAL_PREC_TABLE[top->token_type][incomming->token_type]){
             case '=':
                 PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
-                incomming_token = getNextToken();
-                incomming = ConvertTokenToStackItem(incomming_token);
+                incomming = ConvertTokenToStackItem(getNextToken());
             break;
             case '<':
                 PAInsertBefore(stack, top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
                 PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
-                incomming_token = getNextToken();
-                incomming = ConvertTokenToStackItem(incomming_token);
+                incomming = ConvertTokenToStackItem(getNextToken());
             break;
             case '>':
                 PAInit(&subexpression);
@@ -134,6 +132,9 @@ int parser_parse_expression(){
 
 
     } while (!((incomming->token_type == _PREC_DOLAR) && ParsedSuccessfully(stack)));
+
+    _Expression(NULL);
+
     return 0;
 }
 
@@ -147,6 +148,8 @@ int ResolveExpression(sPA_Stack *inputStack){
         PAPush(stack, tmp->type, tmp->token_type, tmp->lex_token_type, tmp->token_attr);
         tmp = tmp->next;
     }
+
+    /* HERE COMES RULES!!!!!! */
 
     sPA_Stack_Item *current_item = PAPop(stack);
 
@@ -171,20 +174,42 @@ int ResolveExpression(sPA_Stack *inputStack){
                 return 0;
             }
         }
+
+        sToken *for_generator = (sToken*) malloc(sizeof(sToken));
+        for_generator->data = current_item->token_attr;
+        for_generator->type = current_item->lex_token_type;
+
+        _Expression(for_generator);
+
         current_item = PAPop(stack);
         if(current_item != NULL) error_fatal(ERROR_SYNTACTIC);
+
+
     } else if(current_item->token_type == _PREC_L_BRACKET){
         current_item = PAPop(stack);
         if(current_item->type == _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
         current_item = PAPop(stack);
         if(!(current_item->token_type == _PREC_R_BRACKET)) error_fatal(ERROR_SYNTACTIC);
+
+
     } else if(current_item->type == _NONTERMINAL){
         current_item = PAPop(stack);
         if(!(current_item->type == _TERMINAL && current_item->token_type == _PREC_PLUS_MINUS) &&
             !(current_item->type == _TERMINAL && current_item->token_type == _PREC_MULT_SUBS) &&
             !(current_item->type == _TERMINAL && current_item->token_type == _PREC_RELATION)) error_fatal(ERROR_SYNTACTIC);
+
+        //TODO: Poslat generátoru v závislosi na operátoru metodu
+
+        sToken *for_generator = (sToken*) malloc(sizeof(sToken));
+        for_generator->data = current_item->token_attr;
+        for_generator->type = current_item->lex_token_type;
+
+        _Expression(for_generator);
+
         current_item = PAPop(stack);
         if(current_item->type != _NONTERMINAL) error_fatal(ERROR_SYNTACTIC);
+
+
     } else if((current_item->type == _TERMINAL && current_item->token_type == _PREC_RELATION) ||
               (current_item->type == _TERMINAL && current_item->token_type == _PREC_MULT_SUBS) || 
               (current_item->type == _TERMINAL && current_item->token_type == _PREC_PLUS_MINUS)) {
