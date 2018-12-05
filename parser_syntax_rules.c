@@ -303,7 +303,7 @@ int parser_parse_cond(){
     token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "then")) error_fatal(ERROR_SYNTACTIC);
 
-    _Condition_if();
+    _Condition_start();
 
     token = getNextToken();
     if(!cmp_token_type(token, T_EOL)) error_fatal(ERROR_SYNTACTIC);
