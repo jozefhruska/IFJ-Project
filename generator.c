@@ -978,6 +978,16 @@ void _Condition_end() {
 void _While_start() {
 	char *key = contextPush("$while");
 
+	createInstruction(
+		INSTR_PUSHS,
+		createSymbolWrapper(
+			createSymbol(3, "bool", "@", "true"),
+			NULL,
+			NULL,
+			1
+		)
+	);
+
 	if (key != NULL) {
 		createInstruction(
 			INSTR_LABEL,
@@ -1003,16 +1013,6 @@ void _While_start() {
 
 void _While_end() {
 	char *key = contextStack->top->key;
-
-	createInstruction(
-		INSTR_PUSHS,
-		createSymbolWrapper(
-			createSymbol(3, "bool", "@", "true"),
-			NULL,
-			NULL,
-			1
-		)
-	);
 
 	if (key != NULL) {
 		createInstruction(
