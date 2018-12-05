@@ -89,7 +89,8 @@ int parser_parse_expression(){
     PAInit(&stack);
     PAPush(stack, _TERMINAL, _PREC_DOLAR, _PREC_NULL, "$");
 
-    sPA_Stack_Item *incomming = ConvertTokenToStackItem(getNextToken());
+    sToken *incomming_token = getNextToken();
+    sPA_Stack_Item *incomming = ConvertTokenToStackItem(incomming_token);
     sPA_Stack_Item *top;
 
     do{
@@ -98,12 +99,14 @@ int parser_parse_expression(){
         switch(__GLOBAL_PREC_TABLE[top->token_type][incomming->token_type]){
             case '=':
                 PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
-                incomming = ConvertTokenToStackItem(getNextToken());
+                incomming_token = getNextToken();
+                incomming = ConvertTokenToStackItem(incomming_token);
             break;
             case '<':
                 PAInsertBefore(stack, top, _SYM_LOWER, _PREC_NULL, _PREC_NULL, "<");
                 PAPush(stack, incomming->type, incomming->token_type, incomming->lex_token_type, incomming->token_attr);
-                incomming = ConvertTokenToStackItem(getNextToken());
+                incomming_token = getNextToken();
+                incomming = ConvertTokenToStackItem(incomming_token);
             break;
             case '>':
                 PAInit(&subexpression);
@@ -118,6 +121,7 @@ int parser_parse_expression(){
                 if(item == NULL) error_fatal(ERROR_SYNTACTIC);
 
                 ResolveExpression(subexpression);
+
                 //PAPop(stack);
                 sPA_Stack_Item *_s = PAPop(stack);
                 while(_s->type != _SYM_LOWER) _s = PAPop(stack);

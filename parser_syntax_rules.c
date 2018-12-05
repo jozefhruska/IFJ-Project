@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "memory_manager.h"
+
 #include "parser.h"
 #include "parser_syntax_rules.h"
 #include "parser_syntax_prec_analysis.h"
@@ -12,6 +14,7 @@
 
 #include "semantic.h"
 #include "generator.h"
+
 
 int parser_parse_prog(){
     // TODO: init global symbol table once in main, remove untill // TODO: end remove
@@ -30,6 +33,7 @@ int parser_parse_prog(){
         return parser_parse_prog();
     } else if(cmp_token_type(token, T_EOF)){
         /* <prog> -> e */
+        free_token(token);
         return PARSE_SUCCESS;
     } else if(cmp_token(token, T_KEYWORD, "if") ||
               cmp_token(token, T_KEYWORD, "while") ||
@@ -53,6 +57,7 @@ int parser_parse_func(){
     /* <func> -> ... */
     sToken *token = getNextToken();
     if(!cmp_token(token, T_KEYWORD, "def")) error_fatal(ERROR_SYNTACTIC);
+    free_token(token);
     token = getNextToken();
     if(cmp_token_type(token, T_ID)) { // function name
         addFunction((char *) token->data);
